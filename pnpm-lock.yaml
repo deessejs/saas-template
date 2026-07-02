@@ -45,6 +45,9 @@ catalogs:
     hono:
       specifier: latest
       version: 4.12.27
+    next:
+      specifier: ^16.2.6
+      version: 16.2.6
     pg:
       specifier: ^8.15.0
       version: 8.22.0
@@ -86,6 +89,52 @@ importers:
       turbo:
         specifier: ^2.9.18
         version: 2.10.1
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  apps/app:
+    dependencies:
+      '@workspace/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      next:
+        specifier: 'catalog:'
+        version: 16.2.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      next-themes:
+        specifier: ^0.4.6
+        version: 0.4.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.4
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.4(react@19.2.4)
+    devDependencies:
+      '@tailwindcss/postcss':
+        specifier: 'catalog:'
+        version: 4.3.2
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.19.43
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.17)
+      '@workspace/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9
+        version: 9.39.4(jiti@2.7.0)
+      tailwindcss:
+        specifier: ^4
+        version: 4.3.2
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

@@ -17,6 +17,9 @@ catalog:
   '@orpc/client': ^1.14.6
   "@orpc/server": latest
 
+  # Next.js
+  "next": ^16.2.6
+
   # Shared tooling
   "@tailwindcss/postcss": ^4
   "@turbo/gen": ^2.10.1
