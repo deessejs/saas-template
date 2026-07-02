@@ -16,7 +16,7 @@ Monorepo template for building SaaS applications with modern tooling.
 - **api** — Hono + orpc
 
 ### Apps
-- **web** — Next.js (pages router)
+- **web** — Next.js (app router)
 - **app** — Next.js (app router)
 - **docs** — Fumadocs
 
@@ -25,7 +25,7 @@ Monorepo template for building SaaS applications with modern tooling.
 ```
 .
 ├── apps/
-│   ├── web/          # Next.js (pages router)
+│   ├── web/          # Next.js (app router)
 │   ├── app/          # Next.js (app router)
 │   └── docs/         # Fumadocs
 ├── packages/
