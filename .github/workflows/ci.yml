@@ -26,7 +26,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm turbo lint
+      - run: pnpm turbo lint --force
 
   typecheck:
     name: Type Check
@@ -43,7 +43,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm turbo typecheck
+      - run: pnpm turbo typecheck --force
 
   build:
     name: Build
@@ -60,7 +60,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm turbo build
+      - run: pnpm turbo build --force
 
   test-unit:
     name: Test (Unit)
