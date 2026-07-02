@@ -10,7 +10,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@orpc/client": "catalog:",
+    "@orpc/server": "catalog:",
+    "@workspace/api": "workspace:*",
+    "@workspace/auth": "workspace:*",
     "@workspace/ui": "workspace:*",
+    "better-auth": "catalog:",
     "next": "catalog:",
     "next-themes": "^0.4.6",
     "react": "catalog:",

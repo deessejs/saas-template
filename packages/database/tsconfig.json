@@ -2,11 +2,11 @@
   "extends": "@workspace/typescript-config/base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": ".",
+    "rootDir": "./src",
     "module": "ES2022",
     "moduleResolution": "Bundler",
     "isolatedDeclarations": false
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "vitest.config.ts", "drizzle.config.ts"]
+  "exclude": ["node_modules", "dist", "vitest.config.ts", "drizzle.config.ts", "src/test-utils.ts", "tests/**/*"]
 }

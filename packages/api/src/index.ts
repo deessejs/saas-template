@@ -45,4 +45,8 @@ api.on(["POST", "GET"], "/rpc/*", async (c) => {
   return c.json({ error: "Not found" }, 404)
 })
 
-export default api
+// Named export for Next.js integration
+export { api }
+
+// Re-export types and router for client usage
+export { appRouter } from "./router/index.js"
