@@ -1,6 +1,7 @@
 packages:
   - "apps/*"
   - "packages/*"
+  - agents/*
 
 # pnpm 11: explicit allowlist for build scripts
 allowBuilds:
@@ -16,9 +17,6 @@ catalog:
   "@better-auth/drizzle-adapter": latest
   '@orpc/client': ^1.14.6
   "@orpc/server": latest
-
-  # Next.js
-  "next": ^16.2.6
 
   # Shared tooling
   "@tailwindcss/postcss": ^4
@@ -40,11 +38,18 @@ catalog:
 
   # API
   hono: latest
+
+  # Icons
+  lucide-react: ^1.22.0
+
+  # Next.js
+  "next": ^16.2.6
   pg: ^8.15.0
   postgres: ^3.4.0
   react: 19.2.4
   react-dom: 19.2.4
   typescript: ^5.9.3
+  vercel-minimax-ai-provider: ^0.0.2
 
   # Testing
   vitest: ^4.1.5
@@ -52,3 +57,15 @@ catalog:
 
 # Strict mode: all dependencies MUST come from a catalog
 catalogMode: strict
+
+minimumReleaseAgeExclude:
+  - "@ai-sdk/*"
+  - "@rolldown/*"
+  - "@vercel/*"
+  - "@workflow/*"
+  - ai
+  - experimental-ai-sdk-code-mode
+  - eve
+  - nitro
+  - rolldown
+  - workflow

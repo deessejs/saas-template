@@ -44,3 +44,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Eve agents (maintainers only — hors workspace pnpm)
+# Ces dossiers vivent en dehors du workspace pnpm et sont gérés localement.
+agents/*/node_modules
+agents/*/.next
+agents/*/.turbo
+agents/*/dist
+agents/*/coverage
+agents/*/.eve
+agents/*/.env*
+!agents/*/.env.example

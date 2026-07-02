@@ -5,3 +5,5 @@
 - [Claude Code subagents creation](claude-code-subagents-creation.md) — frontmatter fields, locations, invocation, plugin limits, pitfalls
 - [Claude Code workflows](claude-code-workflows.md) — Workflow tool primitives, patterns, limits, when over Agent tool
 - [user research style](user-research-style.md) — thorough research with examples, saved to memory; French; casual register
+- [Eve init side effects](eve-init-side-effects.md) — `npx eve@latest init` modifies parent's pnpm-workspace.yaml + bumps root engine to 24.x; manual revert required
+- [MiniMax models](minimax-models.md) — M3 (1M ctx, frontier) is default for agents/tech-lead; M2.1/M2 are legacy

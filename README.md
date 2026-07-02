@@ -105,6 +105,39 @@ Copy `.env.example` to `.env.local` and fill in the required values:
 cp .env.example .env.local
 ```
 
+## Agents (maintainers only)
+
+The `agents/` directory hosts [Eve](https://vercel.com/eve) agents — filesystem-first
+AI agent frameworks managed by the project's maintainers. **End users of this template
+can safely ignore this directory.**
+
+Eve agents are workspace members but they are excluded from the shared `catalog`
+on purpose: their dependencies (`eve`, `ai`, `@vercel/connect`, etc.) live outside
+`catalogMode: strict` via `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`.
+
+### Available agents
+
+| Agent | Purpose |
+|---|---|
+| `tech-lead` | Mirror of the Claude Code tech-lead subagent: audits packages, fixes divergences, maintains `.claude/agent-memory/tech-lead/` |
+
+### Setup
+
+```bash
+pnpm install        # workspace install covers agents/tech-lead too
+cd agents/tech-lead
+npm run dev         # starts the interactive terminal UI (Node 24+ required)
+```
+
+Each agent has its own `package.json`, `node_modules`, and `.env`. Use
+`agents/tech-lead/.env.example` as a template.
+
+### Runtime requirement
+
+Eve requires Node.js >=24 (Vercel hard requirement), but the rest of this template
+targets Node >=20. End users who never touch `agents/` are unaffected. Maintainers
+running an agent must use Node 24+ (e.g. via `fnm`, `nvm`, `volta`, or `asdf`).
+
 ## Dependencies
 
 Shared dependencies are managed through [pnpm catalogs](https://pnpm.io/workspaces#catalogs-and-ranges-in-workspace-protocol). Update versions in `pnpm-workspace.yaml` to propagate changes across all packages.

@@ -1,5 +1,8 @@
 import type { Metadata } from "next"
+
+import "@workspace/ui/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { TooltipProvider } from "@workspace/ui/components/tooltip"
 
 export const metadata: Metadata = {
   title: "SaaS Template",
@@ -15,7 +18,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider>
-          {children}
+          <TooltipProvider>
+            {children}
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

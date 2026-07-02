@@ -23,3 +23,21 @@ This version has breaking changes — APIs, conventions, and file structure may 
 **Notes:**
 - General help via `fresh --help` and per-command via `fresh <cmd> --help`.
 - Version via `fresh --version`.
+
+## Eve agents
+
+Maintainers run [Eve](https://vercel.com/eve) agents from `agents/` (top-level).
+These agents audit packages, propose fixes, and maintain
+`.claude/agent-memory/tech-lead/`. End users of this template can ignore this directory.
+
+To install an agent (Node 24+ required at runtime — see `package.json` engines):
+
+```bash
+pnpm install        # workspace install covers agents/* too
+cd agents/<name>
+npm run dev         # starts the interactive terminal UI
+```
+
+Each agent has its own `package.json` and `.env.example`. The `eve` runtime and
+`@vercel/connect` are workspace members but bypass the catalog via
+`minimumReleaseAgeExclude` in `pnpm-workspace.yaml`.
