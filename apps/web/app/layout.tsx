@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google"
 
 import "@workspace/ui/globals.css"
-import { ThemeProvider } from "@/components/providers/theme-provider"
+import { AppProviders } from "@/components/providers"
 import { SiteHeader } from "@/components/headers/site-header"
 import { cn } from "@workspace/ui/lib/utils"
 
@@ -24,12 +24,12 @@ export default function RootLayout({
       className={cn("antialiased", fontMono.variable, "font-sans", geist.variable)}
     >
       <body>
-        <ThemeProvider>
+        <AppProviders>
           <div className="flex min-h-screen flex-col">
             <SiteHeader />
             <main className="flex-1">{children}</main>
           </div>
-        </ThemeProvider>
+        </AppProviders>
       </body>
     </html>
   )
