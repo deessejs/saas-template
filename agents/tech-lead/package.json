@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@types/node": "24.x",
+    "just-bash": "catalog:",
     "typescript": "7.0.1-rc"
   }
 }

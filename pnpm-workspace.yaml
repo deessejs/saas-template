@@ -5,9 +5,11 @@ packages:
 
 # pnpm 11: explicit allowlist for build scripts
 allowBuilds:
+  '@mongodb-js/zstd': true
   '@prisma/client': true
   better-sqlite3: true
   esbuild: true
+  node-liblzma: true
   sharp: true
   unrs-resolver: true
 
@@ -38,6 +40,7 @@ catalog:
 
   # API
   hono: latest
+  just-bash: ^3.0.2
 
   # Icons
   lucide-react: ^1.22.0

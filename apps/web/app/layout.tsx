@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google"
 
 import "@workspace/ui/globals.css"
+import { APP_CONFIG } from "@workspace/ui/lib/config"
 import { AppProviders } from "@/components/providers"
 import { SiteHeader } from "@/components/headers/site-header"
 import { cn } from "@workspace/ui/lib/utils"
@@ -11,6 +12,11 @@ const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 })
+
+export const metadata = {
+  title: APP_CONFIG.name,
+  description: APP_CONFIG.description,
+}
 
 export default function RootLayout({
   children,

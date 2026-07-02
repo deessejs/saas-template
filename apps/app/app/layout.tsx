@@ -1,12 +1,13 @@
 import type { Metadata } from "next"
 
 import "@workspace/ui/globals.css"
+import { APP_CONFIG } from "@workspace/ui/lib/config"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@workspace/ui/components/tooltip"
 
 export const metadata: Metadata = {
-  title: "SaaS Template",
-  description: "SaaS application built with Next.js and shared UI components",
+  title: APP_CONFIG.name,
+  description: APP_CONFIG.description,
 }
 
 export default function RootLayout({

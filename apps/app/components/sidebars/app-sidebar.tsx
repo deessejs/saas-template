@@ -11,7 +11,7 @@ import {
   SidebarRail,
 } from "@workspace/ui/components/sidebar"
 
-import { APP_NAME } from "@/lib/config"
+import { APP_NAME } from "@workspace/ui/lib/config"
 import { Home, Settings } from "lucide-react"
 
 // TODO: replace with real user data from auth session
