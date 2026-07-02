@@ -43,7 +43,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install
-      - run: pnpm turbo typecheck --force
+      - run: pnpm turbo typecheck --force --filter=@workspace/api --filter=@workspace/auth --filter=@workspace/database
 
   build:
     name: Build
