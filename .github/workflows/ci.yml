@@ -119,7 +119,9 @@ jobs:
           echo "BETTER_AUTH_SECRET=${{ secrets.BETTER_AUTH_SECRET }}" >> .env
 
       - name: Run migrations
-        run: pnpm db:generate && pnpm db:migrate
+        run: |
+          export DATABASE_URL="postgresql://test:test@localhost:5432/test"
+          pnpm db:generate && pnpm db:migrate
 
       - name: Run integration tests
         run: pnpm turbo test --filter=@workspace/auth --filter=@workspace/api
