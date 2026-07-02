@@ -1,14 +1,8 @@
+import { config as baseConfig } from "./base.js"
 import pluginNext from "@next/eslint-plugin-next"
 import globals from "globals"
 
-import { config as baseConfig } from "./base.js"
-
-/**
- * A custom ESLint configuration for Next.js applications.
- *
- * @type {import("eslint").Linter.Config}
- * */
-export const nextJsConfig = [
+const nextConfig = [
   ...baseConfig,
   {
     plugins: {
@@ -25,3 +19,5 @@ export const nextJsConfig = [
     },
   },
 ]
+
+export { nextConfig }
