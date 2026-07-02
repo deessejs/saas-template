@@ -96,6 +96,9 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+    env:
+      DATABASE_URL: postgresql://test:test@localhost:5432/test
+      BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -107,21 +110,13 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      - name: Setup environment
-        env:
-          DATABASE_URL: postgresql://test:test@localhost:5432/test
-          BETTER_AUTH_URL: http://localhost:3000
-          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
-        run: |
-          cp .env.example .env
-          echo "DATABASE_URL=postgresql://test:test@localhost:5432/test" >> .env
-          echo "BETTER_AUTH_URL=http://localhost:3000" >> .env
-          echo "BETTER_AUTH_SECRET=${{ secrets.BETTER_AUTH_SECRET }}" >> .env
+      - run: pnpm install --frozen-lockfile
 
-      - name: Run migrations
+      - name: Run tests (generate + migrate)
         run: |
-          export DATABASE_URL="postgresql://test:test@localhost:5432/test"
-          pnpm db:generate && pnpm db:migrate
+          pnpm db:generate && DATABASE_URL=$DATABASE_URL pnpm db:migrate
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
 
       - name: Run integration tests
         run: pnpm turbo test --filter=@workspace/auth --filter=@workspace/api
