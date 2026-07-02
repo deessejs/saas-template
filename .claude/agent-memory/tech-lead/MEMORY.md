@@ -1,0 +1,7 @@
+- [pnpm workspace migration](pnpm-migration-2026.md) — npm → pnpm 11 monorepo setup, strict mode, allowBuilds
+- [template strategy](template-strategy.md) — GitHub template repo, changesets NOT needed for end users
+- [better-auth workflow](better-auth-workflow.md) — how to generate auth schema with --config flag in monorepo
+- [Claude Code docs index](claude-code-docs.md) — pointer URLs for subagents, workflows, plugins, hooks, worktrees
+- [Claude Code subagents creation](claude-code-subagents-creation.md) — frontmatter fields, locations, invocation, plugin limits, pitfalls
+- [Claude Code workflows](claude-code-workflows.md) — Workflow tool primitives, patterns, limits, when over Agent tool
+- [user research style](user-research-style.md) — thorough research with examples, saved to memory; French; casual register

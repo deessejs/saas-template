@@ -1,0 +1,51 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# pnpm 11: explicit allowlist for build scripts
+allowBuilds:
+  '@prisma/client': true
+  better-sqlite3: true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+
+# Shared dependency versions — update here, propagate everywhere
+catalog:
+  # Core
+  "@better-auth/drizzle-adapter": latest
+  '@orpc/client': ^1.14.6
+  "@orpc/server": latest
+
+  # Shared tooling
+  "@tailwindcss/postcss": ^4
+  "@turbo/gen": ^2.10.1
+
+  # Types
+  "@types/node": ^20
+  "@types/pg": ^8.11.0
+  "@types/react": ^19
+  "@types/react-dom": ^19
+  "@vitest/coverage-v8": ^4.1.7
+
+  # Auth
+  better-auth: latest
+  drizzle-kit: ^0.30.0
+
+  # Database
+  drizzle-orm: ^0.40.0
+
+  # API
+  hono: latest
+  pg: ^8.15.0
+  postgres: ^3.4.0
+  react: 19.2.4
+  react-dom: 19.2.4
+  typescript: ^5.9.3
+
+  # Testing
+  vitest: ^4.1.5
+  zod: latest
+
+# Strict mode: all dependencies MUST come from a catalog
+catalogMode: strict
