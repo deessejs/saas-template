@@ -9,7 +9,7 @@ import { drizzleAdapter } from "@better-auth/drizzle-adapter"
 import { testUtils } from "better-auth/plugins"
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
-import * as schema from "@workspace/database/src/schema"
+import * as schema from "@workspace/database/schema"
 
 // Test database connection
 const testDatabaseUrl = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL!
