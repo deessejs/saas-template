@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google"
 
 import "@workspace/ui/globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/providers/theme-provider"
 import { SiteHeader } from "@/components/headers/site-header"
 import { cn } from "@workspace/ui/lib/utils"
 

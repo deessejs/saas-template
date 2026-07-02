@@ -5,4 +5,3 @@
 - [Claude Code subagents creation](claude-code-subagents-creation.md) — frontmatter fields, locations, invocation, plugin limits, pitfalls
 - [Claude Code workflows](claude-code-workflows.md) — Workflow tool primitives, patterns, limits, when over Agent tool
 - [user research style](user-research-style.md) — thorough research with examples, saved to memory; French; casual register
-- [tech-lead subagent design](tech-lead-subagent-design.md) — read-only planner in .claude/agents/, deliberately separated from Eve framework
