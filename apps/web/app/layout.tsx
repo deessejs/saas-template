@@ -25,8 +25,10 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
-          <SiteHeader />
-          <main className="min-h-[calc(100vh-3.5rem)]">{children}</main>
+          <div className="flex min-h-screen flex-col">
+            <SiteHeader />
+            <main className="flex-1">{children}</main>
+          </div>
         </ThemeProvider>
       </body>
     </html>
