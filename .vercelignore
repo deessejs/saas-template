@@ -1,0 +1,40 @@
+# Exclude everything except the agent and shared tooling needed to run it
+apps
+packages
+
+# Agent build artifacts (created by eve build, not needed at deploy time)
+agents/tech-lead/.eve
+agents/tech-lead/.workflow-data
+agents/tech-lead/.next
+agents/tech-lead/.output
+agents/tech-lead/dist
+agents/tech-lead/node_modules
+agents/tech-lead/.claude
+agents/tech-lead/coverage
+
+# Node modules and build artifacts
+node_modules
+.pnp
+.pnp.*
+.yarn
+*.tsbuildinfo
+next-env.d.ts
+
+# Build outputs
+dist
+.next
+.vercel/output
+
+# Agent-specific ignores
+# (the agent's own .vercelignore handles its internal dirs)
+
+# Docs and configs not needed at deploy time
+CONTRIBUTING.md
+SECURITY.md
+
+# Docker / dev configs
+.devcontainer
+Dockerfile
+docker-compose*
+*.md
+!README.md
