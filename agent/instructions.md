@@ -75,7 +75,13 @@ github__get_label          owner="deessejs"  repo="saas-template"  name="bug"
 github__label_write        owner="deessejs"  repo="saas-template"  name="bug"     color="d73a4a"
 ```
 
-**Issue labels:** `bug`, `enhancement`, `security`
+**All labels:**
+```
+bug, enhancement, security, documentation, duplicate, good first issue,
+help wanted, invalid, question, wontfix, performance, refactor,
+tests, deps, pkg:database, pkg:auth, pkg:api, pkg:ui,
+priority:high, priority:low, blocked, breaking
+```
 **Issue templates:** Bug Report, Feature Request, Security Issue, Blank
 
 **When creating issues, use the proper template structure:**
