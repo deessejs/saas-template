@@ -2,17 +2,19 @@
  * Sandbox configuration for the tech-lead agent.
  *
  * Backend: Vercel Sandbox (cloud).
- * On session start, the sandbox clones the saas-template repo into /workspace/repo.
- * The agent then works on its own checkout — it never touches the local filesystem
- * where eve runs.
  *
- * Required env vars (set in Vercel project or .env.local for local dev with
- * `vercel env pull`):
- *   GH_TOKEN        — GitHub fine-grained PAT with repo read access.
- *                     Create at: GitHub Settings → Developer settings → Personal access tokens
- *   REPO_URL       — Full git URL. Defaults to the public GitHub repo.
- *                     Override for forks or private repos.
- *   REPO_BRANCH    — Branch to checkout. Defaults to "main".
+ * Strategy: use `onSession()` instead of `bootstrap()` because prewarm (during
+ * `eve build`) runs in a restricted network context where `git clone` fails.
+ * `onSession()` runs at runtime when the sandbox has full network access.
+ *
+ * Required env vars:
+ *   GH_TOKEN     — GitHub PAT with repo:read (for private repos).
+ *                  For public repos, omit or set to empty.
+ *   REPO_URL     — Full git URL. Defaults to the public GitHub repo.
+ *   REPO_BRANCH  — Branch to checkout. Defaults to "main".
+ *
+ * Note: the sandbox caches /workspace across reconnects via `sandbox.id`.
+ * Cloning only happens on the first session or after a sandbox TTL expiry.
  */
 
 import { defineSandbox } from "eve/sandbox";
@@ -21,6 +23,7 @@ import { vercel } from "eve/sandbox/vercel";
 const REPO_URL =
   process.env.REPO_URL ?? "https://github.com/martyy-code/saas-template.git";
 const BRANCH = process.env.REPO_BRANCH ?? "main";
+const GH_TOKEN = process.env.GH_TOKEN;
 
 export default defineSandbox({
   backend: vercel({
@@ -28,37 +31,29 @@ export default defineSandbox({
     resources: { vcpus: 2 },
   }),
 
-  // Bump this key whenever you change the bootstrap script.
-  // Eve invalidates the sandbox cache and re-runs bootstrap.
-  revalidationKey: () => "tech-lead-v1",
+  async onSession({ use }) {
+    // Ensure the sandbox has network access for git operations
+    const sandbox = await use({ networkPolicy: "allow-all" });
 
-  async bootstrap({ use }) {
-    const sandbox = await use();
+    // Check if repo is already cloned (sandbox.id persists across reconnects)
+    const check = await sandbox.run({ command: "ls /workspace/repo/.git 2>/dev/null && echo CLONED || echo NOT_CLONED" });
+    const alreadyCloned = check.stdout.trim() === "CLONED";
 
-    // Clone the repo
-    await sandbox.run({
-      command: `git clone --branch ${BRANCH} --single-branch ${REPO_URL} /workspace/repo`,
-    });
+    if (!alreadyCloned) {
+      // Clone the repo
+      const cloneArgs = [`git clone --branch ${BRANCH} --single-branch`];
+      if (GH_TOKEN) {
+        // Use authenticated clone to avoid GitHub rate limiting
+        cloneArgs.push(`https://x-access-token:${GH_TOKEN}@github.com/martyy-code/saas-template.git`);
+      } else {
+        cloneArgs.push(REPO_URL);
+      }
+      cloneArgs.push("/workspace/repo");
 
-    // Verify the clone worked
-    const check = await sandbox.run({
-      command: "ls /workspace/repo/package.json",
-    });
-    if (check.exitCode !== 0) {
-      throw new Error(
-        `Bootstrap failed: repo clone did not produce /workspace/repo/package.json.\n${check.stderr}`,
-      );
-    }
-
-    // Install deps so typecheck/lint work out of the box
-    const install = await sandbox.run({
-      command: "cd /workspace/repo && pnpm install --frozen-lockfile",
-    });
-    if (install.exitCode !== 0) {
-      // Non-fatal: deps might already be cached or network might be restricted
-      console.warn(
-        `Bootstrap warning: pnpm install exited ${install.exitCode}\n${install.stderr}`,
-      );
+      const clone = await sandbox.run({ command: cloneArgs.join(" ") });
+      if (clone.exitCode !== 0) {
+        throw new Error(`Failed to clone repo:\n${clone.stderr}`);
+      }
     }
   },
 });
