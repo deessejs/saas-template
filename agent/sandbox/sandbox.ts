@@ -21,7 +21,7 @@ import { defineSandbox } from "eve/sandbox";
 import { vercel } from "eve/sandbox/vercel";
 
 const REPO_URL =
-  process.env.REPO_URL ?? "https://github.com/martyy-code/saas-template.git";
+  process.env.REPO_URL ?? "https://github.com/deessejs/saas-template.git";
 const BRANCH = process.env.REPO_BRANCH ?? "main";
 const GH_TOKEN = process.env.GH_TOKEN;
 
@@ -44,7 +44,7 @@ export default defineSandbox({
       const cloneArgs = [`git clone --branch ${BRANCH} --single-branch`];
       if (GH_TOKEN) {
         // Use authenticated clone to avoid GitHub rate limiting
-        cloneArgs.push(`https://x-access-token:${GH_TOKEN}@github.com/martyy-code/saas-template.git`);
+        cloneArgs.push(`https://x-access-token:${GH_TOKEN}@github.com/deessejs/saas-template.git`);
       } else {
         cloneArgs.push(REPO_URL);
       }
