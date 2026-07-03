@@ -1,51 +1,14 @@
-# Exclude everything except the agent and shared tooling needed to run it
-apps
-packages
-
-# Agent build artifacts (created by eve build, not needed at deploy time)
-agents/tech-lead/.eve
-agents/tech-lead/.workflow-data
-agents/tech-lead/.next
-agents/tech-lead/.output
-agents/tech-lead/dist
-agents/tech-lead/node_modules
-agents/tech-lead/.claude
-agents/tech-lead/coverage
-
-# Node modules and build artifacts
+# Build artifacts
 node_modules
 .pnp
 .pnp.*
 .yarn
 *.tsbuildinfo
 next-env.d.ts
-
-# Build outputs
 dist
 .next
-.vercel/output
-
-# Markdown files — keep only agent-authored ones needed by eve
-# Eve reads: agent/instructions.md, AGENTS.md, CLAUDE.md
-*.md
-!agents/tech-lead/agent/instructions.md
-!agents/tech-lead/AGENTS.md
-!agents/tech-lead/CLAUDE.md
-
-# Docker / dev configs
-.devcontainer
-Dockerfile
-docker-compose*
-
-# Root config files needed
-!.gitignore
-!package.json
-!pnpm-workspace.yaml
-!pnpm-lock.yaml
-!turbo.json
-!tsconfig.json
-!vercel.json
-!.npmrc
-!.prettierrc
-!.prettierignore
-!.eslintrc.js
+.vercel
+agents/tech-lead/node_modules
+agents/tech-lead/.eve
+agents/tech-lead/.workflow-data
+agents/tech-lead/coverage
