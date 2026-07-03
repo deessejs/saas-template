@@ -19,12 +19,12 @@ const data = {
   user: {
     name: "User",
     email: "user@example.com",
-    avatar: "/avatars/user.png",
+    username: "dummy",
   },
   teams: [
     {
       name: APP_NAME,
-      logo: <span className="text-xs font-bold">{APP_NAME.charAt(0)}</span>,
+      orgUsername: "dummy",
       plan: "SaaS",
     },
   ],
