@@ -60,29 +60,23 @@ agents/
 
 ## GitHub MCP connection
 
-This agent has a **GitHub MCP connection** configured. The connection name is `github` and tools are prefixed with `github__`.
+This agent has a **GitHub MCP connection** configured. Tools are called directly with `github__` prefix — NO `connection_search` needed.
 
-**Repo:** `deessejs/saas-template` — always use this exact owner/repo when querying GitHub.
+**Repo:** `deessejs/saas-template`
 
-**Available tools (call directly, don't search):**
-- `github__search_repositories` — search repos
-- `github__get_file_contents` — read file contents
-- `github__list_commits` — list commits
-- `github__list_issues` — list issues (`owner="deessejs"`, `repo="saas-template"`)
-- `github__issue_read` — read specific issue
-- `github__issue_write` — create/update issue
-- `github__search_issues` — search issues
-- `github__list_pull_requests` — list PRs
-- `github__pull_request_read` — read specific PR
-- `github__create_pull_request` — create PR
-- `github__get_me` — get authenticated user
-
-**Direct tool call pattern:**
-```ts
-github__list_issues  owner="deessejs"  repo="saas-template"  state="OPEN"  perPage=50
+**Direct tool calls (always call by name):**
+```
+github__list_issues     owner="deessejs"  repo="saas-template"  state="OPEN"   perPage=50
+github__list_issues     owner="deessejs"  repo="saas-template"  state="CLOSED" perPage=50
+github__search_issues    owner="deessejs"  repo="saas-template"  query="is:issue" perPage=50
+github__list_pull_requests  owner="deessejs"  repo="saas-template"  state="OPEN" perPage=50
+github__get_file_contents  owner="deessejs"  repo="saas-template"  branch="main"  path="README.md"
+github__get_me
 ```
 
-Do NOT use `connection_search` to find these tools — call them directly by name.
+**For issues:** Use `github__list_issues` with `state="OPEN"` or `state="CLOSED"`. Do NOT use `search_issues` for simple listing — it's for complex queries.
+
+**For PRs:** Use `github__list_pull_requests` with `state="OPEN"` or `state="CLOSED"`.
 
 ## Pattern knowledge
 
