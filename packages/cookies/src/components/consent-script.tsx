@@ -2,8 +2,8 @@
 
 import Script from "next/script"
 import type { ScriptProps } from "next/script"
-import { useCookieConsentStore } from "@/stores/cookies/cookie-consent"
-import type { ConsentCategory } from "@/stores/cookies/cookie-consent"
+import { useCookieConsentStore } from "../store/cookie-consent"
+import type { ConsentCategory } from "../types"
 
 interface ConsentScriptProps extends Omit<ScriptProps, "strategy"> {
   category: ConsentCategory

@@ -1,7 +1,5 @@
 "use client"
 
-"use client"
-
 import { useEffect } from "react"
 import Link from "next/link"
 import { Cookie, Settings, X } from "lucide-react"
@@ -9,10 +7,7 @@ import { Button } from "@workspace/ui/components/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { Separator } from "@workspace/ui/components/separator"
 import { Switch } from "@workspace/ui/components/switch"
-import {
-  useCookieConsentStore,
-  rehydrateCookieConsent,
-} from "@/stores/cookies/cookie-consent"
+import { useCookieConsentStore, rehydrateCookieConsent } from "../store/cookie-consent"
 
 export function CookieConsent() {
   const {
@@ -31,15 +26,17 @@ export function CookieConsent() {
     rehydrateCookieConsent()
   }, [])
 
-  // Don't render until hydrated — avoids flash with wrong state
-  if (!hasHydrated || hasDecided) return null
+  // Don't render until hydrated
+  if (!hasHydrated) return null
 
+  // Preferences modal — can be opened from the footer even after initial decision
   if (preferencesOpen) {
     return (
       <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center">
         <div
-          className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+          className="absolute inset-0 cursor-pointer bg-background/80 backdrop-blur-sm"
           onClick={() => setPreferencesOpen(false)}
+          aria-hidden="true"
         />
         <Card className="relative z-10 w-full max-w-md">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -49,7 +46,8 @@ export function CookieConsent() {
             </div>
             <button
               onClick={() => setPreferencesOpen(false)}
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+              aria-label="Close preferences"
             >
               <X className="size-4" />
             </button>
@@ -118,38 +116,43 @@ export function CookieConsent() {
     )
   }
 
-  return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 sm:bottom-4 sm:right-4 sm:left-auto sm:max-w-sm">
-      <Card className="shadow-lg">
-        <CardHeader className="pb-2">
-          <div className="flex items-center gap-2">
-            <Cookie className="size-5" />
-            <CardTitle className="text-lg">We use cookies</CardTitle>
-          </div>
-          <CardDescription>
-            We use cookies to enhance your browsing experience and analyze our traffic.{" "}
-            <Link href="/cookies" className="underline underline-offset-2 hover:text-foreground">
-              Learn more
-            </Link>
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-2 sm:flex-row">
-          <Button variant="outline" size="sm" onClick={declineAll} className="flex-1">
-            Decline
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPreferencesOpen(true)}
-            className="flex-1"
-          >
-            Customize
-          </Button>
-          <Button size="sm" onClick={acceptAll} className="flex-1">
-            Accept All
-          </Button>
-        </CardContent>
-      </Card>
-    </div>
-  )
+  // Banner — only shown on first visit (hasDecided is false)
+  if (!hasDecided) {
+    return (
+      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 sm:bottom-4 sm:right-4 sm:left-auto sm:max-w-sm">
+        <Card className="shadow-lg">
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-2">
+              <Cookie className="size-5" />
+              <CardTitle className="text-lg">We use cookies</CardTitle>
+            </div>
+            <CardDescription>
+              We use cookies to enhance your browsing experience and analyze our traffic.{" "}
+              <Link href="/cookies" className="underline underline-offset-2 hover:text-foreground">
+                Learn more
+              </Link>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2 sm:flex-row">
+            <Button variant="outline" size="sm" onClick={declineAll} className="flex-1">
+              Decline
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPreferencesOpen(true)}
+              className="flex-1"
+            >
+              Customize
+            </Button>
+            <Button size="sm" onClick={acceptAll} className="flex-1">
+              Accept All
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  return null
 }

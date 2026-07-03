@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { APP_NAME } from "@workspace/ui/lib/config"
+import { CookiePreferencesButton } from "@workspace/cookies"
 
 export function AppFooter() {
   const year = new Date().getFullYear()
@@ -36,6 +37,7 @@ export function AppFooter() {
           >
             Terms
           </Link>
+          <CookiePreferencesButton />
         </nav>
       </div>
     </footer>

@@ -1,40 +1,18 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-
-export type ConsentCategory = "functional" | "analytics" | "marketing"
-
-export interface CookieConsent {
-  functional: boolean
-  analytics: boolean
-  marketing: boolean
-}
-
-interface CookieConsentState {
-  consent: CookieConsent
-  hasDecided: boolean
-  hasHydrated: boolean
-  preferencesOpen: boolean
-}
-
-interface CookieConsentActions {
-  acceptAll: () => void
-  declineAll: () => void
-  setCategory: (cat: ConsentCategory, value: boolean) => void
-  setPreferencesOpen: (open: boolean) => void
-  setHasHydrated: (value: boolean) => void
-}
+import type { CookieConsentData } from "../types"
 
 const STORAGE_KEY = "cookie_consent"
 const CONSENT_VERSION = 1
 
-const DEFAULT_CONSENT: CookieConsent = {
+const DEFAULT_CONSENT: CookieConsentData = {
   functional: true,
   analytics: false,
   marketing: false,
 }
 
 interface PersistedState {
-  consent: CookieConsent
+  consent: CookieConsentData
   hasDecided: boolean
   version?: number
 }
@@ -45,7 +23,6 @@ function loadStored(): PersistedState | null {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return null
     const parsed = JSON.parse(raw) as PersistedState
-    // Re-prompt if consent categories changed
     if (parsed.version !== CONSENT_VERSION) return null
     return parsed
   } catch {
@@ -53,22 +30,21 @@ function loadStored(): PersistedState | null {
   }
 }
 
-export const useCookieConsentStore = create<CookieConsentState & CookieConsentActions>()(
+export const useCookieConsentStore = create<import("../types").CookieConsentStore>()(
   persist(
     (set, get) => ({
-      // Server: always render defaults. Client rehydrates from localStorage via skipHydration.
       consent: DEFAULT_CONSENT,
       hasDecided: false,
       hasHydrated: false,
       preferencesOpen: false,
 
       acceptAll: () => {
-        const full: CookieConsent = { functional: true, analytics: true, marketing: true }
+        const full: CookieConsentData = { functional: true, analytics: true, marketing: true }
         set({ consent: full, hasDecided: true })
       },
 
       declineAll: () => {
-        const minimal: CookieConsent = { functional: true, analytics: false, marketing: false }
+        const minimal: CookieConsentData = { functional: true, analytics: false, marketing: false }
         set({ consent: minimal, hasDecided: true })
       },
 
@@ -79,15 +55,16 @@ export const useCookieConsentStore = create<CookieConsentState & CookieConsentAc
 
       setPreferencesOpen: (open) => set({ preferencesOpen: open }),
 
+      openPreferences: () => set({ preferencesOpen: true }),
+
       setHasHydrated: (value) => set({ hasHydrated: value }),
     }),
     {
       name: STORAGE_KEY,
-      skipHydration: true, // Prevent SSR/CSR mismatch — rehydrate manually after mount
+      skipHydration: true,
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true)
       },
-      // Persist version for future category changes
       partialize: (state) => ({
         consent: state.consent,
         hasDecided: state.hasDecided,
@@ -97,7 +74,6 @@ export const useCookieConsentStore = create<CookieConsentState & CookieConsentAc
   )
 )
 
-// Rehydrate on client mount — call once at app startup
 export function rehydrateCookieConsent() {
   useCookieConsentStore.persist.rehydrate()
 }

@@ -11,3 +11,4 @@
 - [Eve agent URL](eve-agent-url.md) — https://saas-template-tech-lead.vercel.app deployed tech-lead agent
 - [Vercel deploy pattern](vercel-deploy-pattern.md) — cd agent && pnpm run build; dashboard overrides vercel.json; engines.node >=24; flat agent/ structure
 - [apps/web blog/changelog patterns](web-blog-changelog-patterns.md) — src/ structure, Zustand stores at src/stores/cookies/, content-collections blog + changelog, Fuse.js search
+- [packages/ui audit corrections](packages-ui-audit-corrections.md) — things I got wrong: bg-blend-color is valid Tailwind, lucide-react 1.22.0 is latest (0→1 jump), next-themes 0.4.6 is latest; things right: peerDependencies missing react, shadcn CLI in deps, next-themes unused, APP_CONFIG category mistake

@@ -5,7 +5,8 @@ import { APP_CONFIG } from "@workspace/ui/lib/config"
 import { AppProviders } from "@/components/providers"
 import { AppFooter } from "@/components/footers/app-footer"
 import { SiteHeader } from "@/components/headers/site-header"
-import { CookieConsent } from "@/components/cookie-consent"
+import { CookieConsent } from "@workspace/cookies"
+import { Toaster } from "@workspace/ui/components/sonner"
 import { cn } from "@workspace/ui/lib/utils"
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
@@ -38,6 +39,7 @@ export default function RootLayout({
             <main className="flex-1">{children}</main>
             <AppFooter />
             <CookieConsent />
+            <Toaster />
           </div>
         </AppProviders>
       </body>
