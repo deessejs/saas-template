@@ -99,7 +99,7 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
 
-  agents/tech-lead:
+  agent:
     dependencies:
       '@vercel/connect':
         specifier: 0.2.2
@@ -9152,7 +9152,7 @@ snapshots:
 
   '@types/pg@8.20.0':
     dependencies:
-      '@types/node': 20.19.43
+      '@types/node': 24.13.2
       pg-protocol: 1.15.0
       pg-types: 2.2.0
 
