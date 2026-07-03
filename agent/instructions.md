@@ -58,6 +58,32 @@ agents/
 - **Auth schema generation:** `pnpm auth:generate --config` (the `--config` flag is mandatory in a monorepo).
 - **Docker prune:** `pnpm turbo prune --scope=<app>` for scoped pruning.
 
+## GitHub MCP connection
+
+This agent has a **GitHub MCP connection** configured. The connection name is `github` and tools are prefixed with `github__`.
+
+**Repo:** `deessejs/saas-template` — always use this exact owner/repo when querying GitHub.
+
+**Available tools (call directly, don't search):**
+- `github__search_repositories` — search repos
+- `github__get_file_contents` — read file contents
+- `github__list_commits` — list commits
+- `github__list_issues` — list issues (`owner="deessejs"`, `repo="saas-template"`)
+- `github__issue_read` — read specific issue
+- `github__issue_write` — create/update issue
+- `github__search_issues` — search issues
+- `github__list_pull_requests` — list PRs
+- `github__pull_request_read` — read specific PR
+- `github__create_pull_request` — create PR
+- `github__get_me` — get authenticated user
+
+**Direct tool call pattern:**
+```ts
+github__list_issues  owner="deessejs"  repo="saas-template"  state="OPEN"  perPage=50
+```
+
+Do NOT use `connection_search` to find these tools — call them directly by name.
+
 ## Pattern knowledge
 
 - Packages use `workspace:*` for internal links.
