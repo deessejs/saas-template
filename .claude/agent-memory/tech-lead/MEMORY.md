@@ -8,3 +8,6 @@
 - [Eve init side effects](eve-init-side-effects.md) — `npx eve@latest init` modifies parent's pnpm-workspace.yaml + bumps root engine to 24.x; manual revert required
 - [MiniMax models](minimax-models.md) — M3 (1M ctx, frontier) is default for agents/tech-lead; M2.1/M2 are legacy
 - [apps/app route groups & sidebar](app-route-groups-sidebar.md) — full structure, sidebar patterns, shared config, shadcn setup, Tailwind v4 notes
+- [Eve agent URL](eve-agent-url.md) — https://saas-template-tech-lead.vercel.app deployed tech-lead agent
+- [Vercel deploy pattern](vercel-deploy-pattern.md) — cd agent && pnpm run build; dashboard overrides vercel.json; engines.node >=24; flat agent/ structure
+- [apps/web blog/changelog patterns](web-blog-changelog-patterns.md) — src/ structure, Zustand stores at src/stores/cookies/, content-collections blog + changelog, Fuse.js search
