@@ -25,16 +25,27 @@ dist
 .next
 .vercel/output
 
-# Agent-specific ignores
-# (the agent's own .vercelignore handles its internal dirs)
-
-# Docs and configs not needed at deploy time
-CONTRIBUTING.md
-SECURITY.md
+# Markdown files — keep only agent-authored ones needed by eve
+# Eve reads: agent/instructions.md, AGENTS.md, CLAUDE.md
+*.md
+!agents/tech-lead/agent/instructions.md
+!agents/tech-lead/AGENTS.md
+!agents/tech-lead/CLAUDE.md
 
 # Docker / dev configs
 .devcontainer
 Dockerfile
 docker-compose*
-*.md
-!README.md
+
+# Root config files needed
+!.gitignore
+!package.json
+!pnpm-workspace.yaml
+!pnpm-lock.yaml
+!turbo.json
+!tsconfig.json
+!vercel.json
+!.npmrc
+!.prettierrc
+!.prettierignore
+!.eslintrc.js
