@@ -1,5 +1,5 @@
 {
   "installCommand": "pnpm install --ignore-scripts",
   "buildCommand": "cd agents/tech-lead && pnpm run build",
-  "outputDirectory": ".vercel/output"
+  "outputDirectory": "agents/tech-lead/.vercel/output"
 }
