@@ -51,12 +51,12 @@ export function TeamSwitcher({
               size="lg"
               className="w-full data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:justify-center"
             >
-              <Avatar className="size-8 shrink-0 rounded-lg">
+              <Avatar className="size-8 shrink-0" rounded="md">
                 <AvatarImage
                   src={`${VERCEL_AVATAR_BASE}?s=40&u=${activeTeam.orgUsername}&dpl=dpl_AS99V7XmtTzE4xdb72tYFtNTVV48`}
                   alt={activeTeam.name}
                 />
-                <AvatarFallback className="rounded-lg">
+                <AvatarFallback>
                   {activeTeam.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
@@ -82,12 +82,12 @@ export function TeamSwitcher({
                 onClick={() => setActiveTeam(team)}
                 className="gap-2 p-2"
               >
-                <Avatar className="size-6 rounded-md">
+                <Avatar className="size-6" rounded="md">
                   <AvatarImage
                     src={`${VERCEL_AVATAR_BASE}?s=40&u=${team.orgUsername}&dpl=dpl_AS99V7XmtTzE4xdb72tYFtNTVV48`}
                     alt={team.name}
                   />
-                  <AvatarFallback className="rounded-md">
+                  <AvatarFallback>
                     {team.name.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
