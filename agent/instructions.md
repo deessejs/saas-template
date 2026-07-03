@@ -68,11 +68,11 @@ This agent has a **GitHub MCP connection** configured. Tools are called directly
 ```
 github__list_issues        owner="deessejs"  repo="saas-template"  state="OPEN"   perPage=50
 github__list_issues        owner="deessejs"  repo="saas-template"  state="CLOSED" perPage=50
+github__issue_write        owner="deessejs"  repo="saas-template"  issueNumber=1  title="..."  body="..."  labels=["bug","invalid"]
+github__issue_read         owner="deessejs"  repo="saas-template"  issueNumber=1
 github__list_pull_requests  owner="deessejs"  repo="saas-template"  state="OPEN"   perPage=50
 github__get_file_contents   owner="deessejs"  repo="saas-template"  branch="main"  path="README.md"
 github__get_me
-github__get_label          owner="deessejs"  repo="saas-template"  name="bug"
-github__label_write        owner="deessejs"  repo="saas-template"  name="bug"     color="d73a4a"
 ```
 
 **All labels:**
@@ -82,6 +82,8 @@ help wanted, invalid, question, wontfix, performance, refactor,
 tests, deps, pkg:database, pkg:auth, pkg:api, pkg:ui,
 priority:high, priority:low, blocked, breaking
 ```
+
+**To add/update labels on existing issues:** Use `github__issue_write` with `labels=["bug","invalid"]`
 **Issue templates:** Bug Report, Feature Request, Security Issue, Blank
 
 **When creating issues, use the proper template structure:**
