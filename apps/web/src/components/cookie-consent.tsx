@@ -1,18 +1,38 @@
 "use client"
 
+"use client"
+
+import { useEffect } from "react"
 import Link from "next/link"
 import { Cookie, Settings, X } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { Separator } from "@workspace/ui/components/separator"
 import { Switch } from "@workspace/ui/components/switch"
-import { useCookieConsentStore } from "@/stores/cookies/cookie-consent"
+import {
+  useCookieConsentStore,
+  rehydrateCookieConsent,
+} from "@/stores/cookies/cookie-consent"
 
 export function CookieConsent() {
-  const { consent, hasDecided, acceptAll, declineAll, setCategory, preferencesOpen, setPreferencesOpen } =
-    useCookieConsentStore()
+  const {
+    consent,
+    hasDecided,
+    hasHydrated,
+    acceptAll,
+    declineAll,
+    setCategory,
+    preferencesOpen,
+    setPreferencesOpen,
+  } = useCookieConsentStore()
 
-  if (hasDecided) return null
+  // Rehydrate from localStorage on mount — prevents SSR/CSR mismatch
+  useEffect(() => {
+    rehydrateCookieConsent()
+  }, [])
+
+  // Don't render until hydrated — avoids flash with wrong state
+  if (!hasHydrated || hasDecided) return null
 
   if (preferencesOpen) {
     return (

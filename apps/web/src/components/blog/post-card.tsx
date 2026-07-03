@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 import { Calendar, Clock } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card"
@@ -13,15 +14,16 @@ export function PostCard({ post }: { post: Post }) {
       {hasCover ? (
         <Link
           href={post.url}
-          className="block aspect-video w-full overflow-hidden bg-muted"
+          className="relative block aspect-video w-full overflow-hidden bg-muted"
           tabIndex={-1}
+          aria-hidden="true"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={post.cover}
+          <Image
+            src={post.cover!}
             alt=""
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         </Link>
       ) : null}

@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Image from "next/image"
 import Link from "next/link"
 import { Badge } from "@workspace/ui/components/badge"
 import { PostCard } from "@/components/blog/post-card"
@@ -90,12 +91,14 @@ export default function BlogPage() {
             <div className="mb-12 overflow-hidden rounded-xl border border-border/40">
               <Link href={featured.url} className="block">
                 {featured.cover ? (
-                  <div className="aspect-video w-full overflow-hidden bg-muted">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                  <div className="relative aspect-video w-full overflow-hidden bg-muted">
+                    <Image
                       src={featured.cover}
                       alt=""
-                      className="h-full w-full object-cover"
+                      fill
+                      className="object-cover"
+                      priority
+                      sizes="(max-width: 768px) 100vw, 1200px"
                     />
                   </div>
                 ) : null}

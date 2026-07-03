@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { Separator } from "@workspace/ui/components/separator"
 import { WEB_URL } from "@/lib/urls"
@@ -90,12 +91,16 @@ export default async function PostPage(
 
       {post.cover ? (
         <figure className="mb-10 overflow-hidden rounded-xl border border-border/40 bg-muted">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={post.cover}
-            alt={post.title}
-            className="aspect-video w-full object-cover"
-          />
+          <div className="relative aspect-video w-full">
+            <Image
+              src={post.cover}
+              alt={post.title}
+              fill
+              className="object-cover"
+              priority
+              sizes="(max-width: 768px) 100vw, 1200px"
+            />
+          </div>
         </figure>
       ) : null}
 

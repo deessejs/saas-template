@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
+import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar"
+import { AvatarNextImage } from "./avatar-image"
 import type { Author } from "@/lib/blog/types"
 
 function SingleAuthorBlock({ author }: { author: Author }) {
@@ -16,9 +17,9 @@ function SingleAuthorBlock({ author }: { author: Author }) {
   return (
     <div className="flex items-start gap-4">
       <Link href={authorUrl} aria-label={`More from ${author.name}`} className="shrink-0">
-        <Avatar className="size-12">
+        <Avatar className="size-12 overflow-hidden rounded-full">
           {author.avatar ? (
-            <AvatarImage src={author.avatar} alt={author.name} />
+            <AvatarNextImage src={author.avatar} alt={author.name} />
           ) : null}
           <AvatarFallback className="text-sm font-semibold">
             {fallback || author.name[0]}
