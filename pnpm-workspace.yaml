@@ -1,7 +1,7 @@
 packages:
   - "apps/*"
   - "packages/*"
-  - agents/*
+  - agent
 
 # pnpm 11: explicit allowlist for build scripts
 allowBuilds:

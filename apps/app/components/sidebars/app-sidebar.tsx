@@ -24,7 +24,7 @@ const data = {
   teams: [
     {
       name: APP_NAME,
-      orgUsername: "dummy",
+      logoUrl: `https://vercel.com/api/www/avatar?s=128&u=${encodeURIComponent(APP_NAME)}&dpl=dpl_AS99V7XmtTzE4xdb72tYFtNTVV48`,
       plan: "SaaS",
     },
   ],

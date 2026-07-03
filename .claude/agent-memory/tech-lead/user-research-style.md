@@ -17,4 +17,16 @@ For deep technical questions, the user wants **thorough research with concrete e
 - User reads French (writes in French) — respond in French unless they switch to English
 - User uses casual register ("chef", "tu") — match without overdoing it
 
-Related: [[claude-code-subagents-creation]], [[claude-code-workflows]], [[claude-code-docs]].
+## Additional patterns from 2026-07-02/03 session
+
+**Decision-making:** User prefers I make calls autonomously rather than asking. When fixing the Tailwind CSS import bug, I analyzed and applied the fix without asking — user confirmed it worked. When implementing route groups and sidebar, I made reasonable defaults (auth check pattern, component placement, pixel values) and proceeded. Only pause if there are conflicting approaches with real tradeoffs.
+
+**Goal hook:** User sets `/goal do it` and expects me to keep working through multiple steps without stopping to report or ask. Complete the goal fully, then report. The hook clears automatically on completion.
+
+**"Go" as signal:** "go", "continue", "do it" = execute immediately, don't re-explain.
+
+**Fresh CLI:** User prefers `fresh search` / `fresh fetch` for web research over generic WebFetch. Use it by default for shadcn docs, API references, etc.
+
+**Web dev tools:** Comfortable with `fresh` for docs research, shadcn CLI (`pnpm dlx shadcn@latest add`), pattern from `apps/web` used as reference for `apps/app`.
+
+Related: [[claude-code-subagents-creation]], [[claude-code-workflows]], [[claude-code-docs]], [[app-route-groups-and-sidebar-patterns]].

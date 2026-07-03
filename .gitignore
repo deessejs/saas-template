@@ -47,11 +47,12 @@ next-env.d.ts
 
 # Eve agents (maintainers only — hors workspace pnpm)
 # Ces dossiers vivent en dehors du workspace pnpm et sont gérés localement.
-agents/*/node_modules
-agents/*/.next
-agents/*/.turbo
-agents/*/dist
-agents/*/coverage
-agents/*/.eve
-agents/*/.env*
-!agents/*/.env.example
+# Eve agent (maintainers only)
+agent/node_modules
+agent/.next
+agent/.turbo
+agent/dist
+agent/coverage
+agent/.eve
+agent/.env*
+!agent/.env.example

@@ -1,12 +1,8 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@workspace/ui/components/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,14 +20,12 @@ import {
 } from "@workspace/ui/components/sidebar"
 import { ChevronsUpDownIcon, PlusIcon } from "lucide-react"
 
-const VERCEL_AVATAR_BASE = "https://vercel.com/api/www/avatar"
-
 export function TeamSwitcher({
   teams,
 }: {
   teams: {
     name: string
-    orgUsername: string
+    logoUrl: string
     plan: string
   }[]
 }) {
@@ -51,15 +45,13 @@ export function TeamSwitcher({
               size="lg"
               className="w-full data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:justify-center"
             >
-              <Avatar className="size-8 shrink-0" rounded="md">
-                <AvatarImage
-                  src={`${VERCEL_AVATAR_BASE}?s=40&u=${activeTeam.orgUsername}&dpl=dpl_AS99V7XmtTzE4xdb72tYFtNTVV48`}
-                  alt={activeTeam.name}
-                />
-                <AvatarFallback>
-                  {activeTeam.name.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
+              <Image
+                src={activeTeam.logoUrl}
+                alt={activeTeam.name}
+                width={32}
+                height={32}
+                className="shrink-0 rounded-lg object-cover"
+              />
               <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
                 <span className="truncate font-medium">{activeTeam.name}</span>
                 <span className="truncate text-xs">{activeTeam.plan}</span>
@@ -82,15 +74,13 @@ export function TeamSwitcher({
                 onClick={() => setActiveTeam(team)}
                 className="gap-2 p-2"
               >
-                <Avatar className="size-6" rounded="md">
-                  <AvatarImage
-                    src={`${VERCEL_AVATAR_BASE}?s=40&u=${team.orgUsername}&dpl=dpl_AS99V7XmtTzE4xdb72tYFtNTVV48`}
-                    alt={team.name}
-                  />
-                  <AvatarFallback>
-                    {team.name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
+                <Image
+                  src={team.logoUrl}
+                  alt={team.name}
+                  width={24}
+                  height={24}
+                  className="rounded-md object-cover"
+                />
                 {team.name}
                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
               </DropdownMenuItem>

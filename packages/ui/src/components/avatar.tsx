@@ -5,39 +5,19 @@ import { Avatar as AvatarPrimitive } from "radix-ui"
 
 import { cn } from "@workspace/ui/lib/utils"
 
-const ROUNDED_MAP = {
-  full: "rounded-full",
-  lg: "rounded-xl",
-  md: "rounded-lg",
-  sm: "rounded-md",
-  none: "rounded-none",
-} as const
-
 function Avatar({
   className,
   size = "default",
-  rounded = "full",
   ...props
 }: React.ComponentProps<typeof AvatarPrimitive.Root> & {
   size?: "default" | "sm" | "lg"
-  rounded?: keyof typeof ROUNDED_MAP
 }) {
-  const roundedClass = ROUNDED_MAP[rounded]
-
   return (
     <AvatarPrimitive.Root
       data-slot="avatar"
       data-size={size}
-      data-rounded={rounded}
       className={cn(
-        "group/avatar relative flex shrink-0 select-none after:absolute after:inset-0 after:border after:border-border after:mix-blend-darken dark:after:mix-blend-lighten",
-        roundedClass,
-        { "after:rounded-[inherit]": rounded !== "none" },
-        {
-          "size-8": size === "default",
-          "size-10": size === "lg",
-          "size-6": size === "sm",
-        },
+        "group/avatar relative flex size-8 shrink-0 rounded-full select-none after:absolute after:inset-0 after:rounded-full after:border after:border-border after:mix-blend-darken data-[size=lg]:size-10 data-[size=sm]:size-6 dark:after:mix-blend-lighten",
         className
       )}
       {...props}
@@ -52,7 +32,10 @@ function AvatarImage({
   return (
     <AvatarPrimitive.Image
       data-slot="avatar-image"
-      className={cn("aspect-square size-full object-cover", className)}
+      className={cn(
+        "aspect-square size-full rounded-full object-cover",
+        className
+      )}
       {...props}
     />
   )
@@ -66,7 +49,7 @@ function AvatarFallback({
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={cn(
-        "flex size-full items-center justify-center bg-muted text-sm text-muted-foreground group-data-[size=sm]/avatar:text-xs",
+        "flex size-full items-center justify-center rounded-full bg-muted text-sm text-muted-foreground group-data-[size=sm]/avatar:text-xs",
         className
       )}
       {...props}

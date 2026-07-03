@@ -26,15 +26,14 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## Eve agents
 
-Maintainers run [Eve](https://vercel.com/eve) agents from `agents/` (top-level).
-These agents audit packages, propose fixes, and maintain
-`.claude/agent-memory/tech-lead/`. End users of this template can ignore this directory.
+Maintainers run [Eve](https://vercel.com/eve) agents from `agent/` (top-level).
+This directory hosts the tech-lead agent. **End users of this template can ignore it.**
 
-To install an agent (Node 24+ required at runtime — see `package.json` engines):
+To install and run (Node 24+ required):
 
 ```bash
-pnpm install        # workspace install covers agents/* too
-cd agents/<name>
+cd agent
+pnpm install
 npm run dev         # starts the interactive terminal UI
 ```
 
