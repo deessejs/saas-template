@@ -45,6 +45,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# content-collections
+.content-collections
+
 # Eve agents (maintainers only — hors workspace pnpm)
 # Ces dossiers vivent en dehors du workspace pnpm et sont gérés localement.
 # Eve agent (maintainers only)

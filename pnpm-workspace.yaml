@@ -17,8 +17,13 @@ allowBuilds:
 catalog:
   # Core
   "@better-auth/drizzle-adapter": latest
+  '@content-collections/cli': ^0.1.9
+  '@content-collections/core': ^0.15.2
+  '@content-collections/mdx': ^0.2.2
+  '@content-collections/next': ^0.2.11
   '@orpc/client': ^1.14.6
   "@orpc/server": latest
+  '@shikijs/rehype': ^4.3.0
 
   # Shared tooling
   "@tailwindcss/postcss": ^4
@@ -37,6 +42,7 @@ catalog:
 
   # Database
   drizzle-orm: ^0.40.0
+  fuse.js: ^7.4.2
 
   # API
   hono: latest
@@ -51,12 +57,14 @@ catalog:
   postgres: ^3.4.0
   react: 19.2.4
   react-dom: 19.2.4
+  reading-time: ^1.5.0
   typescript: ^5.9.3
   vercel-minimax-ai-provider: ^0.0.2
 
   # Testing
   vitest: ^4.1.5
   zod: latest
+  zustand: ^5.0.14
 
 # Strict mode: all dependencies MUST come from a catalog
 catalogMode: strict
