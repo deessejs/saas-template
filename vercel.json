@@ -1,5 +1,5 @@
 {
   "installCommand": "pnpm install --ignore-scripts",
-  "buildCommand": "cd agent && pnpm run build",
+  "buildCommand": "cd agent/web && pnpm run build",
   "outputDirectory": ".vercel/output"
 }

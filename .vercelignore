@@ -4,11 +4,9 @@ node_modules
 .pnp.*
 .yarn
 *.tsbuildinfo
-next-env.d.ts
+.next-env.d.ts
 dist
 .next
 .vercel
-agents/tech-lead/node_modules
-agents/tech-lead/.eve
-agents/tech-lead/.workflow-data
-agents/tech-lead/coverage
+.eve
+.workflow-data
