@@ -1,5 +1,5 @@
 {
   "installCommand": "pnpm install --ignore-scripts",
-  "buildCommand": "cd agent/web && pnpm build && cp -r .next .vercel/output",
+  "buildCommand": "cd agent/web && pnpm build && mkdir -p .vercel/output && cp -r .next/* .vercel/output/",
   "outputDirectory": ".vercel/output"
 }
