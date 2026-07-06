@@ -15,6 +15,7 @@
     "@workspace/api": "workspace:*",
     "@workspace/auth": "workspace:*",
     "@workspace/ui": "workspace:*",
+    "@nanostores/react": "^1.0.0",
     "better-auth": "catalog:",
     "lucide-react": "catalog:",
     "next": "catalog:",

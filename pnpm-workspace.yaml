@@ -1,7 +1,7 @@
 packages:
   - "apps/*"
   - "packages/*"
-  - agent
+  - "agent/web"
 
 # pnpm 11: explicit allowlist for build scripts
 allowBuilds:
@@ -51,6 +51,9 @@ catalog:
 
   # Icons
   lucide-react: ^1.22.0
+
+  # UI
+  tailwind-merge: ^3
 
   # Next.js
   "next": ^16.2.6
