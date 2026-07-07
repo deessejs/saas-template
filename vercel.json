@@ -1,5 +1,0 @@
-{
-  "installCommand": "pnpm install --ignore-scripts",
-  "buildCommand": "cd agent/web && pnpm build",
-  "outputDirectory": "agent/web/.next"
-}

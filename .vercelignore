@@ -8,5 +8,4 @@ node_modules
 dist
 .next
 .vercel
-.eve
 .workflow-data

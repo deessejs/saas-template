@@ -24,8 +24,8 @@ api.get("/ready", async (c) => {
   }
 })
 
-// Mount better-auth on /api/auth/*
-api.on(["POST", "GET"], "/api/auth/*", (c) => {
+// Mount better-auth on /auth/*
+api.on(["POST", "GET"], "/auth/*", (c) => {
   return auth.handler(c.req.raw)
 })
 
@@ -45,8 +45,9 @@ api.on(["POST", "GET"], "/rpc/*", async (c) => {
   return c.json({ error: "Not found" }, 404)
 })
 
-// Named export for Next.js integration
+// Named exports for Next.js integration
 export { api }
+export { rpcHandler }
 
 // Re-export types and router for client usage
 export { appRouter } from "./router/index.js"

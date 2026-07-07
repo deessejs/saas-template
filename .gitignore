@@ -17,6 +17,9 @@ coverage
 .next/
 out/
 
+# temp
+temp/
+
 # production
 build
 dist
@@ -47,15 +50,3 @@ next-env.d.ts
 
 # content-collections
 .content-collections
-
-# Eve agents (maintainers only — hors workspace pnpm)
-# Ces dossiers vivent en dehors du workspace pnpm et sont gérés localement.
-# Eve agent (maintainers only)
-agent/node_modules
-agent/.next
-agent/.turbo
-agent/dist
-agent/coverage
-agent/.eve
-agent/.env*
-!agent/.env.example

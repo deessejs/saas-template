@@ -60,7 +60,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm turbo build --force --filter=!tech-lead
+      - run: pnpm turbo build --force
 
   test-unit:
     name: Test (Unit)

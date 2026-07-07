@@ -1,14 +1,15 @@
-import { Button } from "@workspace/ui/components/button"
+import { SignupForm } from "@/components/auth"
 
 export default function SignupPage() {
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Create account</h1>
-      <p className="text-muted-foreground text-sm">
-        Sign up to get started.
-      </p>
-      {/* TODO: build signup form, wire to better-auth signUp */}
-      <Button type="button">Create account</Button>
+    <div className="flex flex-1 flex-col justify-center gap-6">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-2xl font-bold">Create account</h1>
+        <p className="text-sm text-muted-foreground">
+          Sign up to get started.
+        </p>
+      </div>
+      <SignupForm />
     </div>
   )
 }

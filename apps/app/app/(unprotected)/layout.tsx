@@ -6,9 +6,9 @@ export default function UnprotectedLayout({
   children: React.ReactNode
 }) {
   return (
-    <>
+    <div className="flex h-dvh flex-col">
       <SiteHeader />
       {children}
-    </>
+    </div>
   )
 }

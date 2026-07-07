@@ -1,6 +1,0 @@
-{
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd ../.. && pnpm install",
-  "buildCommand": "cd ../.. && pnpm --filter @saas-template/agent-web run build:agent && pnpm --filter @saas-template/agent-web run build",
-  "outputDirectory": ".next"
-}

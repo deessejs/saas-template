@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import {
   Avatar,
   AvatarFallback,
@@ -21,6 +22,7 @@ import {
   useSidebar,
 } from "@workspace/ui/components/sidebar"
 import { ChevronsUpDownIcon, SparklesIcon, BadgeCheckIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
+import { logoutAction } from "@/app/(protected)/logout-actions.server"
 
 const VERCEL_AVATAR_BASE = "https://vercel.com/api/www/avatar"
 
@@ -34,7 +36,13 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const [loggingOut, setLoggingOut] = useState(false)
   const avatarUrl = `${VERCEL_AVATAR_BASE}?s=40&u=${user.username}&dpl=dpl_AS99V7XmtTzE4xdb72tYFtNTVV48`
+
+  async function handleLogout() {
+    setLoggingOut(true)
+    await logoutAction()
+  }
 
   return (
     <SidebarMenu>
@@ -101,10 +109,10 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout} disabled={loggingOut} aria-busy={loggingOut}>
               <LogOutIcon
               />
-              Log out
+              {loggingOut ? "Signing out…" : "Log out"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
