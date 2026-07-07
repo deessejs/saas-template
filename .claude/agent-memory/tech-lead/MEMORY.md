@@ -1,6 +1,7 @@
 - [Stack](project/stack.md) — pnpm 11 monorepo + catalogs strict + Turbo v2 + Tailwind v4 + CI
 - [Template strategy](project/template-strategy.md) — GitHub template repo, no changesets for end users
 - [Vercel deploy](project/deploy.md) — eve vercel.json pattern + dashboard overrides + engines.node >=24 + live agent URL
+- [Vercel platform](project/vercel-platform.md) — July 2026 snapshot: Vercel Services (multi-framework), Fluid compute + Active CPU, Sandbox, AI Gateway, full product catalog
 - [Eve integration](project/eve.md) — `npx eve init` side effects on root pnpm-workspace.yaml + package.json + MiniMax M3 provider
 - [AGENTS + commit conventions](project/agents.md) — AGENTS.md markers + Conventional Commits (informal) + CODEOWNERS + Co-authored-by footer
 - [apps/app architecture](apps/app.md) — authenticated app (login/signup/dashboard/settings), separate deploy from web
