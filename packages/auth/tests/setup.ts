@@ -10,15 +10,15 @@ import { testUtils } from "better-auth/plugins"
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
 import * as schema from "@workspace/database/schema"
+import { serverEnv } from "@workspace/env/server"
 
 // Test database connection
-const testDatabaseUrl = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL!
-const pool = postgres(testDatabaseUrl, { max: 1 })
+const pool = postgres(serverEnv.TEST_DATABASE_URL, { max: 1 })
 const db = drizzle(pool)
 
 // Test auth instance with testUtils
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
+  baseURL: serverEnv.BETTER_AUTH_URL,
   database: drizzleAdapter(db, {
     provider: "pg",
     schema,

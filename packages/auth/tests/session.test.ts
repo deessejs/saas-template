@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest"
 import { auth } from "./setup.js"
+import { serverEnv } from "@workspace/env/server"
 
 describe("auth session", () => {
   // Note: Integration tests with database require DATABASE_URL env var
   // Run with: TEST_DATABASE_URL=postgresql://... pnpm test
 
-  const hasDatabase = !!process.env.TEST_DATABASE_URL || !!process.env.DATABASE_URL
+  const hasDatabase =
+    !!serverEnv.TEST_DATABASE_URL || !!serverEnv.DATABASE_URL
 
   describe("configuration", () => {
     it("should have email and password enabled", () => {

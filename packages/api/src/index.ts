@@ -3,13 +3,16 @@ import { cors } from "hono/cors"
 import { logger } from "hono/logger"
 import { auth } from "@workspace/auth"
 import { RPCHandler } from "@orpc/server/fetch"
+import { serverEnv } from "@workspace/env/server"
 import { appRouter } from "./router/index.js"
 
 const api = new Hono()
 
-// CORS middleware (single source of truth)
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") ?? ["http://localhost:3000", "http://localhost:3001"]
-api.use("*", cors({ origin: allowedOrigins, credentials: true }))
+// CORS middleware (single source of truth, validated at the env-package boundary)
+api.use(
+  "*",
+  cors({ origin: serverEnv.ALLOWED_ORIGINS, credentials: true }),
+)
 
 // Logging middleware
 api.use("*", logger())

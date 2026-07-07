@@ -9,6 +9,7 @@
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
 import { afterAll, beforeAll } from "vitest"
+import { serverEnv } from "@workspace/env/server"
 
 // Database instances
 let _sql: ReturnType<typeof postgres> | null = null
@@ -85,8 +86,8 @@ async function initPostgres(url: string) {
 
 beforeAll(async () => {
   // Priority: TEST_DATABASE_URL > pg-mem
-  if (process.env.TEST_DATABASE_URL) {
-    const result = await initPostgres(process.env.TEST_DATABASE_URL)
+  if (serverEnv.TEST_DATABASE_URL) {
+    const result = await initPostgres(serverEnv.TEST_DATABASE_URL)
     _sql = result.sql
     _testDb = result.db
   } else {

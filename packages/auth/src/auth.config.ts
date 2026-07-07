@@ -2,12 +2,14 @@
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "@better-auth/drizzle-adapter"
 import { Pool } from "pg"
+import { serverEnv } from "@workspace/env/server"
 
 export const auth = betterAuth({
-  // Same env var + fallback as runtime config (packages/auth/src/index.ts).
-  // Without baseURL the CLI logs a warning and the generated schema can drift.
-  baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
-  database: drizzleAdapter(new Pool({ connectionString: process.env.DATABASE_URL }), {
+  // Env values come from the same validated schema as the runtime config
+  // (packages/auth/src/index.ts), so generated schema cannot drift from
+  // production.
+  baseURL: serverEnv.BETTER_AUTH_URL,
+  database: drizzleAdapter(new Pool({ connectionString: serverEnv.DATABASE_URL }), {
     provider: "pg",
   }),
   emailAndPassword: {

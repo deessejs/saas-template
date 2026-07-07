@@ -6,7 +6,13 @@ Thank you for your interest in contributing!
 
 1. Clone the repository
 2. Install dependencies: `pnpm install`
-3. Create a `.env.local` file based on `.env.example`
+3. Create a `.env` file at the repo root based on `.env.example`:
+   ```bash
+   cp .env.example .env
+   ```
+   Fill in `DATABASE_URL` and `BETTER_AUTH_SECRET` (generate one with
+   `openssl rand -base64 32`). One `.env` is read by every app, package,
+   script, and test in the monorepo — no per-app copies required.
 
 ## Workflow
 

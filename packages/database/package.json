@@ -17,6 +17,7 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
+    "lint": "eslint --max-warnings=0",
     "build": "tsc",
     "test": "vitest",
     "test:run": "vitest run",
@@ -29,6 +30,7 @@
     "db:check": "drizzle-kit check"
   },
   "dependencies": {
+    "@workspace/env": "workspace:*",
     "drizzle-orm": "catalog:",
     "postgres": "catalog:"
   },
@@ -38,6 +40,7 @@
     "@workspace/typescript-config": "workspace:*",
     "dotenv": "catalog:",
     "drizzle-kit": "catalog:",
+    "eslint": "catalog:",
     "pg-mem": "^3.0.0",
     "vitest": "catalog:"
   }

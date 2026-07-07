@@ -17,6 +17,7 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
+    "lint": "eslint --max-warnings=0",
     "build": "tsc",
     "test": "vitest",
     "test:run": "vitest run",
@@ -29,6 +30,7 @@
     "@orpc/server": "catalog:",
     "@workspace/auth": "workspace:*",
     "@workspace/database": "workspace:*",
+    "@workspace/env": "workspace:*",
     "better-auth": "catalog:",
     "hono": "catalog:",
     "postgres": "catalog:",
@@ -38,6 +40,7 @@
     "@types/node": "catalog:",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
+    "eslint": "catalog:",
     "vitest": "catalog:"
   }
 }

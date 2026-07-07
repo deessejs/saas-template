@@ -14,6 +14,7 @@
     "@orpc/server": "catalog:",
     "@workspace/api": "workspace:*",
     "@workspace/auth": "workspace:*",
+    "@workspace/env": "workspace:*",
     "@workspace/ui": "workspace:*",
     "@nanostores/react": "^1.0.0",
     "better-auth": "catalog:",

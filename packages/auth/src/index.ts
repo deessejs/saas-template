@@ -3,15 +3,18 @@ import { drizzleAdapter } from "@better-auth/drizzle-adapter"
 import { nextCookies } from "better-auth/next-js"
 import { db } from "@workspace/database"
 import * as schema from "@workspace/database"
+import { serverEnv } from "@workspace/env/server"
 
 export const auth = betterAuth({
-  // Security: always set explicitly
-  baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
-  secret: process.env.BETTER_AUTH_SECRET ?? process.env.AUTH_SECRET,
+  // Env values come from the validated @workspace/env/server schema.
+  // Aliases (AUTH_SECRET) and fallbacks (BETTER_AUTH_URL) are resolved at
+  // the env-package boundary, so call sites only see canonical values.
+  baseURL: serverEnv.BETTER_AUTH_URL,
+  secret: serverEnv.BETTER_AUTH_SECRET,
   trustedOrigins: [
     "http://localhost:3000",
     "http://localhost:3001",
-    ...(process.env.ALLOWED_ORIGINS?.split(",") ?? []),
+    ...serverEnv.ALLOWED_ORIGINS,
   ],
 
   database: drizzleAdapter(db, {

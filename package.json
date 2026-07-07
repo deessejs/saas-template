@@ -5,7 +5,7 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
-    "lint": "turbo lint",
+    "lint": "turbo lint -- --max-warnings=0",
     "format": "turbo format",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
@@ -13,7 +13,8 @@
     "db:migrate": "pnpm --filter @workspace/database db:migrate",
     "db:push": "pnpm --filter @workspace/database db:push",
     "db:studio": "pnpm --filter @workspace/database db:studio",
-    "auth:generate": "pnpm --filter @workspace/auth auth:generate"
+    "auth:generate": "pnpm --filter @workspace/auth auth:generate",
+    "env:check": "pnpm --filter @workspace/env typecheck"
   },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",

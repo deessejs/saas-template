@@ -1,12 +1,13 @@
 // Shared app configuration — used by all apps in the workspace.
-// Override values with NEXT_PUBLIC_* env vars in .env or .env.local.
+// Values come from `@workspace/env/client` so the contract is single-sourced
+// and the bundler can inline NEXT_PUBLIC_* at build time.
+
+import { clientEnv } from "@workspace/env/client"
 
 export const APP_CONFIG = {
-  name: process.env.NEXT_PUBLIC_APP_NAME ?? "SaaS Template",
-  description:
-    process.env.NEXT_PUBLIC_APP_DESCRIPTION ??
-    "SaaS application built with Next.js and shared UI components",
-  url: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+  name: clientEnv.NEXT_PUBLIC_APP_NAME,
+  description: clientEnv.NEXT_PUBLIC_APP_DESCRIPTION,
+  url: clientEnv.NEXT_PUBLIC_APP_URL,
   links: {
     home: "/",
     login: "/login",

@@ -12,6 +12,7 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
+    "lint": "eslint --max-warnings=0",
     "build": "tsc",
     "test": "vitest",
     "test:run": "vitest run",
@@ -22,6 +23,7 @@
   "dependencies": {
     "@better-auth/drizzle-adapter": "catalog:",
     "@workspace/database": "workspace:*",
+    "@workspace/env": "workspace:*",
     "better-auth": "catalog:",
     "drizzle-orm": "catalog:",
     "pg": "catalog:",
@@ -33,6 +35,7 @@
     "@types/pg": "catalog:",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
+    "eslint": "catalog:",
     "vitest": "catalog:"
   }
 }
