@@ -1,14 +1,15 @@
-- [pnpm workspace migration](pnpm-migration-2026.md) — npm → pnpm 11 monorepo setup, strict mode, allowBuilds
-- [template strategy](template-strategy.md) — GitHub template repo, changesets NOT needed for end users
-- [better-auth workflow](better-auth-workflow.md) — how to generate auth schema with --config flag in monorepo
-- [Claude Code docs index](claude-code-docs.md) — pointer URLs for subagents, workflows, plugins, hooks, worktrees
-- [Claude Code subagents creation](claude-code-subagents-creation.md) — frontmatter fields, locations, invocation, plugin limits, pitfalls
-- [Claude Code workflows](claude-code-workflows.md) — Workflow tool primitives, patterns, limits, when over Agent tool
-- [user research style](user-research-style.md) — thorough research with examples; French; casual register; autonomous decision-making; /goal do it; fresh CLI
-- [Eve init side effects](eve-init-side-effects.md) — `npx eve@latest init` modifies parent's pnpm-workspace.yaml + bumps root engine to 24.x; manual revert required
-- [MiniMax models](minimax-models.md) — M3 (1M ctx, frontier) is default for agents/tech-lead; M2.1/M2 are legacy
-- [apps/app route groups & sidebar](app-route-groups-sidebar.md) — full structure, sidebar patterns, shared config, shadcn setup, Tailwind v4 notes
-- [Eve agent URL](eve-agent-url.md) — https://saas-template-tech-lead.vercel.app deployed tech-lead agent
-- [Vercel deploy pattern](vercel-deploy-pattern.md) — cd agent && pnpm run build; dashboard overrides vercel.json; engines.node >=24; flat agent/ structure
-- [apps/web blog/changelog patterns](web-blog-changelog-patterns.md) — src/ structure, Zustand stores at src/stores/cookies/, content-collections blog + changelog, Fuse.js search
-- [packages/ui audit corrections](packages-ui-audit-corrections.md) — things I got wrong: bg-blend-color is valid Tailwind, lucide-react 1.22.0 is latest (0→1 jump), next-themes 0.4.6 is latest; things right: peerDependencies missing react, shadcn CLI in deps, next-themes unused, APP_CONFIG category mistake
+- [Stack](project/stack.md) — pnpm 11 monorepo + catalogs strict + Turbo v2 + Tailwind v4 + CI
+- [Template strategy](project/template-strategy.md) — GitHub template repo, no changesets for end users
+- [Vercel deploy](project/deploy.md) — eve vercel.json pattern + dashboard overrides + engines.node >=24 + live agent URL
+- [Eve integration](project/eve.md) — `npx eve init` side effects on root pnpm-workspace.yaml + package.json + MiniMax M3 provider
+- [AGENTS + commit conventions](project/agents.md) — AGENTS.md markers + Conventional Commits (informal) + CODEOWNERS + Co-authored-by footer
+- [apps/app architecture](apps/app.md) — authenticated app (login/signup/dashboard/settings), separate deploy from web
+- [apps/web architecture](apps/web.md) — public static site (marketing/blog/changelog/legal), NO auth, links to /login /signup live in apps/app
+- [apps/docs architecture](apps/docs.md) — Fumadocs-based docs site (separate deploy, target of /docs links from web/app)
+- [packages/ui audit](packages/ui-audit.md) — audit findings corrected after web verification (4 wrong, 4 right)
+- [packages/auth](packages/auth.md) — better-auth CLI workflow + file ownership + Drizzle companion scripts (generate/migrate/push/check)
+- [Claude Code docs index](claude-code/README.md) — pointer URLs for subagents, workflows, plugins, hooks, worktrees, memory
+- [Claude Code subagents](claude-code/subagents.md) — frontmatter fields, locations, invocation modes, pitfalls
+- [Claude Code skills](claude-code/skills.md) — CLI SKILL.md (progressive disclosure) + API/Managed skills distinction
+- [Claude Code workflows](claude-code/workflows.md) — Workflow tool primitives, patterns, hard limits, when over Agent tool
+- [User research style](user.md) — thorough research with examples, French, casual, autonomous decisions, /goal do it, fresh CLI
