@@ -5,21 +5,8 @@ import { headers } from "next/headers"
 import { z } from "zod"
 import { auth } from "@workspace/auth"
 import { APIError } from "better-auth"
-
-export const resetPasswordSchema = z
-  .object({
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  })
-
-export type ResetPasswordState =
-  | { ok: false; fieldErrors?: Record<string, string[]> }
-  | { ok: true }
-  | null
+import type { ResetPasswordState } from "@/app/(unprotected)/(auth)/actions"
+import { resetPasswordSchema } from "@/app/(unprotected)/(auth)/actions"
 
 export async function resetPasswordAction(
   _prev: ResetPasswordState,

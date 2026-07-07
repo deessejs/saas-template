@@ -3,7 +3,8 @@
 import { useRef, useState } from "react"
 import Link from "next/link"
 import { useActionState } from "react"
-import { resetPasswordAction, type ResetPasswordState } from "@/app/(unprotected)/(auth)/reset-password/actions"
+import { resetPasswordAction } from "@/app/(unprotected)/(auth)/reset-password/actions.server"
+import type { ResetPasswordState } from "@/app/(unprotected)/(auth)/actions"
 import { SubmitButton } from "./submit-button"
 import { PasswordInput } from "./password-input"
 
