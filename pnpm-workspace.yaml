@@ -1,7 +1,7 @@
 packages:
   - "apps/*"
   - "packages/*"
-  - "agent/web"
+  - agents/*
 
 # pnpm 11: explicit allowlist for build scripts
 allowBuilds:
@@ -21,28 +21,30 @@ catalog:
   '@content-collections/core': ^0.15.2
   '@content-collections/mdx': ^0.2.2
   '@content-collections/next': ^0.2.11
-  '@orpc/client': ^1.14.6
+  '@orpc/client': ^1.14.7
   "@orpc/server": latest
-  '@shikijs/rehype': ^4.3.0
+  '@shikijs/rehype': ^4.3.1
 
   # Shared tooling
-  "@tailwindcss/postcss": ^4
-  "@turbo/gen": ^2.10.1
+  "@tailwindcss/postcss": ^4.3.2
+  "@turbo/gen": ^2.10.4
 
   # Types
-  "@types/node": ^20
-  "@types/pg": ^8.11.0
-  "@types/react": ^19
-  "@types/react-dom": ^19
-  "@vitest/coverage-v8": ^4.1.7
+  "@types/node": ^24
+  "@types/pg": ^8.20.0
+  "@types/react": ^19.2.17
+  "@types/react-dom": ^19.2.3
+  "@vitest/coverage-v8": ^4.1.10
 
   # Auth
+  "@better-auth/cli": ^1.4.21
   better-auth: latest
   cmdk: ^1.1.1
-  drizzle-kit: ^0.30.0
+  drizzle-kit: ^0.31.10
 
   # Database
-  drizzle-orm: ^0.40.0
+  dotenv: ^17.4.2
+  drizzle-orm: ^0.45.2
   fuse.js: ^7.4.2
 
   # API
@@ -50,25 +52,26 @@ catalog:
   just-bash: ^3.0.2
 
   # Icons
-  lucide-react: ^1.22.0
+  lucide-react: ^1.23.0
 
   # UI
-  tailwind-merge: ^3
+  tailwind-merge: ^3.6.0
 
   # Next.js
-  "next": ^16.2.6
-  pg: ^8.15.0
+  "next": ^16.2.10
+  "eslint-config-next": ^16.2.10
+  pg: ^8.22.0
   portless: ^0.15.1
-  postgres: ^3.4.0
-  react: 19.2.4
-  react-dom: 19.2.4
+  postgres: ^3.4.9
+  react: 19.2.7
+  react-dom: 19.2.7
   reading-time: ^1.5.0
   sonner: ^2.0.7
-  typescript: ^5.9.3
+  typescript: ^6.0.3
   vercel-minimax-ai-provider: ^0.0.2
 
   # Testing
-  vitest: ^4.1.5
+  vitest: ^4.1.10
   zod: latest
   zustand: ^5.0.14
 
@@ -82,7 +85,13 @@ minimumReleaseAgeExclude:
   - "@workflow/*"
   - ai
   - experimental-ai-sdk-code-mode
-  - eve
   - nitro
   - rolldown
   - workflow
+  - eve
+
+# Force single version of @types/react across the tree to avoid duplicate-type errors
+overrides:
+  "@types/react": ^19.2.17
+  "@types/react-dom": ^19.2.3
+

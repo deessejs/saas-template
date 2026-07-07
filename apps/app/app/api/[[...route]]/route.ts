@@ -1,15 +1,31 @@
-import { RPCHandler } from "@orpc/server/fetch"
-import { appRouter } from "@workspace/api/router"
+import { api, rpcHandler } from "@workspace/api"
 
-const handler = new RPCHandler(appRouter)
+// Force dynamic — this route imports the DB client which reads DATABASE_URL
+// at module load. Next.js build-time page-data collection would crash without
+// the env var; marking it dynamic defers evaluation to request time.
+export const dynamic = "force-dynamic"
 
-async function handleRequest(request: Request) {
-  const { response } = await handler.handle(request, {
-    prefix: "/rpc",
-    context: { headers: request.headers },
-  })
-  return response ?? new Response("Not found", { status: 404 })
+// Hono routes /auth/* (better-auth) and /rpc/* (oRPC) internally.
+async function handleRequest(request: Request): Promise<Response> {
+  // /auth/* → better-auth handler
+  if (request.url.includes("/auth/")) {
+    return api.fetch(request)
+  }
+
+  // /rpc/* → oRPC handler
+  if (request.url.includes("/rpc/")) {
+    const { response } = await rpcHandler.handle(request, {
+      prefix: "/rpc",
+      context: { headers: request.headers },
+    })
+    return response ?? new Response("Not found", { status: 404 })
+  }
+
+  // /health and /ready are handled by Hono's fetch
+  return api.fetch(request)
 }
 
-export const GET = handleRequest
-export const POST = handleRequest
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const GET = handleRequest as any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const POST = handleRequest as any

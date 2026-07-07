@@ -11,5 +11,6 @@
     "allowJs": true,
     "resolveJsonModule": true,
     "isolatedModules": true
-  }
+  },
+  "exclude": ["node_modules", "dist", ".next", "temp"]
 }

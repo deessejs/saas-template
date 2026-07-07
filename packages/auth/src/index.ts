@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "@better-auth/drizzle-adapter"
+import { nextCookies } from "better-auth/next-js"
 import { db } from "@workspace/database"
 import * as schema from "@workspace/database"
 
@@ -29,13 +30,14 @@ export const auth = betterAuth({
 
   advanced: {
     useSecureCookies: true,
-    generateId: "uuid",
   },
 
   experimental: {
     joins: true,
   },
-})
+
+  plugins: [nextCookies()],
+}) as unknown as ReturnType<typeof betterAuth>
 
 // Type exports for consumers
 export type AuthInstance = typeof auth

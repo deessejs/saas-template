@@ -30,12 +30,13 @@
   },
   "dependencies": {
     "drizzle-orm": "catalog:",
-    "postgres": "^3.4.0"
+    "postgres": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
+    "dotenv": "catalog:",
     "drizzle-kit": "catalog:",
     "pg-mem": "^3.0.0",
     "vitest": "catalog:"
