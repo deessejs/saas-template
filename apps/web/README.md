@@ -33,8 +33,6 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 apps/web/
 ├── src/
 │   ├── app/                  # Next.js routes
-│   │   ├── (protected)/      # Protected routes (placeholder)
-│   │   ├── (unprotected)/   # Unprotected routes (placeholder)
 │   │   ├── blog/             # Blog: list, post, author, tag, feed
 │   │   ├── changelog/        # Changelog: list, release
 │   │   ├── cookies/          # Cookie policy
@@ -117,14 +115,19 @@ Release content with Keep-a-Changelog format.
 
 ## Key conventions
 
-- **Route groups** `(protected)` / `(unprotected)` are stubs for auth-protected areas (wired in `apps/app`).
 - **`@/*` path alias** maps to `src/*` (configured in `tsconfig.json`).
 - **Cookie consent** uses Zustand with `skipHydration` — rehydrate once via `useEffect` in `CookieConsent`.
 - **Images** use `next/image` with `remotePatterns` configured for Unsplash. Add your image host to `next.config.ts`.
 - **RSS feeds** at `/blog/feed.xml` and `/changelog/feed.xml`.
 
-## Relationship to `apps/app`
+## Relationship to other apps
 
-`apps/web` is public. `apps/app` contains the authenticated dashboard and user-facing features (auth routes, settings, etc.). Both share `@workspace/ui` for components and styling.
+This app is one of three in the monorepo, each deployed independently:
 
-Links to `/login` and `/signup` in the header point to `apps/app`'s route groups.
+- **`apps/web`** (this app) — public, anonymous. Marketing, blog, changelog, legal pages.
+- **`apps/app`** — authenticated app. `/login`, `/signup`, dashboard, settings. Has its own `(protected)` / `(unprotected)` route groups for auth.
+- **`apps/docs`** — Fumadocs-based documentation site, served at `/docs`.
+
+Links to `/login`, `/signup` in the header point to `apps/app`. Links to `/docs` point to `apps/docs`. Both are intentional cross-app navigation, not broken links.
+
+All three share `@workspace/ui` for components and styling, and `@workspace/ui/lib/config` for `APP_CONFIG`.

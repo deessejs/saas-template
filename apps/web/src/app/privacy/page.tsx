@@ -1,4 +1,10 @@
+import type { Metadata } from "next"
 import { H1, H2, P, Link } from "@workspace/ui/components/typography"
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  robots: { index: false, follow: false },
+}
 
 export default function PrivacyPage() {
   return (
