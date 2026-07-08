@@ -9,5 +9,5 @@
     "isolatedDeclarations": false
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "vitest.config.ts", "auth.config.ts"]
+  "exclude": ["node_modules", "dist", "vitest.config.ts"]
 }

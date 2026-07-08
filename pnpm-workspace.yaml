@@ -16,7 +16,12 @@ allowBuilds:
 # Shared dependency versions — update here, propagate everywhere
 catalog:
   # Core
-  
+
+  # Email (added 2026-07-07 — packages/email)
+  "@react-email/components": ^1.0.12
+  "@react-email/render": ^2.0.6
+  resend: ^6.17.1
+
   # Auth
   "@better-auth/cli": ^1.4.21
   "@better-auth/drizzle-adapter": latest

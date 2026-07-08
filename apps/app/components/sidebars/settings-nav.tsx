@@ -11,15 +11,25 @@ import {
 } from "@workspace/ui/components/sidebar"
 import {
   BadgeCheckIcon,
-  CreditCardIcon,
-  DeleteIcon,
   KeyIcon,
   LinkIcon,
   SmartphoneIcon,
   UserIcon,
 } from "lucide-react"
 
-const NAV_ITEMS = [
+type SettingsNavChild = {
+  title: string
+  href: string
+}
+
+type SettingsNavItem = {
+  title: string
+  href: string
+  icon: typeof UserIcon
+  children?: SettingsNavChild[]
+}
+
+const NAV_ITEMS: SettingsNavItem[] = [
   {
     title: "Profile",
     href: "/settings/profile",
@@ -29,9 +39,7 @@ const NAV_ITEMS = [
     title: "Security",
     href: "/settings/security",
     icon: KeyIcon,
-    children: [
-      { title: "Password", href: "/settings/security/password" },
-    ],
+    children: [{ title: "Password", href: "/settings/security/password" }],
   },
   {
     title: "Sessions",
@@ -54,7 +62,7 @@ const NAV_ITEMS = [
   },
 ]
 
-function SettingsNav() {
+export function SettingsNav() {
   const pathname = usePathname()
 
   return (
@@ -63,7 +71,9 @@ function SettingsNav() {
         <SidebarMenu>
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon
-            const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
+            const isActive =
+              pathname === item.href ||
+              pathname.startsWith(`${item.href}/`)
 
             return (
               <SidebarMenuItem key={item.href}>
@@ -96,22 +106,5 @@ function SettingsNav() {
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
-  )
-}
-
-export default function SettingsLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <div className="flex gap-6">
-      <aside className="hidden w-56 shrink-0 md:block">
-        <SettingsNav />
-      </aside>
-      <div className="flex-1">
-        {children}
-      </div>
-    </div>
   )
 }

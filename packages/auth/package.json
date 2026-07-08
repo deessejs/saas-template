@@ -5,12 +5,12 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
+      "types": "./dist/auth.d.ts",
+      "import": "./dist/auth.js",
+      "default": "./dist/auth.js"
     }
   },
-  "types": "./dist/index.d.ts",
+  "types": "./dist/auth.d.ts",
   "scripts": {
     "lint": "eslint --max-warnings=0",
     "build": "tsc",
@@ -18,11 +18,12 @@
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
-    "auth:generate": "pnpm exec better-auth generate --config ./src/auth.config.ts --output ../database/src/schema/auth.ts --yes"
+    "auth:generate": "pnpm exec better-auth generate --config ./src/auth.ts --output ../database/src/schema/auth.ts --yes"
   },
   "dependencies": {
     "@better-auth/drizzle-adapter": "catalog:",
     "@workspace/database": "workspace:*",
+    "@workspace/email": "workspace:*",
     "@workspace/env": "workspace:*",
     "better-auth": "catalog:",
     "drizzle-orm": "catalog:",

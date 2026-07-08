@@ -2,7 +2,20 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { auth } from "@workspace/auth"
 
-const PROTECTED_PREFIXES = ["/home", "/settings"]
+// Session type extended with activeOrganizationId from the organization plugin.
+// The plugin adds this field to the session at runtime; the base Session type
+// from better-auth does not include it, so we need to extend it here.
+type SessionWithOrg = {
+  activeOrganizationId?: string | null | undefined
+  [key: string]: unknown
+}
+
+const PROTECTED_PREFIXES = [
+  "/home",
+  "/settings",
+  "/onboarding",
+  "/accept-invitation",
+]
 const AUTH_PREFIXES = [
   "/login",
   "/signup",
@@ -16,6 +29,8 @@ export const config = {
   matcher: [
     "/home/:path*",
     "/settings/:path*",
+    "/onboarding",
+    "/accept-invitation",
     "/login",
     "/signup",
     "/forgot-password",
@@ -45,6 +60,18 @@ export async function proxy(request: NextRequest) {
     const loginUrl = new URL("/login", request.url)
     loginUrl.searchParams.set("redirect", pathname)
     return NextResponse.redirect(loginUrl)
+  }
+
+  // After signup, databaseHooks auto-create an org and set activeOrganizationId.
+  // Legacy sessions (pre-migration) have null — bounce them to /onboarding.
+  // /accept-invitation is excluded: an invited user without an org must reach it.
+  if (
+    session?.session &&
+    !(session.session as unknown as SessionWithOrg).activeOrganizationId &&
+    pathname !== "/accept-invitation" &&
+    !pathname.startsWith("/accept-invitation/")
+  ) {
+    return NextResponse.redirect(new URL("/onboarding", request.url))
   }
 
   if (isAuthPage && session?.session) {

@@ -69,6 +69,38 @@ async function initPgMem() {
         created_at TIMESTAMP DEFAULT NOW() NOT NULL,
         updated_at TIMESTAMP DEFAULT NOW() NOT NULL
       );
+
+      CREATE TABLE "organization" (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        slug TEXT NOT NULL UNIQUE,
+        logo TEXT,
+        metadata JSONB,
+        created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+        updated_at TIMESTAMP DEFAULT NOW() NOT NULL
+      );
+
+      CREATE TABLE "member" (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+        organization_id TEXT NOT NULL REFERENCES "organization"(id) ON DELETE CASCADE,
+        role TEXT NOT NULL DEFAULT 'member',
+        created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+        updated_at TIMESTAMP DEFAULT NOW() NOT NULL,
+        UNIQUE("user_id", "organization_id")
+      );
+
+      CREATE TABLE "invitation" (
+        id TEXT PRIMARY KEY,
+        email TEXT NOT NULL,
+        inviter_id TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+        organization_id TEXT NOT NULL REFERENCES "organization"(id) ON DELETE CASCADE,
+        role TEXT DEFAULT 'member',
+        status TEXT NOT NULL DEFAULT 'pending',
+        expires_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+        updated_at TIMESTAMP DEFAULT NOW() NOT NULL
+      );
     `)
 
     return db

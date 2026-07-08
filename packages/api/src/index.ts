@@ -6,7 +6,10 @@ import { RPCHandler } from "@orpc/server/fetch"
 import { serverEnv } from "@workspace/env/server"
 import { appRouter } from "./router/index.js"
 
-const api = new Hono()
+// Catch-all is mounted at /api/[[...route]] in apps/app, so all incoming
+// requests have an /api prefix. basePath('/api') makes Hono match those
+// patterns correctly without changing the route definitions below.
+const api = new Hono().basePath("/api")
 
 // CORS middleware (single source of truth, validated at the env-package boundary)
 api.use(

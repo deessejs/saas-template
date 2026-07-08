@@ -6,7 +6,7 @@ import { NavMain } from "@/components/sidebars/nav-main"
 import { NavUser } from "@/components/sidebars/nav-user"
 import { SettingsNav } from "@/components/sidebars/settings-nav"
 import { SidebarBackAction } from "@/components/sidebar-back-action"
-import { TeamSwitcher } from "@/components/sidebars/team-switcher"
+import { OrgSwitcher } from "@/components/sidebars/org-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -20,24 +20,13 @@ import {
   SidebarRail,
 } from "@workspace/ui/components/sidebar"
 
-import { APP_NAME } from "@workspace/ui/lib/config"
 import { Home, Settings } from "lucide-react"
 
 type SidebarUser = {
   name: string
   email: string
-  /** better-auth: string | null | undefined for OAuth. Null/undefined both
-   *  mean "no image" — same fallback path. */
   image?: string | null | undefined
 }
-
-const teams = [
-  {
-    name: APP_NAME,
-    logoUrl: `https://vercel.com/api/www/avatar?s=128&u=${encodeURIComponent(APP_NAME)}&dpl=dpl_AS99V7XmtTzE4xdb72tYFtNTVV48`,
-    plan: "SaaS",
-  },
-]
 
 const dashboardNav = [
   {
@@ -94,10 +83,7 @@ export function AppSidebar({
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="flex h-14 flex-row items-center border-b p-0">
         <div className="flex w-full items-center">
-          {/* Single team for now; when organizations are added, the switcher
-              will iterate over the user's orgs. The dropdown collapses when
-              there's only one team so it doesn't look broken. */}
-          <TeamSwitcher teams={teams} />
+          <OrgSwitcher />
         </div>
       </SidebarHeader>
       <SidebarContent>

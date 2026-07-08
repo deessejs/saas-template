@@ -30,4 +30,10 @@ For deep technical questions, the user wants **thorough research with concrete e
 
 **Web dev tools:** Comfortable with `fresh` for docs research, shadcn CLI (`pnpm dlx shadcn@latest add`), pattern from `apps/web` used as reference for `apps/app`.
 
+**Dev infrastructure preference — "On peut pas juste avoir des logs en dev ?" (2026-07-07):** When proposing dev tooling that requires extra services (Docker containers, SMTP catch-alls like Mailpit, etc.), the user pushes back and prefers the simplest possible option that works. For the mailer audit, I had recommended Mailpit (SMTP catch-all with web UI) as the dev default; user asked "On peut pas juste avoir des logs en dev ?" and we switched to a `ConsoleTransport` (logs to stdout) as the dev default, with Mailpit kept as an opt-in via `MAIL_TRANSPORT=smtp`.
+
+**Why:** The template targets onboarding speed — extra services = extra setup steps = friction for new users. Console logs are zero-friction, copy-paste-the-link from terminal is enough for 3 simple transactional emails.
+
+**How to apply:** When proposing dev infrastructure for a template, **default to the simplest option** (console logs, file-based mocks, in-memory state) and only suggest a service container if the use case clearly demands it. Frame heavier options as opt-in (`MAIL_TRANSPORT=smtp`) not as default. The user will accept opt-in infrastructure; they'll push back on default infrastructure.
+
 Related: [[claude-code-subagents]], [[claude-code-workflows]], [[claude-code-index]], [[app-architecture]].

@@ -25,7 +25,7 @@ export const serverSchema = z.object({
   NODE_ENV: z
     .enum(["development", "test", "production"])
     .default("development"),
-  DATABASE_URL: z.string().url(),
+  DATABASE_URL: z.string().url().optional(),
   TEST_DATABASE_URL: z.string().url().optional(),
   BETTER_AUTH_URL: z.string().url().default("http://localhost:3000"),
   BETTER_AUTH_SECRET: z
@@ -36,6 +36,21 @@ export const serverSchema = z.object({
     "http://localhost:3000",
     "http://localhost:3001",
   ]),
+
+  // Mailer — Resend (prod)
+  RESEND_API_KEY: z.string().optional(),
+  RESEND_FROM_EMAIL: z
+    .string()
+    .email()
+    .default("onboarding@resend.dev"),
+  RESEND_FROM_NAME: z.string().min(1).default("SaaS Template"),
+
+  // Mailer — transport selector
+  //   "console" (default) → logs to stdout, zero infrastructure
+  //   "resend"            → production, uses RESEND_API_KEY
+  MAIL_TRANSPORT: z
+    .enum(["console", "resend"])
+    .default("console"),
 })
 
 /**

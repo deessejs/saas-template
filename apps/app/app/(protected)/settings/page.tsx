@@ -2,7 +2,6 @@ import Link from "next/link"
 import { SettingsCard } from "@/components/settings"
 import {
   BadgeCheckIcon,
-  CreditCardIcon,
   KeyIcon,
   LinkIcon,
   SmartphoneIcon,

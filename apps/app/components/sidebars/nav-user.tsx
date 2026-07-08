@@ -26,18 +26,57 @@ import { logoutAction } from "@/app/(protected)/logout-actions.server"
 
 const VERCEL_AVATAR_BASE = "https://vercel.com/api/www/avatar"
 
-export function NavUser({
-  user,
-}: {
+type NavUserProps = {
   user: {
     name: string
     email: string
-    username: string
-  }
-}) {
+    /** better-auth sets this for OAuth providers (Google/GitHub). Null for
+     *  email/password signups. When null, we fall back to a Vercel avatar
+     *  seeded with the email, then to initials. */
+    image?: string | null | undefined
+  } | null
+}
+
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return "?"
+  if (parts.length === 1) return parts[0]!.slice(0, 2).toUpperCase()
+  return (parts[0]![0]! + parts[parts.length - 1]![0]!).toUpperCase()
+}
+
+function getAvatarUrl(user: NonNullable<NavUserProps["user"]>): string {
+  if (user.image) return user.image
+  // Vercel avatar endpoint accepts any string; email gives a stable per-user
+  // identicon-style avatar.
+  return `${VERCEL_AVATAR_BASE}?s=40&u=${encodeURIComponent(user.email)}&dpl=dpl_AS99V7XmtTzE4xdb72tYFtNTVV48`
+}
+
+export function NavUser({ user }: NavUserProps) {
   const { isMobile } = useSidebar()
   const [loggingOut, setLoggingOut] = useState(false)
-  const avatarUrl = `${VERCEL_AVATAR_BASE}?s=40&u=${user.username}&dpl=dpl_AS99V7XmtTzE4xdb72tYFtNTVV48`
+
+  // No session — render an anonymous "Guest" placeholder rather than crashing.
+  // The proxy.ts gate should prevent this, but defensive for SSR edge cases.
+  if (!user) {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton size="lg" disabled>
+            <Avatar className="h-8 w-8 rounded-lg">
+              <AvatarFallback className="rounded-lg">?</AvatarFallback>
+            </Avatar>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-medium">Guest</span>
+              <span className="truncate text-xs">Not signed in</span>
+            </div>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    )
+  }
+
+  const avatarUrl = getAvatarUrl(user)
+  const initials = getInitials(user.name)
 
   async function handleLogout() {
     setLoggingOut(true)
@@ -55,7 +94,7 @@ export function NavUser({
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={avatarUrl} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
@@ -74,7 +113,7 @@ export function NavUser({
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={avatarUrl} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>

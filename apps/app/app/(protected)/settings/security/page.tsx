@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { SettingsCard } from "@/components/settings"
-import { KeyIcon } from "lucide-react"
 
 export default function SecurityPage() {
   return (

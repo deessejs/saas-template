@@ -1,19 +1,45 @@
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
-import { serverEnv } from "@workspace/env/server"
 import * as schema from "./schema/index.js"
 
 // Serverless-friendly defaults:
 //   prepare: false  → required behind PgBouncer / Neon pooler (extended-query
 //                     protocol incompatible with transaction-mode pooling).
 //   max: 10         → cap per Lambda/worker. Tune to provider limits.
-//   idle_timeout    → reap idle connections (0 = never, foot-gun in serverless).
-//   max_lifetime    → recycle long-lived connections (0 = forever, foot-gun).
-const pool = postgres(serverEnv.DATABASE_URL, {
-  prepare: false,
-  max: 10,
-  idle_timeout: 20,
-  max_lifetime: 60 * 30,
-})
+//   idle_timeout: 60 → Neon serverless compute suspends after 5 min inactivity.
+//                    20 s was too aggressive; ECONNRESET from the pooler killed connections.
+//   max_lifetime: 1800 → recycle connections every 30 min to stay fresh.
+//
+// Lazy initialization: the pool is only created when `db` is first accessed.
+// When DATABASE_URL is not set (e.g. `pnpm auth:generate`), a dummy object is
+// returned so imports succeed without crashing.
 
-export const db = drizzle(pool, { schema })
+let _db: ReturnType<typeof drizzle> | null = null
+
+function getDb() {
+  if (!_db) {
+    const { serverEnv } = require("@workspace/env/server")
+    if (!serverEnv.DATABASE_URL) {
+      // CLI context: return a passthrough object so imports don't crash.
+      // Real usage always has DATABASE_URL set.
+      _db = {} as ReturnType<typeof drizzle>
+    } else {
+      const pool = postgres(serverEnv.DATABASE_URL, {
+        prepare: false,
+        max: 10,
+        idle_timeout: 60,
+        max_lifetime: 60 * 30,
+      })
+      _db = drizzle(pool, { schema })
+    }
+  }
+  return _db
+}
+
+// Accessor — consumers use `db`, never `_db`. The Proxy defers pool creation
+// until a property is actually accessed (e.g. by drizzle queries at runtime).
+export const db = new Proxy({} as ReturnType<typeof drizzle>, {
+  get(_target, prop) {
+    return (getDb() as any)[prop]
+  },
+})

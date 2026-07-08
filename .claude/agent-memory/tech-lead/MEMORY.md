@@ -9,6 +9,8 @@
 - [apps/docs architecture](apps/docs.md) — Fumadocs-based docs site (separate deploy, target of /docs links from web/app)
 - [packages/ui audit](packages/ui-audit.md) — audit findings corrected after web verification (4 wrong, 4 right)
 - [packages/auth](packages/auth.md) — better-auth CLI workflow + file ownership + Drizzle companion scripts (generate/migrate/push/check)
+- [Package structure](project/package-structure.md) — one-package-per-concern — new features get their own packages/* (e.g. packages/email for the mailer)
+- [Mailer audit](project/mailer-audit.md) — 2026-07-07 decision log: Resend + console default + react-email in new packages/email package
 - [Claude Code docs index](claude-code/README.md) — pointer URLs for subagents, workflows, plugins, hooks, worktrees, memory
 - [Claude Code subagents](claude-code/subagents.md) — frontmatter fields, locations, invocation modes, pitfalls
 - [Claude Code skills](claude-code/skills.md) — CLI SKILL.md (progressive disclosure) + API/Managed skills distinction
