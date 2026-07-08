@@ -93,7 +93,7 @@ User signs up
 - **Pros:** zero friction for activation, with a path to create a named org later. Linear uses this pattern.
 - **Cons:** two types of orgs to manage in the data model. `creatorRole: "admin"` on the personal org (not owner), so it can't be deleted without consequences. Requires `organizationLimit` gating.
 
-**Recommendation:** **Option B for v1** — explicit `/onboarding` page. It is the simplest to reason about, the safest for the invitation edge case, and the most consistent with the better-auth docs pattern. Option A is the better long-term target (YuSMP workspace-first principle), but it requires a `databaseHooks` integration that is more complex to test.
+**Recommendation:** **Option A for v1** — auto-create on signup. This is the pattern Vercel uses in production with better-auth (verified). YuSMP's *"workspace-first, not user-first"* principle aligns with it. The YuSMP activation benchmarks (60-75% top quartile for self-serve PLG) favour zero-friction signup, and auto-creation eliminates a mandatory step. The invitation edge case (user who auto-creates an org then receives an invitation) is resolvable cleanly with the `afterAcceptInvitation` hook — the user ends up with two orgs and picks via the org-switcher. This is the simplest long-term path and Vercel's precedent removes the uncertainty.
 
 ---
 
@@ -269,12 +269,12 @@ These are the choices that minimise complexity for v1 while leaving room to evol
 
 | # | Question | Answer | Rationale |
 |---|---|---|---|
-| D1 | Signup → first org | **Manual via `/onboarding`** | Simplest to implement, safest for invitation edge case |
+| D1 | Signup → first org | **Auto-create via `databaseHooks.session.create.before`** | Vercel's production pattern. YuSMP workspace-first principle. Zero friction, highest activation rate. |
 | D2 | Zero-org state | **Forbidden (strict gate)** | All protected pages assume org context exists |
 | D3 | Invitation → needs own org first | **No** | `acceptInvitation` works without org; set `activeOrganizationId` in `afterAcceptInvitation` hook |
 | D4 | Accept invitation → auto-set active org | **Yes** | User is immediately productive in the org they joined |
-| D5 | Session migration | **Default column `NULL`, deploy before `/onboarding` is live** | Zero churn, only users who hit `/onboarding` are affected |
-| D6 | When to set `activeOrganizationId` | **`createOrganization` (auto via plugin) + `afterAcceptInvitation` hook** | Two insertion points cover both paths |
+| D5 | Session migration | **Default column `NULL`, deploy before org-switcher is live** | Zero churn; old sessions land in `/onboarding` which creates an org on their behalf |
+| D6 | When to set `activeOrganizationId` | **`databaseHooks.session.create.before` (auto on signup) + `afterAcceptInvitation` hook** | Two insertion points cover both paths |
 | D7 | Where to check it | **`proxy.ts` (all protected routes except `/accept-invitation`)** | Single gate, server-side, consistent |
 | D8 | RBAC | **Static (default roles)** | Dynamic adds `organizationRole` table and complexity — deferred to v2 |
 | D9 | Teams | **Off** | Smaller surface for v1. Add `teams.enabled: true` when real team scoping is needed |
@@ -287,22 +287,25 @@ These are the choices that minimise complexity for v1 while leaving room to evol
 ```
 /signup
   → verify email
-  → redirect to /onboarding
-  → fill name + slug form
-  → createOrganization → activeOrganizationId set by plugin
+  → databaseHooks.session.create.before: auto-create org (e.g. "John's workspace")
+  → activeOrganizationId set in session
   → redirect to /home
   → sidebar: org-switcher shows 1 org
 ```
 
-**Flow 2 — Invitation (second path)**
+> `/onboarding` is NOT a mandatory stop. User reaches `/home` and first value immediately. This matches Vercel's pattern and YuSMP's workspace-first principle.
+
+**Flow 2 — Invitation (user has no org yet)**
 
 ```
 /accept-invitation?id=xxx
   → not logged in → /signup → verify email → /accept-invitation?id=xxx
   → logged in → acceptInvitation (email match checked by plugin)
+    → databaseHooks fires: auto-creates user's org (e.g. "John's workspace")
     → afterAcceptInvitation hook: setActiveOrganization to invited org
   → redirect to /home
-  → sidebar: org-switcher shows 1 org (the one they were invited to)
+  → sidebar: org-switcher shows [invited org]  (personal org exists but not active)
+  → user is immediately in the invited org
 ```
 
 **Flow 3 — Existing user accepts second invitation**
@@ -314,8 +317,10 @@ These are the choices that minimise complexity for v1 while leaving room to evol
   → acceptInvitation
     → afterAcceptInvitation hook: setActiveOrganization to Client Corp
   → redirect to /home
-  → sidebar: org-switcher shows [Acme, Client Corp]
+  → sidebar: org-switcher shows [Acme, Client Corp] (Client Corp is active)
 ```
+
+> Users who auto-created an org and then receive an invitation will have two orgs. The org-switcher handles switching. This is acceptable — Vercel handles the same pattern.
 
 ---
 
@@ -332,38 +337,42 @@ Resolve the five questions above before writing any code. The answers above are 
 1. Add `organization` plugin to `packages/auth/src/index.ts`
 2. Add `organization` plugin to `packages/auth/src/auth.config.ts` (same config — extract to `organizationConfig.ts` to avoid drift)
 3. Add `sendInvitationEmail` to the plugin config (wire the mailer — currently missing for all flows)
-4. Run `pnpm --filter @workspace/auth auth:generate`
-5. Run `pnpm --filter @workspace/database db:generate && db:migrate`
-6. Add `afterAcceptInvitation` hook with `setActiveOrganization`
-7. Set `requireEmailVerificationOnInvitation: true`
-8. Extend pg-mem DDL in `packages/database/tests/setup.ts` and `packages/auth/tests/setup.ts`
-9. Add `organizationMiddleware` to `packages/api` (reads `session.activeOrganizationId`, injects into oRPC context)
+4. Add `databaseHooks.session.create.before` to auto-create org on signup
+5. Add `organizationHooks.afterAcceptInvitation` with `auth.api.setActiveOrganization` (auto-set active org to the invited org after acceptance)
+6. Set `requireEmailVerificationOnInvitation: true`
+7. Run `pnpm --filter @workspace/auth auth:generate`
+8. Run `pnpm --filter @workspace/database db:generate && db:migrate`
+9. Extend pg-mem DDL in `packages/database/tests/setup.ts` and `packages/auth/tests/setup.ts`
+10. Add `organizationMiddleware` to `packages/api` (reads `session.activeOrganizationId`, injects into oRPC context)
 
-### Phase 2 — `/onboarding` minimum (0.5 day)
+### Phase 2 — `databaseHooks` + org creation server action (0.5 day)
 
-1. Create `app/(protected)/onboarding/page.tsx`
-   - `?id=` → `AcceptInvitationCard`
-   - no `id` → `CreateOrganizationForm`
-   - if `activeOrganizationId` already set → redirect `/home`
-2. Wire `createOrganizationAction` + `acceptInvitationAction` server actions
-3. Update `proxy.ts`:
+1. Add `databaseHooks.session.create.before` to `organization()` plugin config:
+   - create a default org (name from user.name, slug auto-generated or user-provided)
+   - set `activeOrganizationId` in the session data return
+2. Add a server action `createOrganizationAction` for users who want to create a named org (not the default one) — used by the org-switcher "Create new org" dialog
+3. Create `app/(protected)/onboarding/page.tsx` as a fallback destination:
+   - for users who somehow reached `/onboarding` without an org (legacy sessions post-migration)
+   - for creating additional orgs beyond the auto-created default
+4. Update `proxy.ts`:
    - add `/onboarding` to `PROTECTED_PREFIXES`
    - add `/accept-invitation` to protected routes
    - check `activeOrganizationId` after `getSession`
    - exclude `/accept-invitation` from the null-check redirect
-4. Verify: signup → `/onboarding` → create org → `/home` ✅
+5. Verify: signup → `/home` directly ✅ (no `/onboarding` stop for first-time users)
 
 ### Phase 3 — Org switcher (0.5 day)
 
 1. Add `organizationClient()` to `lib/auth-client.ts`
 2. Replace decorative `team-switcher.tsx` with `org-switcher.tsx`
-   - `useListOrganizations` → list all memberships
+   - `useListOrganizations` → list all memberships (includes auto-created personal org)
    - `useActiveOrganization` → current selection
    - `organization.setActive` → on selection
-   - If 0 orgs → "Create organization" links to `/onboarding`
+   - "Create new organization" → links to `/onboarding` (creates a second org, not the first)
 3. Wire `SidebarBackAction` in `AppSidebar`
+4. Verify: org-switcher shows auto-created org on first login ✅
 
-### Phase 4 — Settings org (1–2 days)
+### Phase 4 — Settings org (1–2 days) [unchanged]
 
 1. `app/(protected)/settings/organization/layout.tsx` + hub `page.tsx`
 2. `/settings/organization/general` + `updateOrganizationAction`
@@ -371,7 +380,7 @@ Resolve the five questions above before writing any code. The answers above are 
 4. `/settings/organization/invitations` + `cancelInvitationAction`
 5. `/settings/organization/billing` (placeholder only — Stripe deferred)
 
-### Phase 5 — Polish (0.5 day)
+### Phase 5 — Polish (0.5 day) [unchanged]
 
 1. `error.tsx` and `loading.tsx` boundaries
 2. `not-found.tsx`
