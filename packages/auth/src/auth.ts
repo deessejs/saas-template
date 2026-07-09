@@ -7,15 +7,7 @@ import { serverEnv } from "@workspace/env/server"
 import { sendAuthEmail, templates } from "@workspace/email"
 import { organization } from "better-auth/plugins"
 
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 40)
-}
+import { slugify } from "./utils"
 
 /**
  * Organization plugin options shared between the runtime auth instance and the
@@ -82,9 +74,8 @@ export const auth = betterAuth({
   },
 
   emailVerification: {
-    sendOnSignUp: false,
     sendVerificationEmail: async ({ user, url }) => {
-      console.log("[DEBUG] better-auth sendVerificationEmail callback FIRED for:", user.email, "| url:", url?.slice(0, 60))
+      console.log("[DEBUG] better-auth sendVerificationEmail callback FIRED for:", user.email, "| url:", url)
       await sendAuthEmail({
         to: user.email,
         subject: "Verify your email",

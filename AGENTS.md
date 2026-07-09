@@ -4,6 +4,21 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
+### Better-Auth guides
+
+Pattern senior pour better-auth dans ce repo. **Lis toujours `docs/guides/better-auth/index.md` en premier** avant de modifier `packages/auth` ou `packages/database/src/schema/auth.ts`.
+
+| Guide | Contenu |
+|---|---|
+| [docs/guides/better-auth/index.md](docs/guides/better-auth/index.md) | Décisions verrouillées + état du code — **point d'entrée obligatoire** |
+| [docs/guides/better-auth/setup.md](docs/guides/better-auth/setup.md) | Config de base, drizzle-adapter, secrets, trustedOrigins |
+| [docs/guides/better-auth/hooks.md](docs/guides/better-auth/hooks.md) | `databaseHooks`, ordering, fire-and-forget |
+| [docs/guides/better-auth/org.md](docs/guides/better-auth/org.md) | Organization plugin, auto-create org, invitations, rôles |
+| [docs/guides/better-auth/email.md](docs/guides/better-auth/email.md) | Email verification, password reset, Resend + console dev |
+| [docs/guides/better-auth/session.md](docs/guides/better-auth/session.md) | Session config, cookies, expiration, trustedOrigins |
+| [docs/guides/better-auth/client.md](docs/guides/better-auth/client.md) | Hooks React, `useActiveOrganization`, workaround #9710 |
+| [docs/guides/better-auth/pitfalls.md](docs/guides/better-auth/pitfalls.md) | Bugs ouverts (#9070, #9710), options supprimées, gotchas — **à lire AVANT toute implémentation** |
+
 ### Fresh CLI 
 
 `fresh` is a CLI for AI-powered web search and fetch, backed by Exa.ai.
