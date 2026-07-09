@@ -7,6 +7,8 @@ import { useForm } from "@tanstack/react-form"
 import { toast } from "sonner"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@workspace/ui/components/button"
+import { Checkbox } from "@workspace/ui/components/checkbox"
+import { Input } from "@workspace/ui/components/input"
 import { Separator } from "@workspace/ui/components/separator"
 import { PasswordInput } from "./password-input"
 import { loginSchema } from "@/components/auth/schemas"
@@ -92,13 +94,12 @@ export function LoginForm() {
 							<label htmlFor={field.name} className="text-sm font-medium">
 								Email
 							</label>
-							<input
+							<Input
 								id={field.name}
 								name={field.name}
 								type="email"
 								autoComplete="email"
 								autoFocus
-								className="flex h-8 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50"
 								value={field.state.value}
 								onChange={(e) => field.handleChange(e.target.value)}
 								aria-invalid={!!field.state.meta.errors.length}
@@ -146,7 +147,7 @@ export function LoginForm() {
 				/>
 
 				<div className="flex items-center gap-2">
-					<input id="remember" name="remember" type="checkbox" />
+					<Checkbox id="remember" name="remember" />
 					<label htmlFor="remember" className="text-sm font-normal">
 						Remember me
 					</label>

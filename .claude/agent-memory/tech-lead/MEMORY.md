@@ -8,6 +8,7 @@
 - [apps/web architecture](apps/web.md) — public static site (marketing/blog/changelog/legal), NO auth, links to /login /signup live in apps/app
 - [apps/docs architecture](apps/docs.md) — Fumadocs-based docs site (separate deploy, target of /docs links from web/app)
 - [packages/ui audit](packages/ui-audit.md) — audit findings corrected after web verification (4 wrong, 4 right)
+- [use-shadcn skill initiative](project/use-shadcn-skill.md) — 2026-07-09: 3-layer fix (skill + ESLint rule + new Checkbox) to stop agents using raw HTML; 3-file migration backlog
 - [packages/auth](packages/auth.md) — better-auth CLI workflow + file ownership + Drizzle companion scripts (generate/migrate/push/check)
 - [Package structure](project/package-structure.md) — one-package-per-concern — new features get their own packages/* (e.g. packages/email for the mailer)
 - [Mailer audit](project/mailer-audit.md) — 2026-07-07 decision log: Resend + console default + react-email in new packages/email package
@@ -16,3 +17,4 @@
 - [Claude Code skills](claude-code/skills.md) — CLI SKILL.md (progressive disclosure) + API/Managed skills distinction
 - [Claude Code workflows](claude-code/workflows.md) — Workflow tool primitives, patterns, hard limits, when over Agent tool
 - [User research style](user.md) — thorough research with examples, French, casual, autonomous decisions, /goal do it, fresh CLI
+- [Long-term solutions](feedback-long-term-solutions.md) — prefer systemic fixes over local patches (pnpm.overrides over catalog pin, codify patterns, track adjacent debt)

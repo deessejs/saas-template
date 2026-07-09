@@ -63,7 +63,6 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
-      console.log("[DEBUG] sendResetPassword callback FIRED for:", user.email)
       void sendAuthEmail({
         to: user.email,
         subject: "Reset your password",
@@ -75,7 +74,6 @@ export const auth = betterAuth({
 
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
-      console.log("[DEBUG] better-auth sendVerificationEmail callback FIRED for:", user.email, "| url:", url)
       await sendAuthEmail({
         to: user.email,
         subject: "Verify your email",

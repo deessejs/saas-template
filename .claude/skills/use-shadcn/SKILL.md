@@ -96,7 +96,7 @@ Need a container with padding/border?
 
 ## Anti-patterns (NEVER ship these)
 
-- ❌ **Raw `<input>` with shadcn className copy-pasted** — smoking gun in `apps/app/components/auth/login-form.tsx` lines 95-105. Just use `<Input />`.
+- ❌ **Raw `<input>` with shadcn className copy-pasted** — use `<Input />` directly.
 - ❌ **Raw `<button>` with manual classes** — use `<Button variant="..." size="..." />`.
 - ❌ **Raw `<select>` or `<textarea>`** — use the matching shadcn component.
 - ❌ **String-concat className** like `"foo " + (active && "bar")` — use `cn()` from `@workspace/ui/lib/utils`:
@@ -106,6 +106,31 @@ Need a container with padding/border?
   ```
 - ❌ **Importing from `@/components/ui/*`** — wrong path. Use `@workspace/ui/components/*`.
 - ❌ **Adding a new shadcn primitive without coordinating with `packages/ui`** — propose it in the package first, then consume from `apps/`.
+
+## TanStack Form + shadcn controlled inputs (EXCEPTION)
+
+When using `@tanstack/react-form` with `form.Field` children render prop, controlled inputs ARE correct — `value`/`onChange` must be passed explicitly:
+
+```tsx
+// ✅ CORRECT — official shadcn + TanStack Form pattern
+<form.Field name="email">
+  {({ state, handleChange, handleBlur }) => (
+    <Input
+      value={state.value}
+      onChange={(e) => handleChange(e.target.value)}
+      onBlur={handleBlur}
+    />
+  )}
+</form.Field>
+```
+
+```tsx
+// ❌ STILL WRONG — raw <input> with copied classes
+// (even when used with TanStack Form, this avoids Input's accessibility defaults)
+<input className="flex h-8 w-full rounded-md border ..." />
+```
+
+The ESLint `react/forbid-elements` rule has an exception for `input`/`textarea`/`select` when detected inside a `form.Field` children function.
 
 ## App-local wrappers (apps/app only)
 
@@ -137,5 +162,5 @@ If a needed primitive is missing (e.g. `RadioGroup`, `Calendar`, `Slider`):
 
 ## Related enforcement
 
-- ESLint rule `react/forbid-elements` in `packages/eslint-config/react-internal.js` (warn-level on `input`/`button`/`select`/`textarea`)
-- Backlog: 20 existing files in `apps/app/components` use raw HTML controls — these generate warnings and should be migrated in follow-up PRs (use `code-fixer` agent or manual sweeps)
+- ESLint rule `react/forbid-elements` in `packages/eslint-config/react-internal.js` (warn-level on `input`/`button`/`select`/`textarea` — has exception for elements inside `form.Field` children functions)
+- Backlog: remaining raw HTML controls in `apps/app/components` generate warnings — migrate to shadcn components or document exceptions

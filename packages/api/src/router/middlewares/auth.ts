@@ -1,22 +1,20 @@
 import { ORPCError } from "@orpc/server"
-import { auth } from "@workspace/auth"
 import { base } from "../context.js"
 import type { AuthContext } from "../context.js"
 
-// Auth middleware - adds session and user to context
+// Auth guard — `user` and `session` are populated by the Hono session
+// middleware (see packages/api/src/index.ts), so we only need to verify
+// they're present and forward them through.
 export const authMiddleware = base.middleware(async ({ context, next }) => {
-  const session = await auth.api.getSession({ headers: context.headers })
-
-  if (!session?.session || !session?.user) {
-    // Throw using plain Error for simplicity - oRPC will handle it
-    throw new Error("Authentication required")
+  if (!context.user || !context.session) {
+    throw new ORPCError("UNAUTHORIZED")
   }
 
   return next({
     context: {
       ...context,
-      session: session.session,
-      user: session.user,
+      user: context.user,
+      session: context.session,
     } as AuthContext,
   })
 })
