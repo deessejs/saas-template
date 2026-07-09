@@ -18,9 +18,6 @@ catalog:
   # Core
 
   # Email (added 2026-07-07 — packages/email)
-  "@react-email/components": ^1.0.12
-  "@react-email/render": ^2.0.6
-  resend: ^6.17.1
 
   # Auth
   "@better-auth/cli": ^1.4.21
@@ -29,15 +26,20 @@ catalog:
   '@content-collections/core': ^0.15.2
   '@content-collections/mdx': ^0.2.2
   '@content-collections/next': ^0.2.11
+  '@deessejs/errors': ^1.1.1
+  '@deessejs/fp': ^1.0.0
 
   # Next.js
   "@next/env": ^16.2.10
   '@orpc/client': ^1.14.7
   "@orpc/server": latest
+  "@react-email/components": ^1.0.12
+  "@react-email/render": ^2.0.6
   '@shikijs/rehype': ^4.3.1
 
   # Shared tooling
   "@tailwindcss/postcss": ^4.3.2
+  '@tanstack/react-form': ^1.33.0
   "@turbo/gen": ^2.10.4
 
   # Types
@@ -70,6 +72,7 @@ catalog:
   react: 19.2.7
   react-dom: 19.2.7
   reading-time: ^1.5.0
+  resend: ^6.17.1
   sonner: ^2.0.7
 
   # UI

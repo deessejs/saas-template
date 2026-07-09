@@ -6,120 +6,15 @@ settings:
 
 catalogs:
   default:
-    '@better-auth/cli':
-      specifier: ^1.4.21
-      version: 1.4.21
-    '@better-auth/drizzle-adapter':
-      specifier: latest
-      version: 1.6.23
-    '@content-collections/cli':
-      specifier: ^0.1.9
-      version: 0.1.9
-    '@content-collections/core':
-      specifier: ^0.15.2
-      version: 0.15.2
-    '@content-collections/mdx':
-      specifier: ^0.2.2
-      version: 0.2.2
-    '@content-collections/next':
-      specifier: ^0.2.11
-      version: 0.2.11
-    '@next/env':
-      specifier: ^16.2.10
-      version: 16.2.10
-    '@orpc/client':
-      specifier: ^1.14.7
-      version: 1.14.7
-    '@orpc/server':
-      specifier: latest
-      version: 1.14.6
-    '@react-email/components':
-      specifier: ^1.0.12
-      version: 1.0.12
-    '@react-email/render':
-      specifier: ^2.0.6
-      version: 2.0.6
-    '@shikijs/rehype':
-      specifier: ^4.3.1
-      version: 4.3.1
-    '@tailwindcss/postcss':
-      specifier: ^4.3.2
-      version: 4.3.2
-    '@turbo/gen':
-      specifier: ^2.10.4
-      version: 2.10.4
-    '@types/node':
-      specifier: ^24
-      version: 24.13.2
-    '@types/pg':
-      specifier: ^8.20.0
-      version: 8.20.0
-    better-auth:
-      specifier: latest
-      version: 1.6.23
-    cmdk:
-      specifier: ^1.1.1
-      version: 1.1.1
-    dotenv:
-      specifier: ^17.4.2
-      version: 17.4.2
-    drizzle-kit:
-      specifier: ^0.31.10
-      version: 0.31.10
-    drizzle-orm:
-      specifier: ^0.45.2
-      version: 0.45.2
-    eslint:
-      specifier: ^9.39.4
-      version: 9.39.4
-    fuse.js:
-      specifier: ^7.4.2
-      version: 7.4.2
-    hono:
-      specifier: latest
-      version: 4.12.27
-    lucide-react:
-      specifier: ^1.23.0
-      version: 1.23.0
-    next:
-      specifier: ^16.2.10
-      version: 16.2.10
-    pg:
-      specifier: ^8.22.0
-      version: 8.22.0
-    postgres:
-      specifier: ^3.4.9
-      version: 3.4.9
-    react:
-      specifier: 19.2.7
-      version: 19.2.7
-    react-dom:
-      specifier: 19.2.7
-      version: 19.2.7
-    reading-time:
-      specifier: ^1.5.0
-      version: 1.5.0
-    resend:
-      specifier: ^6.17.1
-      version: 6.17.1
-    sonner:
-      specifier: ^2.0.7
-      version: 2.0.7
+    '@tanstack/react-form':
+      specifier: ^1.33.0
+      version: 1.33.0
     typescript:
       specifier: ^6.0.3
       version: 6.0.3
-    vercel-minimax-ai-provider:
-      specifier: ^0.0.2
-      version: 0.0.2
-    vitest:
-      specifier: ^4.1.10
-      version: 4.1.10
     zod:
       specifier: latest
       version: 4.4.3
-    zustand:
-      specifier: ^5.0.14
-      version: 5.0.14
 
 overrides:
   '@types/react': ^19.2.17
@@ -128,6 +23,10 @@ overrides:
 importers:
 
   .:
+    dependencies:
+      '@tanstack/react-form':
+        specifier: 'catalog:'
+        version: 1.33.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
     devDependencies:
       '@workspace/eslint-config':
         specifier: workspace:*
@@ -295,6 +194,9 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 19.2.7(react@19.2.7)
+      sonner:
+        specifier: 'catalog:'
+        version: 2.0.7(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
     devDependencies:
       '@tailwindcss/postcss':
         specifier: 'catalog:'
@@ -4363,6 +4265,36 @@ packages:
 
   '@tailwindcss/postcss@4.3.2':
     resolution: {integrity: sha512-rjVWYCa7Ngbi5AarT6k8TkxUG3Wl1QKzHdIZVsjZSzf36Jmo2IKZt/NHRAwly8oDkbBOH0YTu+CHuf9jPxMc+g==}
+
+  '@tanstack/devtools-event-client@0.4.4':
+    resolution: {integrity: sha512-6T5Yop/793YI+H+5J8Hsyj4kCih9sl4t3ElLgKioW5hk3ocn+ZdSJ94tT7vL7uabxSugWYBZlOTMPzEw2puvQw==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  '@tanstack/form-core@1.33.0':
+    resolution: {integrity: sha512-AV4Pw9Dk4orFsuPBcDssfWMJFs+yMYBae7zZ4oTqrCf4ftNGQKxvrQRZeqKHG6A4TkiLeSvf2kzIjcVkrW7E6w==}
+
+  '@tanstack/pacer-lite@0.1.1':
+    resolution: {integrity: sha512-y/xtNPNt/YeyoVxE/JCx+T7yjEzpezmbb+toK8DDD1P4m7Kzs5YR956+7OKexG3f8aXgC3rLZl7b1V+yNUSy5w==}
+    engines: {node: '>=18'}
+
+  '@tanstack/react-form@1.33.0':
+    resolution: {integrity: sha512-unaee+VS4MvKo+s1dmgGUXI4902VeAhuaUbKsQbhFe3MceOpB3JpAUGCDpyzjQPXVFkFY0COKfLrUNX2XZYW4g==}
+    peerDependencies:
+      '@tanstack/react-start': '*'
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@tanstack/react-start':
+        optional: true
+
+  '@tanstack/react-store@0.11.0':
+    resolution: {integrity: sha512-tX4YXh3PDkmpvGQWkWqKpzs/MSqbtuwY9dWdWhtV9Q50PmO+jOkUKIWIX4G85dwt7lxdHLXsiaEKPdKmC8F41w==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  '@tanstack/store@0.11.0':
+    resolution: {integrity: sha512-WlzzCt3xi0G6pCAJu1U+2jiECwabETDpQDi3hfkFZvJii9AuZqEKbOiVarX1/bWhTNjU486yQtJCCasi/0q+Cw==}
 
   '@ts-morph/common@0.27.0':
     resolution: {integrity: sha512-Wf29UqxWDpc+i61k3oIOzcUfQt79PIT9y/MWfAGlrkjg6lBC1hwDECLXPVJAhWjiGbfBCxZd65F/LIZF3+jeJQ==}
@@ -12772,6 +12704,33 @@ snapshots:
       postcss: 8.5.16
       tailwindcss: 4.3.2
 
+  '@tanstack/devtools-event-client@0.4.4': {}
+
+  '@tanstack/form-core@1.33.0':
+    dependencies:
+      '@tanstack/devtools-event-client': 0.4.4
+      '@tanstack/pacer-lite': 0.1.1
+      '@tanstack/store': 0.11.0
+
+  '@tanstack/pacer-lite@0.1.1': {}
+
+  '@tanstack/react-form@1.33.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+    dependencies:
+      '@tanstack/form-core': 1.33.0
+      '@tanstack/react-store': 0.11.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      react: 19.2.7
+    transitivePeerDependencies:
+      - react-dom
+
+  '@tanstack/react-store@0.11.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+    dependencies:
+      '@tanstack/store': 0.11.0
+      react: 19.2.7
+      react-dom: 19.2.7(react@19.2.7)
+      use-sync-external-store: 1.6.0(react@19.2.7)
+
+  '@tanstack/store@0.11.0': {}
+
   '@ts-morph/common@0.27.0':
     dependencies:
       fast-glob: 3.3.3
@@ -18030,7 +17989,6 @@ snapshots:
   use-sync-external-store@1.6.0(react@19.2.7):
     dependencies:
       react: 19.2.7
-    optional: true
 
   util-deprecate@1.0.2: {}
 

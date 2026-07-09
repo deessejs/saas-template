@@ -22,12 +22,6 @@ import {
 
 import { Home, Settings } from "lucide-react"
 
-type SidebarUser = {
-  name: string
-  email: string
-  image?: string | null | undefined
-}
-
 const dashboardNav = [
   {
     title: "Home",
@@ -71,11 +65,8 @@ function isSettingsPath(pathname: string): boolean {
 }
 
 export function AppSidebar({
-  user,
   ...props
-}: {
-  user: SidebarUser | null
-} & React.ComponentProps<typeof Sidebar>) {
+}: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   const inSettings = isSettingsPath(pathname)
 
@@ -96,7 +87,7 @@ export function AppSidebar({
         {!inSettings && <SettingsShortcut />}
       </SidebarContent>
       <SidebarFooter className="border-t">
-        <NavUser user={user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

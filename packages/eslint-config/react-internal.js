@@ -25,6 +25,33 @@ const config = [
       "react/jsx-uses-react": "off",
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
+      // Discourage raw HTML controls in apps/* — prefer @workspace/ui shadcn components
+      // See: .claude/skills/use-shadcn/SKILL.md
+      "react/forbid-elements": [
+        "warn",
+        {
+          forbid: [
+            {
+              element: "input",
+              message:
+                "Use <Input /> from @workspace/ui/components/input (or <InputField /> wrapper in apps/app/components/auth/field.tsx).",
+            },
+            {
+              element: "button",
+              message:
+                "Use <Button /> from @workspace/ui/components/button with variant/size props.",
+            },
+            {
+              element: "select",
+              message: "Use <Select /> from @workspace/ui/components/select.",
+            },
+            {
+              element: "textarea",
+              message: "Use <Textarea /> from @workspace/ui/components/textarea.",
+            },
+          ],
+        },
+      ],
     },
   },
   {

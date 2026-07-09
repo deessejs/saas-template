@@ -34,5 +34,8 @@
   "packageManager": "pnpm@11.0.0",
   "engines": {
     "node": "24.x"
+  },
+  "dependencies": {
+    "@tanstack/react-form": "catalog:"
   }
 }

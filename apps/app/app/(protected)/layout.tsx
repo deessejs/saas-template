@@ -3,18 +3,14 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@workspace/ui/com
 import { APP_NAME } from "@workspace/ui/lib/config"
 import { AppSidebar } from "@/components/sidebars/app-sidebar"
 import { Separator } from "@workspace/ui/components/separator"
-import { getSession } from "@/lib/session"
-
 export default async function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const session = await getSession()
-
   return (
     <SidebarProvider>
-      <AppSidebar user={session?.user ?? null} />
+      <AppSidebar />
       <SidebarInset>
         <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger />
