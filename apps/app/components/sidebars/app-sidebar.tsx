@@ -6,7 +6,6 @@ import { NavMain } from "@/components/sidebars/nav-main"
 import { NavUser } from "@/components/sidebars/nav-user"
 import { SettingsNav } from "@/components/sidebars/settings-nav"
 import { SidebarBackAction } from "@/components/sidebar-back-action"
-import { OrgSwitcher } from "@/components/sidebars/org-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -19,6 +18,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@workspace/ui/components/sidebar"
+import { APP_NAME } from "@workspace/ui/lib/config"
 
 import { Home, Settings } from "lucide-react"
 
@@ -72,10 +72,24 @@ export function AppSidebar({
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="flex h-14 flex-row items-center border-b p-0">
-        <div className="flex w-full items-center">
-          <OrgSwitcher />
-        </div>
+      <SidebarHeader className="h-14 border-b">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              size="lg"
+              className="h-14 font-semibold"
+              tooltip={APP_NAME}
+            >
+              <Link href="/home">
+                <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground text-sm">
+                  {APP_NAME.charAt(0)}
+                </span>
+                <span>{APP_NAME}</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
