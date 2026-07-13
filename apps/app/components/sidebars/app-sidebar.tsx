@@ -2,7 +2,6 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { NavMain } from "@/components/sidebars/nav-main"
 import { NavUser } from "@/components/sidebars/nav-user"
 import { SettingsNav } from "@/components/sidebars/settings-nav"
 import { SidebarBackAction } from "@/components/sidebar-back-action"
@@ -22,14 +21,28 @@ import { APP_NAME } from "@workspace/ui/lib/config"
 
 import { Home, Settings } from "lucide-react"
 
-const dashboardNav = [
-  {
-    title: "Home",
-    url: "/",
-    icon: <Home />,
-    items: [],
-  },
-]
+/**
+ * Pinned "Home" entry rendered below the brand header. Always visible —
+ * the user needs an exit ramp from any nested route. `isActive` provides
+ * the sidebar's active styling when on /home.
+ */
+function HomeShortcut() {
+  const pathname = usePathname()
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        asChild
+        tooltip="Home"
+        isActive={pathname === "/home"}
+      >
+        <Link href="/home">
+          <Home />
+          <span>Home</span>
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  )
+}
 
 /**
  * Pinned "Settings" shortcut rendered at the bottom of the scrollable
@@ -97,8 +110,12 @@ export function AppSidebar({
             <SidebarBackAction />
           </SidebarGroupContent>
         </SidebarGroup>
-        {inSettings ? <SettingsNav /> : <NavMain items={dashboardNav} />}
-        {!inSettings && <SettingsShortcut />}
+        <SidebarGroup>
+          <SidebarMenu>
+            <HomeShortcut />
+          </SidebarMenu>
+        </SidebarGroup>
+        {inSettings ? <SettingsNav /> : <SettingsShortcut />}
       </SidebarContent>
       <SidebarFooter className="border-t">
         <NavUser />
