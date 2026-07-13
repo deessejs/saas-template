@@ -1,7 +1,6 @@
 packages:
   - "apps/*"
   - "packages/*"
-  - agents/*
 
 # pnpm 11: explicit allowlist for build scripts
 allowBuilds:
@@ -78,7 +77,6 @@ catalog:
   # UI
   tailwind-merge: ^3.6.0
   typescript: ^6.0.3
-  vercel-minimax-ai-provider: ^0.0.2
 
   # Testing
   vitest: ^4.1.10
@@ -89,6 +87,8 @@ catalog:
 catalogMode: strict
 
 minimumReleaseAgeExclude:
+  # Kept for now (Eve side-effect residue; pnpm resolution depends on these).
+  # TODO: audit each entry against direct usage; remove after lockfile regen confirms safety.
   - "@ai-sdk/*"
   - "@rolldown/*"
   - "@vercel/*"
