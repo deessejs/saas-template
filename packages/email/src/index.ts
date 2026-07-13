@@ -1,7 +1,6 @@
 import { mailer } from "./transport.js"
 import { VerifyEmail } from "./templates/verify-email.js"
 import { ResetPassword } from "./templates/reset-password.js"
-import { InvitationEmail } from "./templates/invitation.js"
 import type { MailerTransport, SendArgs } from "./types.js"
 
 export { mailer, type MailerTransport, type SendArgs }
@@ -39,5 +38,4 @@ export async function sendAuthEmail(opts: {
 export const templates = {
   VerifyEmail,
   ResetPassword,
-  InvitationEmail,
 }

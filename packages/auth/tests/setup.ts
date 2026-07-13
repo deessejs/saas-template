@@ -1,18 +1,17 @@
 /**
  * Auth test utilities
  *
- * Provides test auth instance with testUtils + organization plugins.
+ * Provides test auth instance with testUtils plugin.
  * Import this in your tests instead of the production auth.
  */
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "@better-auth/drizzle-adapter"
-import { organization, testUtils } from "better-auth/plugins"
+import { testUtils } from "better-auth/plugins"
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
 import * as schema from "@workspace/database/schema"
 import { serverEnv } from "@workspace/env/server"
 import { sendAuthEmail, templates } from "@workspace/email"
-import { organizationPluginOptions } from "../src/auth"
 
 // Test database connection
 const pool = postgres(serverEnv.TEST_DATABASE_URL, { max: 1 })
@@ -48,7 +47,6 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    organization(organizationPluginOptions),
     testUtils(),
   ],
 })

@@ -39,9 +39,9 @@ export class ConsoleTransport implements MailerTransport {
     }
 
     console.log("[DEBUG] ConsoleTransport.render() completed, plainText length:", plainText.length)
-    // Extract the first URL from the rendered text. For the 3 templates we
-    // ship (verify-email, reset-password, invitation), the magic link is the
-    // primary CTA button href, which appears first in the plain-text output.
+    // Extract the first URL from the rendered text. For the 2 templates we
+    // ship (verify-email, reset-password), the magic link is the primary
+    // CTA button href, which appears first in the plain-text output.
     const links = plainText.match(URL_REGEX) ?? []
     const primaryLink = links[0]
 
