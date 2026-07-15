@@ -1,11 +1,11 @@
 ---
 name: implement
-description: Implement a spec-reviewed issue. Reads the plan, asks for approval if not already given, writes code, and opens a PR. Refuses if not status:ready or if no spec exists.
+description: Implement a spec-reviewed issue. Reads the plan, asks for approval if not already given, and writes code. Does not open PR — use /create-pr after.
 ---
 
 # `implement` Skill
 
-Read an existing implementation spec, implement the code, and open a PR.
+Read an existing implementation spec and write the code. Does not open a PR — run `/create-pr #{n}` after.
 
 ## When to use
 
@@ -23,9 +23,7 @@ Read an existing implementation spec, implement the code, and open a PR.
 4. Checkout   — fetch and checkout the branch
 5. Implement  — write the code following the spec
 6. Validate   — build → typecheck → test → lint → dedupe
-7. Commit     — git add + commit + push
-8. PR         — open the pull request
-9. Update     — label issue, update org fields, post comment
+7. Done       — git push + tell user to run /create-pr #{n}
 ```
 
 ## §0 — Reset (always)
@@ -39,13 +37,6 @@ git checkout main && git pull origin main
 ```bash
 gh api "https://api.github.com/repos/deessejs/saas-template/issues/{n}"
 gh api --paginate "https://api.github.com/repos/deessejs/saas-template/issues/{n}/comments"
-```
-
-Also fetch the org-level issue field IDs (needed in §9):
-
-```bash
-gh api -H "X-GitHub-Api-Version: 2026-03-10" \
-  "https://api.github.com/orgs/deessejs/issue-fields"
 ```
 
 ## §2 — Check
@@ -140,7 +131,7 @@ If any step fails:
 2. Re-run the full sequence
 3. If the fix requires diverging from the spec → stop and ask before continuing
 
-## §7 — Commit + Push
+## §7 — Push + Done
 
 ```bash
 git add {files from plan + modified files}
@@ -151,79 +142,11 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 git push origin "impl/{n}-{slug}"
 ```
 
+Tell the user:
+
+> "Implementation complete and pushed to `impl/{n}-{slug}`. Run `/create-pr #{n}` to open the PR."
+
 **Commit type:** match the primary area label — `ci`, `chore`, `docs`, `feat`, `fix`, `refactor`.
-
-## §8 — Open PR
-
-```bash
-gh pr create \
-  --title "{issue title}" \
-  --body "## Summary
-
-{TL;DR from the spec}
-
-## What changed
-
-- {file}: {what changed}
-- ...
-
-## Verification
-
-- [ ] \`pnpm build\`
-- [ ] \`pnpm typecheck\`
-- [ ] \`pnpm test\`
-- [ ] \`pnpm lint\`
-
-## Related
-
-Closes #{n}
-
----
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)" \
-  --label "{labels}" \
-  --assignee martyy-code
-```
-
-## §9 — Update Issue
-
-After PR is open, do all three in parallel:
-
-**1. Remove `status:ready`**, add `status:in-progress`:
-
-```bash
-gh issue edit {n} --remove-label "status:ready" --add-label "status:in-progress"
-```
-
-**2. Assign to `martyy-code`:**
-
-```bash
-gh issue edit {n} --add-assignee martyy-code
-```
-
-**3. Post a comment:**
-
-```markdown
-<!-- triage-skill:v1 -->
-## Implementation started
-
-PR opened: {PR URL}
-
-The spec was reviewed and approved. Implementation in progress.
-
-_Triage by @martyy-code._
-```
-
-## Idempotency
-
-Before opening a PR, check if one already exists:
-
-```bash
-gh api --paginate "https://api.github.com/repos/deessejs/saas-template/pulls?state=open&per_page=50" \
-  --jq '.[] | select(.body | contains("Closes #{n}")) | {number, html_url}'
-```
-
-If a PR exists → tell the user and offer to update it instead.
 
 ## Error handling
 
@@ -234,7 +157,6 @@ If a PR exists → tell the user and offer to update it instead.
 | No spec found | Refuse — Gate B |
 | Branch not on origin | Refuse — Gate C |
 | `breaking-change` label present | Warn and review Risks before proceeding |
-| PR already exists | Tell user; offer to update instead |
 | Tests fail | Fix → re-validate → ask if outside spec |
 | Spec not approved | Ask for approval in §3 |
 
@@ -245,6 +167,6 @@ If a PR exists → tell the user and offer to update it instead.
 - **Refuse if no spec exists.**
 - **Always branch from `/spec` first.**
 - **Plan before code — no exceptions.**
+- **Never opens a PR** — run `/create-pr #{n}` after this skill.
 - Never push to `main`.
-- Never merge a PR from this skill.
 - Do not use `--force` to overwrite branches without permission.
