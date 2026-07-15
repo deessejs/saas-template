@@ -1,0 +1,54 @@
+"use client"
+
+import { useState } from "react"
+import { toast } from "sonner"
+import { authClient } from "@/lib/auth-client"
+import { Button } from "@workspace/ui/components/button"
+import { GoogleIcon } from "./icons/google-icon"
+import { GitHubIcon } from "./icons/github-icon"
+
+interface OAuthButtonsProps {
+	callbackURL?: string
+}
+
+export function OAuthButtons({ callbackURL = "/home" }: OAuthButtonsProps) {
+	const [loading, setLoading] = useState<string | null>(null)
+
+	async function handleOAuth(provider: "google" | "github") {
+		setLoading(provider)
+		const { error } = await authClient.signIn.social({ provider, callbackURL })
+		setLoading(null)
+
+		if (error) {
+			toast.error(error.message ?? "Authentication failed")
+		}
+		// Redirect is handled automatically by better-auth's redirectPlugin
+	}
+
+	return (
+		<div className="flex flex-col gap-2">
+			<Button
+				variant="outline"
+				type="button"
+				className="w-full"
+				onClick={() => handleOAuth("google")}
+				disabled={!!loading}
+				aria-busy={loading === "google"}
+			>
+				<GoogleIcon />
+				{loading === "google" ? "Redirecting…" : "Continue with Google"}
+			</Button>
+			<Button
+				variant="outline"
+				type="button"
+				className="w-full"
+				onClick={() => handleOAuth("github")}
+				disabled={!!loading}
+				aria-busy={loading === "github"}
+			>
+				<GitHubIcon />
+				{loading === "github" ? "Redirecting…" : "Continue with GitHub"}
+			</Button>
+		</div>
+	)
+}

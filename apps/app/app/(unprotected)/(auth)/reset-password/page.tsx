@@ -1,22 +1,22 @@
-import { ResetPasswordForm } from "@/components/auth"
+import { AuthContainer, ResetPasswordForm } from "@/components/auth"
 
 export default async function ResetPasswordPage({
-  searchParams,
+	searchParams,
 }: {
-  searchParams: Promise<URLSearchParams>
+	searchParams: Promise<{ token?: string }>
 }) {
-  const params = await searchParams
-  const token = params.get("token") ?? ""
+	const params = await searchParams
+	const token = params.token ?? ""
 
-  return (
-    <div className="flex flex-1 flex-col justify-center gap-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold">Reset password</h1>
-        <p className="text-sm text-muted-foreground">
-          Choose a new password for your account.
-        </p>
-      </div>
-      <ResetPasswordForm token={token} />
-    </div>
-  )
+	return (
+		<AuthContainer.Root>
+			<AuthContainer.Header
+				title="Reset password"
+				description="Choose a new password for your account."
+			/>
+			<AuthContainer.Content>
+				<ResetPasswordForm token={token} />
+			</AuthContainer.Content>
+		</AuthContainer.Root>
+	)
 }

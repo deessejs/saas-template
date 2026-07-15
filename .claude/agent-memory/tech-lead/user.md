@@ -36,4 +36,4 @@ For deep technical questions, the user wants **thorough research with concrete e
 
 **How to apply:** When proposing dev infrastructure for a template, **default to the simplest option** (console logs, file-based mocks, in-memory state) and only suggest a service container if the use case clearly demands it. Frame heavier options as opt-in (`MAIL_TRANSPORT=smtp`) not as default. The user will accept opt-in infrastructure; they'll push back on default infrastructure.
 
-Related: [[claude-code-subagents]], [[claude-code-workflows]], [[claude-code-index]], [[app-architecture]].
+Related: [[claude-code-subagents]], [[claude-code-workflows]], [[claude-code-index]], [[app-architecture]], [[verify-high-severity-findings]].

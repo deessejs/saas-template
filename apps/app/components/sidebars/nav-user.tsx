@@ -7,6 +7,15 @@ import {
 	AvatarFallback,
 	AvatarImage,
 } from "@workspace/ui/components/avatar"
+import { Button } from "@workspace/ui/components/button"
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@workspace/ui/components/dialog"
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -51,11 +60,13 @@ export function NavUser() {
 	const { isMobile } = useSidebar()
 	const { data: session } = authClient.useSession()
 	const [loggingOut, setLoggingOut] = useState(false)
+	const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
 
 	const user = session?.user
 
 	async function handleLogout() {
 		setLoggingOut(true)
+		setLogoutDialogOpen(false)
 		await authClient.signOut({
 			fetchOptions: {
 				onSuccess: () => router.push("/login"),
@@ -86,33 +97,15 @@ export function NavUser() {
 	const initials = getInitials(user.name)
 
 	return (
-		<SidebarMenu>
-			<SidebarMenuItem>
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<SidebarMenuButton
-							size="lg"
-							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-						>
-							<Avatar className="h-8 w-8 rounded-lg">
-								<AvatarImage src={avatarUrl} alt={user.name} />
-								<AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
-							</Avatar>
-							<div className="grid flex-1 text-left text-sm leading-tight">
-								<span className="truncate font-medium">{user.name}</span>
-								<span className="truncate text-xs">{user.email}</span>
-							</div>
-							<ChevronsUpDownIcon className="ml-auto size-4" />
-						</SidebarMenuButton>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent
-						className="w-fit"
-						side={isMobile ? "bottom" : "right"}
-						align="end"
-						sideOffset={4}
-					>
-						<DropdownMenuLabel className="p-0 font-normal">
-							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+		<>
+			<SidebarMenu>
+				<SidebarMenuItem>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<SidebarMenuButton
+								size="lg"
+								className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+							>
 								<Avatar className="h-8 w-8 rounded-lg">
 									<AvatarImage src={avatarUrl} alt={user.name} />
 									<AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
@@ -121,42 +114,80 @@ export function NavUser() {
 									<span className="truncate font-medium">{user.name}</span>
 									<span className="truncate text-xs">{user.email}</span>
 								</div>
-							</div>
-						</DropdownMenuLabel>
-						<DropdownMenuSeparator />
-						<DropdownMenuGroup>
-							<DropdownMenuItem>
-								<SparklesIcon />
-								Upgrade to Pro
-							</DropdownMenuItem>
-						</DropdownMenuGroup>
-						<DropdownMenuSeparator />
-						<DropdownMenuGroup>
-							<DropdownMenuItem>
-								<BadgeCheckIcon />
-								Account
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<CreditCardIcon />
-								Billing
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<BellIcon />
-								Notifications
-							</DropdownMenuItem>
-						</DropdownMenuGroup>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem
-							onClick={handleLogout}
-							disabled={loggingOut}
-							aria-busy={loggingOut}
+								<ChevronsUpDownIcon className="ml-auto size-4" />
+							</SidebarMenuButton>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent
+							className="w-fit"
+							side={isMobile ? "bottom" : "right"}
+							align="end"
+							sideOffset={4}
 						>
-							<LogOutIcon />
+							<DropdownMenuLabel className="p-0 font-normal">
+								<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+									<Avatar className="h-8 w-8 rounded-lg">
+										<AvatarImage src={avatarUrl} alt={user.name} />
+										<AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+									</Avatar>
+									<div className="grid flex-1 text-left text-sm leading-tight">
+										<span className="truncate font-medium">{user.name}</span>
+										<span className="truncate text-xs">{user.email}</span>
+									</div>
+								</div>
+							</DropdownMenuLabel>
+							<DropdownMenuSeparator />
+							<DropdownMenuGroup>
+								<DropdownMenuItem>
+									<SparklesIcon />
+									Upgrade to Pro
+								</DropdownMenuItem>
+							</DropdownMenuGroup>
+							<DropdownMenuSeparator />
+							<DropdownMenuGroup>
+								<DropdownMenuItem>
+									<BadgeCheckIcon />
+									Account
+								</DropdownMenuItem>
+								<DropdownMenuItem>
+									<CreditCardIcon />
+									Billing
+								</DropdownMenuItem>
+								<DropdownMenuItem>
+									<BellIcon />
+									Notifications
+								</DropdownMenuItem>
+							</DropdownMenuGroup>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem
+								onClick={() => setLogoutDialogOpen(true)}
+								disabled={loggingOut}
+							>
+								<LogOutIcon />
+								Log out
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</SidebarMenuItem>
+			</SidebarMenu>
+
+			<Dialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Log out?</DialogTitle>
+						<DialogDescription>
+							You will be signed out of your account.
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<Button variant="outline" onClick={() => setLogoutDialogOpen(false)}>
+							Cancel
+						</Button>
+						<Button onClick={handleLogout} disabled={loggingOut}>
 							{loggingOut ? "Signing out…" : "Log out"}
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			</SidebarMenuItem>
-		</SidebarMenu>
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+		</>
 	)
 }

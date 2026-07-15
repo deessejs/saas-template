@@ -10,8 +10,9 @@ export const auth = betterAuth({
   baseURL: serverEnv.BETTER_AUTH_URL,
   secret: serverEnv.BETTER_AUTH_SECRET,
   trustedOrigins: [
-    "http://localhost:3000",
-    "http://localhost:3001",
+    ...(process.env.NODE_ENV === "development"
+      ? ["http://localhost:3000", "http://localhost:3001"]
+      : []),
     ...serverEnv.ALLOWED_ORIGINS,
   ],
 
@@ -34,6 +35,8 @@ export const auth = betterAuth({
   },
 
   emailVerification: {
+    sendOnSignUp: true,
+    sendOnSignIn: true,
     sendVerificationEmail: async ({ user, url }) => {
       await sendAuthEmail({
         to: user.email,
@@ -50,7 +53,7 @@ export const auth = betterAuth({
   },
 
   advanced: {
-    useSecureCookies: true,
+    useSecureCookies: process.env.NODE_ENV === "production",
   },
 
   experimental: {

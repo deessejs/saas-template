@@ -1,6 +1,7 @@
 - [Stack](project/stack.md) — pnpm 11 monorepo + catalogs strict + Turbo v2 + Tailwind v4 + CI
 - [Template strategy](project/template-strategy.md) — GitHub template repo, no changesets for end users
 - [Vercel deploy](project/deploy.md) — eve vercel.json pattern + dashboard overrides + engines.node >=24 + live agent URL
+- [Next.js 16 proxy.ts](project/nextjs-proxy.md) — middleware renamed to proxy.ts; auth guard in apps/app/proxy.ts is correct
 - [Vercel platform](project/vercel-platform.md) — July 2026 snapshot: Vercel Services (multi-framework), Fluid compute + Active CPU, Sandbox, AI Gateway, full product catalog
 - [Eve integration](project/eve.md) — `npx eve init` side effects on root pnpm-workspace.yaml + package.json + MiniMax M3 provider
 - [AGENTS + commit conventions](project/agents.md) — AGENTS.md markers + Conventional Commits (informal) + CODEOWNERS + Co-authored-by footer
@@ -9,7 +10,16 @@
 - [apps/docs architecture](apps/docs.md) — Fumadocs-based docs site (separate deploy, target of /docs links from web/app)
 - [packages/ui audit](packages/ui-audit.md) — audit findings corrected after web verification (4 wrong, 4 right)
 - [use-shadcn skill initiative](project/use-shadcn-skill.md) — 2026-07-09: 3-layer fix (skill + ESLint rule + new Checkbox) to stop agents using raw HTML; 3-file migration backlog
-- [packages/auth](packages/auth.md) — better-auth CLI workflow + file ownership + Drizzle companion scripts (generate/migrate/push/check)
+- [packages/auth](packages/auth.md) — Better Auth schema ownership; runtime/adapter 1.6.23 vs legacy CLI 1.4.21 warning
+- [P1 useSecureCookies](project/p1-use-secure-cookies.md) — static `true` breaks local HTTP sessions
+- [P1 trustedOrigins](project/p1-trusted-origins.md) — localhost always trusted; conditional CSRF risk on deployment host
+- [P1 sendOnSignUp](project/p1-send-on-signup-disabled.md) — verification required but unenforced; f42933e temp bypass
+- [P1 CI typecheck](project/p1-ci-typecheck-scope.md) — typecheck job filters workspace and skips --frozen-lockfile
+- [P1 catalog latest tags](project/p1-catalog-latest-tags.md) — four `latest` entries defeat catalog reproducibility
+- [P1 settings stubs](project/p1-settings-cosmetic-stubs.md) — six setTimeout/DUMMY_* stubs in settings pages
+- [P1 OAuthButtons](project/p1-oauth-buttons-no-error.md) — duplicated OAuthButtons with no error handling
+- [Better Auth CLI blocker](project/better-auth-cli-release-blocker.md) — version mismatch blocks safe auth schema generation
+- [Verify high-severity findings](feedback-verify-high-severity-findings.md) — P0/P1 require exact versions, runtime/Git proof, and Fresh sources
 - [Package structure](project/package-structure.md) — one-package-per-concern — new features get their own packages/* (e.g. packages/email for the mailer)
 - [Mailer audit](project/mailer-audit.md) — 2026-07-07 decision log: Resend + console default + react-email in new packages/email package
 - [Claude Code docs index](claude-code/README.md) — pointer URLs for subagents, workflows, plugins, hooks, worktrees, memory

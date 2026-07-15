@@ -32,10 +32,7 @@ export const serverSchema = z.object({
     .string()
     .min(32, "Run: openssl rand -base64 32 (>= 32 chars required)"),
   AUTH_SECRET: z.string().min(32).optional(),
-  ALLOWED_ORIGINS: csv.default([
-    "http://localhost:3000",
-    "http://localhost:3001",
-  ]),
+  ALLOWED_ORIGINS: csv.default([]),
 
   // Mailer — Resend (prod)
   RESEND_API_KEY: z.string().optional(),
