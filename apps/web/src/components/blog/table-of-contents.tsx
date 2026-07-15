@@ -28,6 +28,9 @@ export function TableOfContents({ targetId }: { targetId: string }) {
       next.push({ id: h.id, text: h.textContent || "", level })
     })
 
+    // Intentionally updating state after DOM query to populate the table of contents.
+    // This is a valid use case that requires extracting headings from the DOM.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setItems(next)
   }, [targetId])
 

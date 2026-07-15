@@ -6,6 +6,8 @@ import { Search, X } from "lucide-react"
 import Fuse from "fuse.js"
 import { searchData } from "@/lib/blog/search"
 import { cn } from "@workspace/ui/lib/utils"
+import { Button } from "@workspace/ui/components/button"
+import { Input } from "@workspace/ui/components/input"
 
 export function SearchDialog() {
   const [query, setQuery] = useState("")
@@ -34,6 +36,9 @@ export function SearchDialog() {
   }, [query, fuse])
 
   useEffect(() => {
+    // Reset selection when results change (e.g., new search query)
+    // This is intentional - we want to clear selection on new results
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedIndex(-1)
   }, [results])
 
@@ -75,16 +80,18 @@ export function SearchDialog() {
 
   if (!isOpen) {
     return (
-      <button
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 rounded-md border border-border/40 bg-muted/30 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted/50"
+        className="flex items-center gap-2 border border-border/40 bg-muted/30 px-3 py-1.5 text-muted-foreground hover:bg-muted/50"
       >
         <Search className="size-4" />
         <span className="hidden sm:inline">Search...</span>
         <kbd className="hidden sm:inline text-[10px] font-mono text-muted-foreground/60">
           ⌘K
         </kbd>
-      </button>
+      </Button>
     )
   }
 
@@ -97,21 +104,23 @@ export function SearchDialog() {
       <div className="relative z-10 w-full max-w-lg rounded-xl border border-border/40 bg-card shadow-xl">
         <div className="flex items-center gap-3 border-b border-border/40 px-4 py-3">
           <Search className="size-4 text-muted-foreground" />
-          <input
+          <Input
             ref={inputRef}
             type="text"
             placeholder="Search articles and releases..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            className="flex-1 border-0 bg-transparent p-0 text-sm shadow-none outline-none placeholder:text-muted-foreground focus-visible:ring-0"
           />
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => { setIsOpen(false); setQuery("") }}
             className="text-muted-foreground hover:text-foreground"
           >
             <X className="size-4" />
-          </button>
+          </Button>
         </div>
 
         {query.trim() && (
@@ -123,14 +132,15 @@ export function SearchDialog() {
             ) : (
               results.map((result, i) => (
                 <li key={result.item.url}>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => {
                       router.push(result.item.url)
                       setIsOpen(false)
                       setQuery("")
                     }}
                     className={cn(
-                      "flex w-full flex-col gap-0.5 px-4 py-2 text-left transition-colors",
+                      "flex w-full flex-col items-start gap-0.5 px-4 py-2 text-left",
                       selectedIndex === i
                         ? "bg-muted"
                         : "hover:bg-muted/50",
@@ -152,7 +162,7 @@ export function SearchDialog() {
                     <span className="line-clamp-1 text-xs text-muted-foreground">
                       {result.item.description}
                     </span>
-                  </button>
+                  </Button>
                 </li>
               ))
             )}
