@@ -52,7 +52,7 @@ export function ConnectedAccountsList() {
 		}
 
 		setAccounts(
-			data.accounts.map((a) => ({
+			data.map((a) => ({
 				id: a.id,
 				providerId: a.providerId,
 				accountId: a.accountId,
@@ -76,7 +76,7 @@ export function ConnectedAccountsList() {
 		if (!unlinkConfirm) return
 		setUnlinkingId(unlinkConfirm.id)
 
-		const { error } = await authClient.unlinkSocial({
+		const { error } = await authClient.unlinkAccount({
 			accountId: unlinkConfirm.id,
 			providerId: unlinkConfirm.provider,
 		})
@@ -146,7 +146,7 @@ export function ConnectedAccountsList() {
 								onClick={() => handleLink(provider)}
 								disabled={isLinked || linking === provider}
 							>
-								{linking === provider ? "Linking…" : `Link ${info.name}`}
+								{linking === provider ? "Linking…" : `Link ${info?.name ?? provider}`}
 							</Button>
 						)
 					})}

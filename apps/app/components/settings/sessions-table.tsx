@@ -19,7 +19,7 @@ interface Session {
 	token: string
 	userAgent: string
 	ipAddress: string
-	expiresAt: string
+	expiresAt: Date
 	isCurrent: boolean
 }
 
@@ -36,22 +36,27 @@ export function SessionsTable() {
 
 	async function loadSessions() {
 		setLoading(true)
-		const { data, error } = await authClient.listSessions()
+		const [{ data: sessions }, { data: currentSession }] = await Promise.all([
+			authClient.listSessions(),
+			authClient.useSession(),
+		])
 		setLoading(false)
 
-		if (error || !data) {
+		if (!sessions || !currentSession) {
 			setSessions([])
 			return
 		}
 
+		const currentToken = currentSession.session?.token
+
 		setSessions(
-			data.sessions.map((s) => ({
+			sessions.map((s) => ({
 				id: s.id,
 				token: s.token,
 				userAgent: s.userAgent ?? "Unknown",
 				ipAddress: s.ipAddress ?? "—",
 				expiresAt: s.expiresAt,
-				isCurrent: s.isCurrent,
+				isCurrent: s.token === currentToken,
 			})),
 		)
 	}

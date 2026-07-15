@@ -43,6 +43,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm turbo build --filter=web --force
       - run: pnpm turbo typecheck --force
 
   build:
