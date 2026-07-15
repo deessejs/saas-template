@@ -16,11 +16,12 @@ Run this **after** `/implement #{n}` — the branch must be pushed with the impl
 ## Workflow overview
 
 ```
-0. Reset  — return to staging and pull latest
-1. Fetch  — read the issue + the spec
-2. Check  — gate A: branch on origin · gate B: no existing open PR
-3. PR     — open the pull request to staging
-4. Update — label, assign, post comment
+0. Reset       — return to staging and pull latest
+1. Fetch       — read the issue + the spec
+2. Check       — gate A: branch on origin · gate B: no existing open PR
+3. PR          — open the pull request to staging
+4. Update      — label, assign, post comment
+5. Changeset   — verify .changeset/*.md exists, add if missing
 ```
 
 ## §0 — Reset (always)
@@ -71,7 +72,7 @@ If a PR exists:
 
 > "A PR already exists for issue #{n}: {PR URL}. Do you want me to update it instead?"
 
-If yes: proceed to §3 but use `--edit` instead of `--create`.
+If yes: proceed to §3 but use `--edit` instead of `--create`. Then go to §5 to verify the changeset file.
 
 ## §3 — Open PR
 
@@ -87,6 +88,12 @@ gh pr create \
 
 - {file}: {what changed}
 - ...
+
+## Changeset
+
+<!-- changeset-type: patch | minor | major -->
+
+A `.changeset/*.md` file should be present in this PR to document the change type and trigger the release workflow on merge to main.
 
 ## Verification
 
@@ -137,11 +144,40 @@ The spec was reviewed and approved. This PR targets `staging`. After CI green + 
 _Triage by @martyy-code._
 ```
 
+## §5 — Verify changeset
+
+Check if a `.changeset/*.md` file exists in the branch:
+
+```bash
+git fetch origin "impl/{n}-{slug}"
+git ls-tree -r --name-only origin/impl/{n}-{slug} | grep "^.changeset/"
+```
+
+If **missing**, offer to create one:
+
+```bash
+pnpm changeset add
+```
+
+Ask the user to describe the change and select `patch`, `minor`, or `major`. Commit and push:
+
+```bash
+git add .changeset/*.md
+git commit -m "docs(changeset): document change
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+git push origin "impl/{n}-{slug}"
+```
+
+Tell the user:
+
+> "Changeset `.changeset/*.md` added. This will trigger the release workflow when staging → main merges."
+
 ## Output
 
 Confirm with a one-liner: PR number, title, URL, and next step.
 
-> "PR #{n}: {title} — {PR URL}. Targets `staging`. After CI green + review approval, merge `staging → main` manually."
+> "PR #{n}: {title} — {PR URL}. Targets `staging`. After CI green + review approval, merge `staging → main` → release workflow triggers automatically."
 
 ## Error handling
 
@@ -150,6 +186,7 @@ Confirm with a one-liner: PR number, title, URL, and next step.
 | Already on a branch | §0 resets to staging automatically |
 | Branch not on origin | Refuse — Gate A |
 | PR already exists | Tell user; offer to update instead |
+| No changeset file found | Create one with `pnpm changeset add` before creating PR |
 | PR creation fails | Check labels are valid, then retry |
 
 ## Constraints
@@ -157,5 +194,6 @@ Confirm with a one-liner: PR number, title, URL, and next step.
 - **Always return to `staging` first.**
 - **Run after `/implement #{n}`** — the branch must exist and be pushed.
 - **PR always targets `staging`.**
+- **A `.changeset/*.md` file must be present** — the release workflow depends on it.
 - Never push to `main`.
 - Never merge a PR from this skill.

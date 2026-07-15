@@ -168,9 +168,11 @@ git push origin "impl/{n}-{slug}"
 
 Tell the user:
 
-> "Implementation complete and pushed to `impl/{n}-{slug}`. Run `/create-pr #{n}` to open the PR."
+> "Implementation complete and pushed to `impl/{n}-{slug}`. Now run `pnpm changeset add` to describe this change, then `/create-pr #{n}` to open the PR."
 
 **Commit type:** match the primary area label — `ci`, `chore`, `docs`, `feat`, `fix`, `refactor`.
+
+**Changeset reminder:** After pushing, remind the user to run `pnpm changeset add`. This creates a `.changeset/*.md` file that documents the change type (`patch`/`minor`/`major`) and description. This file is what triggers the release workflow when the PR merges to main.
 
 ---
 
