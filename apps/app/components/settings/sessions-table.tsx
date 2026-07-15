@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@workspace/ui/components/button"
@@ -30,19 +30,15 @@ export function SessionsTable() {
 	const [revokeAllOpen, setRevokeAllOpen] = useState(false)
 	const [revokingAll, setRevokingAll] = useState(false)
 
-	useEffect(() => {
-		loadSessions()
-	}, [])
-
-	async function loadSessions() {
+	const loadSessions = useCallback(async () => {
 		setLoading(true)
-		const [{ data: sessions }, { data: currentSession }] = await Promise.all([
+		const [{ data: sessionList }, { data: currentSession }] = await Promise.all([
 			authClient.listSessions(),
 			authClient.useSession(),
 		])
 		setLoading(false)
 
-		if (!sessions || !currentSession) {
+		if (!sessionList || !currentSession) {
 			setSessions([])
 			return
 		}
@@ -50,7 +46,7 @@ export function SessionsTable() {
 		const currentToken = currentSession.session?.token
 
 		setSessions(
-			sessions.map((s) => ({
+			sessionList.map((s) => ({
 				id: s.id,
 				token: s.token,
 				userAgent: s.userAgent ?? "Unknown",
@@ -59,19 +55,24 @@ export function SessionsTable() {
 				isCurrent: s.token === currentToken,
 			})),
 		)
-	}
+	}, [])
+
+	useEffect(() => {
+		// Valid: loading data on mount requires setState
+		// eslint-disable-next-line react-hooks/set-state-in-effect
+		loadSessions()
+	}, [loadSessions])
 
 	async function handleRevoke(id: string) {
 		setRevoking(id)
 		const { error } = await authClient.revokeSession({ token: id })
-		setRevoking(null)
 
 		if (error) {
 			toast.error(error.message ?? "Failed to revoke session")
-			return
+		} else {
+			setSessions((prev) => prev.filter((s) => s.id !== id))
 		}
-
-		setSessions((prev) => prev.filter((s) => s.id !== id))
+		setRevoking(null)
 	}
 
 	async function handleRevokeAll() {
@@ -82,10 +83,9 @@ export function SessionsTable() {
 
 		if (error) {
 			toast.error(error.message ?? "Failed to sign out other sessions")
-			return
+		} else {
+			setSessions((prev) => prev.filter((s) => s.isCurrent))
 		}
-
-		setSessions((prev) => prev.filter((s) => s.isCurrent))
 	}
 
 	return (

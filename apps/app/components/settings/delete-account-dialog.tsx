@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
@@ -19,7 +18,6 @@ import { DangerZone } from "@/components/settings"
 const CONFIRM_TEXT = "DELETE"
 
 export function DeleteAccountDialog() {
-	const router = useRouter()
 	const [open, setOpen] = useState(false)
 	const [confirm, setConfirm] = useState("")
 	const [deleting, setDeleting] = useState(false)

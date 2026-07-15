@@ -4,7 +4,6 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
 import { PasswordInput } from "@/components/auth/password-input"
 
 export function PasswordForm() {

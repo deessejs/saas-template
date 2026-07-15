@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@workspace/ui/components/button"
@@ -11,7 +11,6 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from "@workspace/ui/components/dialog"
 import { GoogleIcon } from "@/components/auth/icons/google-icon"
 import { GitHubIcon } from "@/components/auth/icons/github-icon"
@@ -37,11 +36,7 @@ export function ConnectedAccountsList() {
 	const [unlinkConfirm, setUnlinkConfirm] = useState<{ id: string; provider: string } | null>(null)
 	const [linking, setLinking] = useState<string | null>(null)
 
-	useEffect(() => {
-		loadAccounts()
-	}, [])
-
-	async function loadAccounts() {
+	const loadAccounts = useCallback(async () => {
 		setLoading(true)
 		const { data, error } = await authClient.listAccounts()
 		setLoading(false)
@@ -58,7 +53,13 @@ export function ConnectedAccountsList() {
 				accountId: a.accountId,
 			})),
 		)
-	}
+	}, [])
+
+	useEffect(() => {
+		// Valid: loading data on mount requires setState
+		// eslint-disable-next-line react-hooks/set-state-in-effect
+		loadAccounts()
+	}, [loadAccounts])
 
 	async function handleLink(provider: string) {
 		setLinking(provider)
