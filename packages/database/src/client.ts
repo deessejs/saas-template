@@ -16,15 +16,22 @@ import * as schema from "./schema/index.js"
 
 let _db: ReturnType<typeof drizzle> | null = null
 
-function getDb() {
+function getDb(): ReturnType<typeof drizzle> {
   if (!_db) {
-    const { serverEnv } = require("@workspace/env/server")
-    if (!serverEnv.DATABASE_URL) {
+    // Dynamic import to avoid ESM circular dependency issues while still
+    // loading env vars at runtime (not build time).
+    // This is allowed for @workspace/env/server in eslint-config.
+    const envModule = require("@workspace/env/server") as {
+      serverEnv: { DATABASE_URL: string | undefined }
+    }
+    const url = envModule.serverEnv.DATABASE_URL
+
+    if (!url) {
       // CLI context: return a passthrough object so imports don't crash.
       // Real usage always has DATABASE_URL set.
       _db = {} as ReturnType<typeof drizzle>
     } else {
-      const pool = postgres(serverEnv.DATABASE_URL, {
+      const pool = postgres(url, {
         prepare: false,
         max: 10,
         idle_timeout: 60,
@@ -40,6 +47,6 @@ function getDb() {
 // until a property is actually accessed (e.g. by drizzle queries at runtime).
 export const db = new Proxy({} as ReturnType<typeof drizzle>, {
   get(_target, prop) {
-    return (getDb() as any)[prop]
+    return getDb()[prop as keyof ReturnType<typeof drizzle>]
   },
 })
