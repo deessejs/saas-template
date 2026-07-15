@@ -49,6 +49,9 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: production
+      BETTER_AUTH_SECRET: ci-test-secret-which-is-long-enough-to-pass-the-32-char-validation
     steps:
       - uses: actions/checkout@v4
         with:
@@ -66,6 +69,9 @@ jobs:
   test-unit:
     name: Test (Unit)
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      BETTER_AUTH_SECRET: ci-test-secret-which-is-long-enough-to-pass-the-32-char-validation
     steps:
       - uses: actions/checkout@v4
         with:
