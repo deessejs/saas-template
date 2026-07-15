@@ -79,6 +79,21 @@ jobs:
           echo "No changeset files found. Skipping release."
           echo "To create a manual release, use workflow_dispatch."
 
+      # ── Read current VERSION (before changeset bumps it) ─────────────────
+      - name: Read current VERSION
+        id: current-version
+        if: steps.changesets.outputs.count != '0'
+        run: |
+          if [ -f VERSION ]; then
+            CURRENT=$(cat VERSION)
+            echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+            echo "VERSION file exists with: $CURRENT"
+          else
+            CURRENT=$(node -e "console.log(require('./package.json').version)")
+            echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+            echo "No VERSION file, starting from: $CURRENT"
+          fi
+
       # ── Version bump ────────────────────────────────────────────────────
       - name: Apply version bump
         if: steps.changesets.outputs.count != '0'
@@ -86,16 +101,17 @@ jobs:
           pnpm changeset version
           pnpm install --frozen-lockfile
 
-      # ── Update VERSION file ──────────────────────────────────────────────
-      - name: Update VERSION file
+      # ── Sync VERSION from package.json ───────────────────────────────────
+      - name: Sync VERSION file
         if: steps.changesets.outputs.count != '0'
         run: |
           node -e "
             const fs = require('fs');
             const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
             const version = pkg.version;
+            const current = '${{ steps.current-version.outputs.current }}';
             fs.writeFileSync('VERSION', version + '\n');
-            console.log('VERSION:', version);
+            console.log('VERSION updated: ' + current + ' -> ' + version);
           "
 
       # ── Commit version bump ──────────────────────────────────────────────
