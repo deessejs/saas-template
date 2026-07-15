@@ -37,8 +37,11 @@ function validateServerEnv(): Readonly<ServerEnv> {
 
   _cached = Object.freeze({
     ...parsed.data,
+    // Resolve alias: BETTER_AUTH_SECRET > AUTH_SECRET.
+    // When both are undefined, let the consumer (better-auth) handle the
+    // validation — it throws in production and uses a dev default in test/dev.
     BETTER_AUTH_SECRET:
-      parsed.data.BETTER_AUTH_SECRET ?? parsed.data.AUTH_SECRET!,
+      parsed.data.BETTER_AUTH_SECRET ?? parsed.data.AUTH_SECRET ?? undefined,
     TEST_DATABASE_URL:
       parsed.data.TEST_DATABASE_URL ?? parsed.data.DATABASE_URL,
   })

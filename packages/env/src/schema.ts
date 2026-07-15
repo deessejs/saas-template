@@ -5,16 +5,23 @@ import { z } from "zod"
  *
  * Required in every runtime that imports `@workspace/env/server`:
  *   - DATABASE_URL          Postgres connection string
- *   - BETTER_AUTH_SECRET    >=32 chars. Generate: openssl rand -base64 32
  *
  * Optional (defaults shown):
  *   - NODE_ENV              "development" | "test" | "production"
  *   - TEST_DATABASE_URL     Falls back to DATABASE_URL when unset
- *   - BETTER_AUTH_URL       Defaults to http://localhost:3000
+ *   - BETTER_AUTH_SECRET    >=32 chars in prod; optional in dev/test
+ *                           (better-auth auto-generates a dev-only default)
+ *                           Generate: openssl rand -base64 32
  *   - AUTH_SECRET           Alias for BETTER_AUTH_SECRET (resolved at the
  *                           package boundary, so call sites only see the
  *                           resolved value)
+ *   - BETTER_AUTH_URL       Defaults to http://localhost:3000
  *   - ALLOWED_ORIGINS       CSV. Defaults to localhost dev origins.
+ *
+ * BETTER_AUTH_SECRET note: better-auth validates the secret internally.
+ * In production (NODE_ENV=production), it throws if unset. In dev/test,
+ * it uses a built-in default. Making it optional here lets the test
+ * suite run without env vars while still enforcing it at prod startup.
  */
 
 const csv = z
@@ -28,9 +35,13 @@ export const serverSchema = z.object({
   DATABASE_URL: z.string().url().optional(),
   TEST_DATABASE_URL: z.string().url().optional(),
   BETTER_AUTH_URL: z.string().url().default("http://localhost:3000"),
+  // Optional. In production, better-auth throws if unset.
+  // In dev/test, better-auth uses a built-in default secret.
+  // We only validate length when the value is present (prevents crash in test).
   BETTER_AUTH_SECRET: z
     .string()
-    .min(32, "Run: openssl rand -base64 32 (>= 32 chars required)"),
+    .min(32, "Run: openssl rand -base64 32 (>= 32 chars required)")
+    .optional(),
   AUTH_SECRET: z.string().min(32).optional(),
   ALLOWED_ORIGINS: csv.default([]),
 
