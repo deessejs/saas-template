@@ -23,7 +23,7 @@ Two modes:
 ### Spec-driven (default)
 
 ```
-0. Reset      — return to main and pull latest
+0. Reset      — return to staging and pull latest
 1. Fetch      — read the issue + look for the spec
 2. Check      — gate A: status:ready · gate B: spec exists · gate C: branch exists
 3. Review     — ask for approval if not already given
@@ -36,7 +36,7 @@ Two modes:
 ### Review-driven (`--review`)
 
 ```
-0. Reset      — return to main and pull latest
+0. Reset      — return to staging and pull latest
 1. Fetch      — PR details + review comments
 2. Check      — gate A: PR open · gate B: has review with requested_changes
 3. Parse      — extract all requested changes from review comments
@@ -53,7 +53,7 @@ Two modes:
 ## §0 — Reset (always)
 
 ```bash
-git checkout main && git pull origin main
+git checkout staging && git pull origin staging
 ```
 
 ## §1 — Fetch
@@ -179,7 +179,7 @@ Tell the user:
 ## §0 — Reset (always)
 
 ```bash
-git checkout main && git pull origin main
+git checkout staging && git pull origin staging
 ```
 
 ## §1 — Fetch
@@ -307,7 +307,7 @@ Tell the user:
 
 | Situation | Action |
 |---|---|
-| Already on a branch | §0 resets to main automatically |
+| Already on a branch | §0 resets to staging automatically |
 | Spec mode: not `status:ready` | Refuse — Gate A |
 | Spec mode: no spec found | Refuse — Gate B |
 | Spec mode: branch not on origin | Refuse — Gate C |
@@ -319,8 +319,8 @@ Tell the user:
 
 ## Constraints
 
-- **Always return to `main` first.**
+- **Always return to `staging` first.**
 - **Never opens a PR** — run `/create-pr #{n}` after spec-driven mode.
-- **Never merges** — merge is manual.
+- **Never merges** — merge to `staging` is manual, `staging → main` is also manual.
 - Never push to `main`.
 - Do not use `--force` to overwrite branches without permission.

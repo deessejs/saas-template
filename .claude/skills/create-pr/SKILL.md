@@ -16,17 +16,17 @@ Run this **after** `/implement #{n}` — the branch must be pushed with the impl
 ## Workflow overview
 
 ```
-0. Reset  — return to main and pull latest
+0. Reset  — return to staging and pull latest
 1. Fetch  — read the issue + the spec
 2. Check  — gate A: branch on origin · gate B: no existing open PR
-3. PR     — open the pull request
+3. PR     — open the pull request to staging
 4. Update — label, assign, post comment
 ```
 
 ## §0 — Reset (always)
 
 ```bash
-git checkout main && git pull origin main
+git checkout staging && git pull origin staging
 ```
 
 ## §1 — Fetch
@@ -63,8 +63,8 @@ Refuse if missing:
 **Gate B — no existing open PR**
 
 ```bash
-gh api --paginate "https://api.github.com/repos/deessejs/saas-template/pulls?state=open&per_page=50" \
-  --jq '.[] | select(.body | contains("Closes #{n}")) | {number, html_url}'
+gh api --paginate "https://api.github.com/repos/deessejs/saas-template/pulls?state=open&base=staging&per_page=50" \
+  --jq '.[] | select(.body | contains("#{n}")) | {number, html_url}'
 ```
 
 If a PR exists:
@@ -77,6 +77,7 @@ If yes: proceed to §3 but use `--edit` instead of `--create`.
 
 ```bash
 gh pr create \
+  --base staging \
   --title "{issue title}" \
   --body "## Summary
 
@@ -96,7 +97,7 @@ gh pr create \
 
 ## Related
 
-Closes #{n}
+Part of #{n}
 
 ---
 
@@ -131,7 +132,7 @@ gh issue edit {n} --add-assignee martyy-code
 
 PR opened: {PR URL}
 
-The spec was reviewed and approved. Implementation in progress.
+The spec was reviewed and approved. This PR targets `staging`. After CI green + approval, merge `staging → main` manually.
 
 _Triage by @martyy-code._
 ```
@@ -140,20 +141,21 @@ _Triage by @martyy-code._
 
 Confirm with a one-liner: PR number, title, URL, and next step.
 
-> "PR #{n}: {title} — {URL}. Merging is manual — review the diff and squash-merge when ready."
+> "PR #{n}: {title} — {PR URL}. Targets `staging`. After CI green + review approval, merge `staging → main` manually."
 
 ## Error handling
 
 | Situation | Action |
 |---|---|
-| Already on a branch | §0 resets to main automatically |
+| Already on a branch | §0 resets to staging automatically |
 | Branch not on origin | Refuse — Gate A |
 | PR already exists | Tell user; offer to update instead |
 | PR creation fails | Check labels are valid, then retry |
 
 ## Constraints
 
-- **Always return to `main` first.**
+- **Always return to `staging` first.**
 - **Run after `/implement #{n}`** — the branch must exist and be pushed.
+- **PR always targets `staging`.**
 - Never push to `main`.
 - Never merge a PR from this skill.

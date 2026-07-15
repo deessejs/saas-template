@@ -14,9 +14,9 @@ Read a `status:ready` GitHub issue, explore the codebase, write a spec, and ask 
 ## Workflow overview
 
 ```
-0. Reset    — return to main and pull latest
+0. Reset    — return to staging and pull latest
 1. Fetch    — read the issue, check status:ready
-2. Branch   — create impl/{n}-{slug} from main
+2. Branch   — create impl/{n}-{slug} from staging
 3. Explore  — read the codebase, related files, learnings
 4. Write    — build .claude/plans/{n}/plan.md from PLAN_TEMPLATE.md
 5. Review   — present to human for approval
@@ -26,7 +26,7 @@ Read a `status:ready` GitHub issue, explore the codebase, write a spec, and ask 
 ## §0 — Reset (always)
 
 ```bash
-git checkout main && git pull origin main
+git checkout staging && git pull origin staging
 ```
 
 ## §1 — Fetch
@@ -52,7 +52,7 @@ SLUG=$(echo "impl/{n}-$(echo '{issue_title}' | sed 's/[^a-z0-9]+/-/gi' | tr '[:u
 echo "$SLUG"
 ```
 
-Delete if exists, then create:
+Delete if exists, then create from staging:
 
 ```bash
 git branch -D "$SLUG" 2>/dev/null
@@ -131,15 +131,15 @@ git push -u origin "{slug}"
 
 | Situation | Action |
 |---|---|
-| Already on a branch | §0 resets to main automatically |
+| Already on a branch | §0 resets to staging automatically |
 | Issue not `status:ready` (no --force) | Refuse — see §1 |
 | Branch already exists | Delete and recreate (see §2) |
 | No files to explore | Write spec from issue text alone |
 
 ## Constraints
 
-- **Always return to `main` first.**
+- **Always return to `staging` first.**
 - **Refuse if not `status:ready` (unless --force).**
 - **Exploration only — no implementation code.**
 - **Push the branch.** The spec must persist on origin so `/implement` can find it.
-- Never write to `main`.
+- Never write to `main` or merge directly to `main`.

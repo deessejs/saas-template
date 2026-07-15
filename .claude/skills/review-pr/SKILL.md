@@ -19,7 +19,7 @@ Can run at any point:
 ## Workflow overview
 
 ```
-0. Reset  — return to main and pull latest
+0. Reset  — return to staging and pull latest
 1. Fetch  — PR details, CI status, diff, spec (if exists)
 2. Check  — PR state, CI, blocking comments
 3. Review — analyze diff, compare to spec
@@ -30,7 +30,7 @@ Can run at any point:
 ## §0 — Reset (always)
 
 ```bash
-git checkout main && git pull origin main
+git checkout staging && git pull origin staging
 ```
 
 ## §1 — Fetch
@@ -192,18 +192,18 @@ Minor observations (non-blocking):
 If the decision is **Approve**, offer to update the linked issue:
 
 ```bash
-gh issue edit {issue_n} --remove-label "status:in-progress" --add-label "status:ready"
+gh issue edit {issue_n} --remove-label "status:in-progress" --add-label "status:staging-approved"
 ```
 
 Tell the user:
 
-> "PR approved and reviewed. You can merge when ready."
+> "PR approved and reviewed. After CI green, merge `staging → main` manually."
 
 ## Output
 
 One-liner: PR number, decision, CI status, next step.
 
-> "PR #{n}: **Approved** ✅ CI green. Ready to merge."
+> "PR #{n}: **Approved** ✅ CI green. Merge `staging → main` when ready."
 
 ## Error handling
 
@@ -216,7 +216,7 @@ One-liner: PR number, decision, CI status, next step.
 
 ## Constraints
 
-- **Always return to `main` first.**
+- **Always return to `staging` first.**
 - **CI must be green before approving.**
-- **Never merge a PR** — that's manual.
+- **Never merge** — merge to `staging` is manual, `staging → main` is also manual.
 - Do not approve if the diff doesn't match the spec (unless explicitly overridden by the user).
