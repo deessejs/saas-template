@@ -5,6 +5,12 @@ name: Release
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'VERSION'
+      - 'CHANGELOG.md'
+      - 'package.json'
+      - 'packages/**/package.json'
+      - 'apps/**/package.json'
   workflow_dispatch:
     inputs:
       bump:
@@ -20,6 +26,10 @@ on:
 permissions:
   contents: write
   pull-requests: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   release:
@@ -95,18 +105,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "chore: version bump
-          [skip ci]" || echo "Nothing to commit"
+          git commit -m "chore: version bump" || echo "Nothing to commit"
           git push origin main
 
       # ── Create git tags ──────────────────────────────────────────────────
       - name: Create git tags
         if: steps.changesets.outputs.count != '0'
         run: |
-          for tag in $(git tag --list 'template/*' 2>/dev/null); do
-            echo "Tag found: $tag"
-          done
-          # Get the latest package version
           VERSION=$(cat VERSION)
           TAG="template/v${VERSION}"
           echo "Creating tag: $TAG"
@@ -134,17 +139,16 @@ jobs:
         run: |
           DATE=$(date +%Y-%m-%d)
           VERSION=$(cat VERSION)
-          # Use Node.js for reliable string replacement
           node -e "
             const fs = require('fs');
             const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
-            const entry = \`\n\n## [${VERSION}] - ${DATE}\n\n### Changed\n\n- Template release\n\`;
+            const entry = \`\n\n## [\${VERSION}] - \${DATE}\n\n### Changed\n\n- Template release\n\`;
             const updated = changelog.replace('## [Unreleased]', entry + '## [Unreleased]');
             fs.writeFileSync('CHANGELOG.md', updated);
             console.log('CHANGELOG.md updated for', VERSION);
           "
           git add CHANGELOG.md
-          git commit -m "docs: update CHANGELOG.md for template/v$VERSION"
+          git commit -m "docs: update CHANGELOG.md for template/v\$VERSION"
           git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
