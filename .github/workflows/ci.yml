@@ -78,6 +78,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm turbo build
       - run: pnpm turbo test
 
   test-integration:
@@ -116,6 +117,9 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+
+      - name: Build dependencies
+        run: pnpm turbo build
 
       - name: Generate migrations
         run: pnpm db:generate
