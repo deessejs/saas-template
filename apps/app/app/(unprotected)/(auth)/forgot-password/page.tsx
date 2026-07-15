@@ -1,15 +1,15 @@
-import { ForgotPasswordForm } from "@/components/auth"
+import { AuthContainer, ForgotPasswordForm } from "@/components/auth"
 
 export default function ForgotPasswordPage() {
-  return (
-    <div className="flex flex-1 flex-col justify-center gap-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold">Forgot password</h1>
-        <p className="text-sm text-muted-foreground">
-          Enter your email and we&apos;ll send you a reset link.
-        </p>
-      </div>
-      <ForgotPasswordForm />
-    </div>
-  )
+	return (
+		<AuthContainer.Root>
+			<AuthContainer.Header
+				title="Forgot password"
+				description="Enter your email and we'll send you a reset link."
+			/>
+			<AuthContainer.Content>
+				<ForgotPasswordForm />
+			</AuthContainer.Content>
+		</AuthContainer.Root>
+	)
 }

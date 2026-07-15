@@ -47,6 +47,10 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
+  if (isProtected && session?.user && !session.user.emailVerified) {
+    return NextResponse.redirect(new URL("/verify-email", request.url))
+  }
+
   if (isAuthPage && session?.session) {
     return NextResponse.redirect(new URL("/home", request.url))
   }

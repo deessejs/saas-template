@@ -1,34 +1,38 @@
 ---
 name: packages-auth
-description: better-auth CLI workflow in monorepo — schema generation, file ownership, what the CLI does/doesn't allow customizing
+description: Better Auth package workflow, generated-schema ownership, and the 2026-07-13 CLI/runtime version mismatch that blocks safe schema generation
 metadata:
   type: reference
 ---
 
-# better-auth CLI Workflow
+# Better Auth Package Workflow
+
+## Current version warning (2026-07-13)
+
+The application runtime and standalone Drizzle adapter resolve to `1.6.23`, but the configured legacy `@better-auth/cli` resolves to `1.4.21`. Better Auth warns that the old CLI can behave incorrectly with runtime versions `>=1.5`; it renamed the supported CLI package to `auth`.
+
+Treat `pnpm auth:generate` as release-blocked until the CLI, runtime, and adapter follow one reviewed release line. Run the first aligned generation in an isolated worktree, generate to a temporary path, and review the diff before replacing `packages/database/src/schema/auth.ts`. The full evidence and acceptance criteria live in `temp/issues/P0-001-better-auth-cli-runtime-version-mismatch.md`.
+
+Related project state: [[better-auth-cli-release-blocker]].
 
 ## Generate Auth Schema
 
 Since `auth.ts` is in `packages/auth/` (not root), use `--config`:
 
 ```bash
-npx auth@latest generate \
-  --config ./packages/auth/src/index.ts \
+npx auth@<runtime-version> generate \
+  --config ./packages/auth/src/auth.ts \
   --output ./packages/database/src/schema/auth.ts \
   --yes
 ```
 
-In this monorepo, use:
+In this monorepo, the intended entry point remains:
 
 ```bash
 pnpm --filter @workspace/auth auth:generate
 ```
 
-The CLI command (defined in `packages/auth/package.json`):
-
-```
-"auth:generate": "pnpm exec better-auth generate --config ./src/auth.config.ts --output ../database/src/schema/auth.ts --yes"
-```
+As of 2026-07-13, `packages/auth/package.json` still maps that script to the legacy `better-auth` executable from `@better-auth/cli@1.4.21`. Do not treat the command as safe until the dependency and executable are aligned with runtime `1.6.23` (or another single reviewed release line).
 
 The CLI searches for `auth.ts` in `./`, `./utils`, `./lib`, or `src/*` by default. Since our auth config is in `packages/auth/src/`, we must specify `--config` explicitly.
 
@@ -46,16 +50,18 @@ The CLI searches for `auth.ts` in `./`, `./utils`, `./lib`, or `src/*` by defaul
 
 | File | Owner | Mutable by us? |
 |---|---|---|
-| `packages/auth/src/auth.config.ts` | us | ✅ yes — drives what gets generated |
+| `packages/auth/src/auth.ts` | us | ✅ yes — drives what gets generated |
 | `packages/database/src/schema/auth.ts` | **better-auth CLI** | ❌ no — regenerated each time |
 | `packages/database/src/schema/index.ts` | us | ✅ yes — barrel, re-exports |
 | `packages/database/src/tables/index.ts` | us | ✅ yes — for app-domain tables |
 | `packages/database/drizzle/*.sql` | drizzle-kit | ⚠️ only hand-write for off-tree changes |
 | `packages/database/drizzle/meta/_journal.json` | drizzle-kit | ❌ no (unless you know what you're doing) |
 
-## What the Generator Does (verified in `@better-auth/cli@1.4.21` dist)
+## What the legacy generator does (verified in `@better-auth/cli@1.4.21` dist)
 
-The generator (`generators-Ht8QYIi_.mjs:133-140`) emits a Drizzle column with:
+This section records the old generator for historical diagnosis. Do not infer Better Auth 1.6.23 generator behavior from it; the version mismatch is the active release blocker.
+
+The legacy generator (`generators-Ht8QYIi_.mjs:133-140`) emits a Drizzle column with:
 
 - `.defaultNow()` **only if** `attr.defaultValue` is a function whose `.toString()` includes `"new Date()"`
 - `.$onUpdate(fn)` if `attr.onUpdate` is set and the field type is `date`

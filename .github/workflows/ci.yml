@@ -42,8 +42,8 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      - run: pnpm install
-      - run: pnpm turbo typecheck --force --filter=@workspace/api --filter=@workspace/auth --filter=@workspace/database
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm turbo typecheck --force
 
   build:
     name: Build
