@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import { auth } from "@workspace/auth"
+import { authClient } from "./lib/auth-client"
+import type { Session, User } from "better-auth"
 
 const PROTECTED_PREFIXES = ["/home", "/settings"]
 const AUTH_PREFIXES = [
@@ -37,8 +38,15 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  const session = await auth.api.getSession({
-    headers: request.headers,
+  // Use authClient.getSession() instead of auth.api.getSession()
+  // This makes an HTTP call to /api/auth/get-session instead of accessing
+  // serverEnv directly, which allows the build to work without env vars.
+  const { data: session } = await authClient.getSession({
+    fetchOptions: {
+      headers: {
+        cookie: request.headers.get("cookie") || "",
+      },
+    },
   })
 
   if (isProtected && !session?.session) {
@@ -57,3 +65,6 @@ export async function proxy(request: NextRequest) {
 
   return NextResponse.next()
 }
+
+// Re-export types for consumers
+export type { Session, User }

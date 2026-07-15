@@ -61,7 +61,7 @@ export const auth = betterAuth({
   },
 
   plugins: [nextCookies()],
-}) as unknown as ReturnType<typeof betterAuth>
+})
 
 // Type exports for consumers
 export type AuthInstance = typeof auth
