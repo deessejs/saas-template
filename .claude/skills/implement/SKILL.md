@@ -1,19 +1,26 @@
 ---
 name: implement
-description: Implement a spec-reviewed issue. Reads the plan, asks for approval if not already given, and writes code. Does not open PR — use /create-pr after.
+description: Implement a spec-reviewed issue, or apply requested changes from a PR review. Use --review flag for review-driven mode.
 ---
 
 # `implement` Skill
 
-Read an existing implementation spec and write the code. Does not open a PR — run `/create-pr #{n}` after.
+Two modes:
+
+- **Spec-driven** (default): implement a spec-reviewed issue
+- **Review-driven** (`--review`): apply requested changes from a PR review
 
 ## When to use
 
-**Trigger phrases:** "implement #N", "work on #N", "start #N", "/implement #N".
+**Spec-driven trigger phrases:** "implement #N", "work on #N", "start #N", "/implement #N".
+**Review-driven trigger phrases:** "implement #N --review", "apply review #N", "/implement #N --review".
 
-**Prerequisite:** `/spec #{n}` must have been run first.
+**Prerequisite (spec-driven):** `/spec #{n}` must have been run first.
+**Prerequisite (review-driven):** PR must be open with a review requesting changes.
 
 ## Workflow overview
+
+### Spec-driven (default)
 
 ```
 0. Reset      — return to main and pull latest
@@ -25,6 +32,23 @@ Read an existing implementation spec and write the code. Does not open a PR — 
 6. Validate   — build → typecheck → test → lint → dedupe
 7. Done       — git push + tell user to run /create-pr #{n}
 ```
+
+### Review-driven (`--review`)
+
+```
+0. Reset      — return to main and pull latest
+1. Fetch      — PR details + review comments
+2. Check      — gate A: PR open · gate B: has review with requested_changes
+3. Parse      — extract all requested changes from review comments
+4. Apply      — fix each blocking issue from the review
+5. Validate   — build → typecheck → test → lint → dedupe
+6. Push       — git push
+7. Reviewer   — re-request review from original reviewer
+```
+
+---
+
+# SPEC-DRIVEN MODE (default)
 
 ## §0 — Reset (always)
 
@@ -148,25 +172,155 @@ Tell the user:
 
 **Commit type:** match the primary area label — `ci`, `chore`, `docs`, `feat`, `fix`, `refactor`.
 
-## Error handling
+---
+
+# REVIEW-DRIVEN MODE (`--review`)
+
+## §0 — Reset (always)
+
+```bash
+git checkout main && git pull origin main
+```
+
+## §1 — Fetch
+
+```bash
+# PR details
+gh api "https://api.github.com/repos/deessejs/saas-template/pulls/{n}"
+
+# All reviews with their comments
+gh api --paginate "https://api.github.com/repos/deessejs/saas-template/pulls/{n}/reviews"
+
+# Review comments (includes file-level + line-level)
+gh api --paginate "https://api.github.com/repos/deessejs/saas-template/pulls/{n}/comments"
+
+# The branch name
+BRANCH=$(gh api "https://api.github.com/repos/deessejs/saas-template/pulls/{n}" --jq '.head.ref')
+```
+
+## §2 — Check
+
+**Gate A — PR must be open**
+
+```bash
+STATE=$(gh api "https://api.github.com/repos/deessejs/saas-template/pulls/{n}" --jq '.state')
+```
+
+Refuse if `state != open`:
+
+> "PR #{n} is not open ({state}). Nothing to apply."
+
+**Gate B — must have a review with `requested_changes`**
+
+```bash
+REVIEW_STATE=$(gh api --paginate "https://api.github.com/repos/deessejs/saas-template/pulls/{n}/reviews" \
+  --jq '.[] | select(.state == "CHANGES_REQUESTED") | .user.login' | head -1)
+```
+
+Refuse if no review with `CHANGES_REQUESTED`:
+
+> "PR #{n} has no review requesting changes. Run `/review-pr #{n}` first."
+
+Capture the review author for later — this is who we re-request review from.
+
+## §3 — Parse review comments
+
+From the reviews + comments, extract:
+
+- **Blocking issues** — from comments on the `requested_changes` review
+- **File + line** — which file and line the comment references
+- **What to change** — the body of the comment
+
+Group comments by:
+1. File changed
+2. Line/section
+3. Requested fix
+
+Present the list to the user before applying:
+
+> "Found {count} requested changes from @{reviewer}:"
+>
+> 1. `{file}:{line}` — {comment summary}
+> 2. ...
+
+Ask for confirmation before proceeding:
+
+> "Apply all changes and push? (y/n)"
+
+## §4 — Apply fixes
+
+For each blocking comment, make the necessary edit:
+
+- Use `Edit` or `Write` to fix the issue
+- Group fixes by file when possible to keep the diff clean
+- Do not make unrelated changes — stick to what the reviewer requested
+- If a comment is unclear → post a reply question before proceeding
+
+## §5 — Validate
+
+After every file change and again at the end:
+
+```bash
+pnpm build
+pnpm typecheck
+pnpm test
+pnpm lint
+pnpm dedupe:check
+```
+
+If any step fails → fix, re-validate, continue.
+
+## §6 — Push
+
+```bash
+git add {modified files}
+git commit -m "fix: address review comments from @{reviewer}
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+
+git push origin "$BRANCH"
+```
+
+## §7 — Re-request review
+
+```bash
+gh api -X POST "https://api.github.com/repos/deessejs/saas-template/pulls/{n}/reviews/{review_id}/events" \
+  -H "Accept: application/vnd.github+json" \
+  -f event="REQUEST_REVIEW"
+```
+
+Or via CLI (if supported):
+
+```bash
+gh pr review {n} --request-reviewer "@{reviewer}"
+```
+
+## Output
+
+Tell the user:
+
+> "Changes pushed and review re-requested from @{reviewer}. Run `/review-pr #{n}` again once CI passes."
+
+---
+
+# Shared error handling
 
 | Situation | Action |
 |---|---|
 | Already on a branch | §0 resets to main automatically |
-| Not `status:ready` | Refuse — Gate A |
-| No spec found | Refuse — Gate B |
-| Branch not on origin | Refuse — Gate C |
+| Spec mode: not `status:ready` | Refuse — Gate A |
+| Spec mode: no spec found | Refuse — Gate B |
+| Spec mode: branch not on origin | Refuse — Gate C |
+| Review mode: PR not open | Refuse — Gate A |
+| Review mode: no requested_changes review | Refuse — Gate B |
 | `breaking-change` label present | Warn and review Risks before proceeding |
-| Tests fail | Fix → re-validate → ask if outside spec |
+| Tests fail | Fix → re-validate → ask if outside scope |
 | Spec not approved | Ask for approval in §3 |
 
 ## Constraints
 
 - **Always return to `main` first.**
-- **Refuse if not `status:ready`.**
-- **Refuse if no spec exists.**
-- **Always branch from `/spec` first.**
-- **Plan before code — no exceptions.**
-- **Never opens a PR** — run `/create-pr #{n}` after this skill.
+- **Never opens a PR** — run `/create-pr #{n}` after spec-driven mode.
+- **Never merges** — merge is manual.
 - Never push to `main`.
 - Do not use `--force` to overwrite branches without permission.
