@@ -65,7 +65,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm turbo build --force
+      - run: NODE_ENV=production BETTER_AUTH_SECRET=ci-test-secret-which-is-long-enough-to-pass-the-32-char-validation pnpm turbo build --force
 
   test-unit:
     name: Test (Unit)
