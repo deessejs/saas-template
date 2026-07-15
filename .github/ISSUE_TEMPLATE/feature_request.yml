@@ -1,6 +1,6 @@
 name: ✨ Feature Request
 description: Suggest a new idea or enhancement
-labels: ["enhancement"]
+labels: ["enhancement", "status:needs-triage"]
 body:
   - type: markdown
     attributes:
@@ -49,18 +49,21 @@ body:
       placeholder: Links to mockups or examples
 
   - type: dropdown
-    id: package
+    id: area
     attributes:
-      label: 📦 Target Package
-      description: Which package should implement this?
+      label: 🎯 Area
+      description: Which part of the codebase is affected?
       options:
-        - database
-        - auth
-        - api
-        - ui
-        - web
-        - app
-        - docs
+        - area:auth
+        - area:ui
+        - area:web
+        - area:app
+        - area:docs
+        - area:database
+        - area:email
+        - area:ci
+        - area:build
+        - area:deploy
         - Cross-package
     validations:
       required: true
