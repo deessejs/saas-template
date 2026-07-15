@@ -1,11 +1,28 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalEnv": ["CI", "NODE_ENV"],
+  "globalPassThroughEnv": ["TURBO_TOKEN", "TURBO_TEAM", "GITHUB_ACTIONS", "VERCEL_URL"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "env": [
+        "DATABASE_URL",
+        "TEST_DATABASE_URL",
+        "BETTER_AUTH_SECRET",
+        "AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "ALLOWED_ORIGINS",
+        "RESEND_API_KEY",
+        "RESEND_FROM_EMAIL",
+        "RESEND_FROM_NAME",
+        "MAIL_TRANSPORT",
+        "NEXT_PUBLIC_APP_NAME",
+        "NEXT_PUBLIC_APP_DESCRIPTION",
+        "NEXT_PUBLIC_APP_URL"
+      ],
+      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.local", ".env.production", ".env.production.local"],
+      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
