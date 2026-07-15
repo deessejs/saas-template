@@ -20,6 +20,8 @@ catalog:
 
   # Auth
   "@better-auth/drizzle-adapter": ^1.6.23
+  '@changesets/changelog-git': ^0.2.1
+  '@changesets/cli': ^2.31.0
   '@content-collections/cli': ^0.1.9
   '@content-collections/core': ^0.15.2
   '@content-collections/mdx': ^0.2.2

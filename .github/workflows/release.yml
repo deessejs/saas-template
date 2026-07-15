@@ -1,72 +1,150 @@
 name: Release
 
+# Triggered when staging merges to main (push on main)
+# Or manually via workflow_dispatch for emergency bump
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   release:
-    name: Create GitHub Release
+    name: Release
     runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.head_commit.message, '.changeset')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
 
-      - name: Read version
-        id: version
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # ── Manual bump: create empty changeset ──────────────────────────────
+      - name: Create changeset for manual bump
+        if: github.event_name == 'workflow_dispatch'
         run: |
-          VERSION=$(cat VERSION)
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Bumping ${{ github.event.inputs.bump }}"
+          pnpm changeset add --empty --yes
 
-      - name: Check if tag exists
-        id: tag-check
+      # ── Check for changeset files ───────────────────────────────────────
+      - name: Check changeset files
+        id: changesets
         run: |
-          if git tag | grep -q "^v${{ steps.version.outputs.version }}$"; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-          fi
+          COUNT=$(ls .changeset/*.md 2>/dev/null | wc -l)
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "Found $COUNT changeset file(s)"
 
-      - name: Create tag
-        if: steps.tag-check.outputs.exists == 'false'
+      # ── Skip if no changesets on auto trigger ────────────────────────────
+      - name: No changesets found
+        if: steps.changesets.outputs.count == '0'
+        run: |
+          echo "No changeset files found. Skipping release."
+          echo "To create a manual release, use workflow_dispatch."
+
+      # ── Version bump ────────────────────────────────────────────────────
+      - name: Apply version bump
+        if: steps.changesets.outputs.count != '0'
+        run: |
+          pnpm changeset version
+          pnpm install --frozen-lockfile
+
+      # ── Update VERSION file ──────────────────────────────────────────────
+      - name: Update VERSION file
+        if: steps.changesets.outputs.count != '0'
+        run: |
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            const version = pkg.version;
+            fs.writeFileSync('VERSION', version + '\n');
+            console.log('VERSION:', version);
+          "
+
+      # ── Commit version bump ──────────────────────────────────────────────
+      - name: Commit version bump
+        if: steps.changesets.outputs.count != '0'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "${{ steps.version.outputs.tag }}" -m "Release ${{ steps.version.outputs.tag }}"
-          git push origin "${{ steps.version.outputs.tag }}"
+          git add .
+          git commit -m "chore: version bump
+          [skip ci]" || echo "Nothing to commit"
+          git push origin main
 
+      # ── Create git tags ──────────────────────────────────────────────────
+      - name: Create git tags
+        if: steps.changesets.outputs.count != '0'
+        run: |
+          for tag in $(git tag --list 'template/*' 2>/dev/null); do
+            echo "Tag found: $tag"
+          done
+          # Get the latest package version
+          VERSION=$(cat VERSION)
+          TAG="template/v${VERSION}"
+          echo "Creating tag: $TAG"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+
+      # ── Create GitHub Release ────────────────────────────────────────────
       - name: Create GitHub Release
-        if: steps.tag-check.outputs.exists == 'false'
+        if: steps.changesets.outputs.count != '0'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          name: Release ${{ steps.version.outputs.tag }}
+          tag_name: "template/v$(cat VERSION)"
+          name: "Release template/v$(cat VERSION)"
           generate_release_notes: true
           draft: false
           prerelease: false
+          files: |
+            VERSION
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: Update CHANGELOG.md
-        if: steps.tag-check.outputs.exists == 'false'
+      # ── Update CHANGELOG.md ──────────────────────────────────────────────
+      - name: Update root CHANGELOG.md
+        if: steps.changesets.outputs.count != '0'
         run: |
           DATE=$(date +%Y-%m-%d)
-          # Insert new version header after "## [Unreleased]"
-          awk -v ver="${{ steps.version.outputs.version }}" -v date="$DATE" \
-            '/^## \[Unreleased\]/ && !done { print; print ""; print "## [" ver "] - " date; print ""; print "### Added"; print ""; print "- Initial release"; print ""; done=1; next} 1' \
-            CHANGELOG.md > CHANGELOG.md.tmp && mv CHANGELOG.md.tmp CHANGELOG.md
-
-      - name: Commit CHANGELOG.md
-        if: steps.tag-check.outputs.exists == 'false'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          VERSION=$(cat VERSION)
+          # Use Node.js for reliable string replacement
+          node -e "
+            const fs = require('fs');
+            const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
+            const entry = \`\n\n## [${VERSION}] - ${DATE}\n\n### Changed\n\n- Template release\n\`;
+            const updated = changelog.replace('## [Unreleased]', entry + '## [Unreleased]');
+            fs.writeFileSync('CHANGELOG.md', updated);
+            console.log('CHANGELOG.md updated for', VERSION);
+          "
           git add CHANGELOG.md
-          git commit -m "docs: update CHANGELOG.md for ${{ steps.version.outputs.tag }}"
+          git commit -m "docs: update CHANGELOG.md for template/v$VERSION"
           git push origin main
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
