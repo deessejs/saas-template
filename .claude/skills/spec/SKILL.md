@@ -18,7 +18,7 @@ Read a `status:ready` GitHub issue, explore the codebase, write a spec, and ask 
 1. Fetch    — read the issue, check status:ready
 2. Branch   — create impl/{n}-{slug} from staging
 3. Explore  — read the codebase, related files, learnings
-4. Write    — build .claude/plans/{n}/plan.md from PLAN_TEMPLATE.md
+4. Write    — build docs/plans/{n}.md from PLAN_TEMPLATE.md
 5. Review   — present to human for approval
 6. Push     — push branch so the plan persists on origin
 ```
@@ -78,8 +78,8 @@ Keep notes — they feed the spec.
 Create the plan directory and copy the template:
 
 ```bash
-mkdir -p ".claude/plans/{n}"
-cp .claude/skills/spec/PLAN_TEMPLATE.md ".claude/plans/{n}/plan.md"
+mkdir -p "docs/plans"
+cp .claude/skills/spec/PLAN_TEMPLATE.md "docs/plans/{n}.md"
 ```
 
 Fill in every section. Key points:
@@ -102,19 +102,19 @@ Use `AskUserQuestion` with a single approve/reject option. Include:
 - TL;DR
 - Files count + step count
 - Key risk (especially if `breaking-change` label present)
-- Branch + plan path
+- Branch + docs/plans/{n}.md path
 
 **If approved:**
 1. Update YAML: `status: approved`, `reviewer: martyy-code`, `reviewed: {date}`
 2. Push branch
 
 **If rejected:**
-> "Spec rejected. Branch `{slug}` still exists with the spec at `.claude/plans/{n}/plan.md`. Say the word and I'll delete it, or keep it open for later."
+> "Spec rejected. Branch `{slug}` still exists with the spec at `docs/plans/{n}.md`. Say the word and I'll delete it, or keep it open for later."
 
 ## §6 — Push
 
 ```bash
-git add .claude/plans/{n}/plan.md
+git add docs/plans/{n}.md
 git commit -m "docs: write spec for issue #{n}
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
@@ -125,7 +125,7 @@ git push -u origin "{slug}"
 ## Idempotency
 
 - **Spec already approved** → "A spec already exists and is approved. Run `/implement #{n}` to start."
-- **Spec is draft** → "A draft spec exists. Review it at `.claude/plans/{n}/plan.md` on `{slug}`, or run `/spec #{n}` again to overwrite it."
+- **Spec is draft** → "A draft spec exists. Review it at `docs/plans/{n}.md` on `{slug}`, or run `/spec #{n}` again to overwrite it."
 
 ## Error handling
 
