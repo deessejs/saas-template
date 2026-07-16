@@ -5,6 +5,7 @@
 - [Vercel platform](project/vercel-platform.md) — July 2026 snapshot: Vercel Services (multi-framework), Fluid compute + Active CPU, Sandbox, AI Gateway, full product catalog
 - [Eve integration](project/eve.md) — `npx eve init` side effects on root pnpm-workspace.yaml + package.json + MiniMax M3 provider
 - [AGENTS + commit conventions](project/agents.md) — AGENTS.md markers + Conventional Commits (informal) + CODEOWNERS + Co-authored-by footer
+- [Git workflow — staging-first](project/git-workflow.md) — setup 2026-07-16: PRs target staging, main is human-promoted, never merge direct to main
 - [apps/app architecture](apps/app.md) — authenticated app (login/signup/dashboard/settings), separate deploy from web
 - [apps/web architecture](apps/web.md) — public static site (marketing/blog/changelog/legal), NO auth, links to /login /signup live in apps/app
 - [apps/docs architecture](apps/docs.md) — Fumadocs-based docs site (separate deploy, target of /docs links from web/app)
