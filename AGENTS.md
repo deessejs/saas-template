@@ -4,6 +4,37 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
+## Git workflow — staging-first
+
+This repo uses a **staging-first** workflow. All development happens against `staging`, never directly against `main`.
+
+```
+feature/fix branch  ─PR─▶  staging  ─merge (manual, human)─▶  main  ─▶  release
+```
+
+**Rules:**
+
+- **Base new work on `staging`** — `git checkout staging && git pull && git checkout -b my-branch`
+- **PRs always target `staging`** — `gh pr create --base staging`
+- **`staging → main` is the release path** — done manually by a human, after CI green and review approval
+- **Never push directly to `main`** — even for hotfixes, branch from `staging` and PR there
+- **Never merge a PR into `main` from the agent** — `main` is owned by the human release process
+
+**Why this exists:**
+
+- `staging` is the integration branch — multiple PRs land there, get tested together, surface interaction bugs
+- `main` reflects release-ready state — only updated via deliberate human promotion
+- The release workflow (changesets → version bump → publish) triggers on push to `main`
+- Decoupling "incoming work" from "release surface" prevents a broken `main` blocking all deploys
+
+**Skills assume this flow:** `/spec`, `/implement`, `/create-pr`, `/review-pr` all reset to `staging` first and open PRs against `staging`. If you find any skill referencing `main` as a base or PR target, that's a bug — fix it.
+
+**Branch naming:**
+
+- `impl/{n}-{slug}` for issue-driven work (`/spec`, `/implement`) — e.g. `impl/18-fix-ready-endpoint-db-ping`
+- `chore/{slug}` for chores, refactors, infra — e.g. `chore/setup-staging-workflow`
+- `fix/{slug}` for unsolicited bug fixes
+
 ### Better-Auth guides
 
 Pattern senior pour better-auth dans ce repo. **Lis toujours `docs/guides/better-auth/index.md` en premier** avant de modifier `packages/auth` ou `packages/database/src/schema/auth.ts`.
