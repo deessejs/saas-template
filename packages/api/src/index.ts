@@ -1,9 +1,11 @@
 import { Hono } from "hono"
 import { cors } from "hono/cors"
 import { logger } from "hono/logger"
+import { sql } from "drizzle-orm"
 import { auth } from "@workspace/auth"
 import { onError } from "@orpc/server"
 import { RPCHandler } from "@orpc/server/fetch"
+import { db } from "@workspace/database"
 import { serverEnv } from "@workspace/env/server"
 import { appRouter } from "./router/index.js"
 
@@ -62,6 +64,10 @@ api.use("*", async (c, next) => {
 api.get("/health", (c) => c.json({ status: "ok", timestamp: new Date().toISOString() }))
 api.get("/ready", async (c) => {
   try {
+    // Ping Postgres before returning 200. db.execute throws on connection
+    // failure (ECONNREFUSED, ETIMEDOUT, pool exhaustion), so the catch
+    // returns 503 — the signal Kubernetes/LBs need to stop routing traffic.
+    await db.execute(sql`SELECT 1`)
     return c.json({ status: "ready" })
   } catch {
     return c.json({ status: "not ready" }, 503)
