@@ -32,6 +32,7 @@
     "@workspace/database": "workspace:*",
     "@workspace/env": "workspace:*",
     "better-auth": "catalog:",
+    "drizzle-orm": "catalog:",
     "hono": "catalog:",
     "postgres": "catalog:",
     "zod": "catalog:"
