@@ -1,6 +1,6 @@
 - [Stack](project/stack.md) — pnpm 11 monorepo + catalogs strict + Turbo v2 + Tailwind v4 + CI
 - [Template strategy](project/template-strategy.md) — GitHub template repo, no changesets for end users
-- [Vercel deploy](project/deploy.md) — per-app Vercel projects for web/app/docs, dashboard overrides trump vercel.json, engines.node >=20 + cache-bust quirk
+- [Vercel deploy](project/deploy.md) — per-app Vercel projects for web/app/docs, dashboard overrides trump vercel.json, engines.node >=22.0.0 + cache-bust quirk
 - [Next.js 16 proxy.ts](project/nextjs-proxy.md) — middleware renamed to proxy.ts; auth guard in apps/app/proxy.ts is correct
 - [Vercel platform](project/vercel-platform.md) — July 2026 snapshot: Vercel Services (multi-framework), Fluid compute + Active CPU, Sandbox, AI Gateway, full product catalog
 - [AGENTS + commit conventions](project/agents.md) — AGENTS.md markers + Conventional Commits (informal) + CODEOWNERS + Co-authored-by footer
