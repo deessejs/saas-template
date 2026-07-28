@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { SettingsCard } from "@/components/settings"
+import { SettingsCard, SettingsPage } from "@/components/settings"
 import {
   BadgeCheckIcon,
   KeyIcon,
@@ -41,16 +41,9 @@ const SECTIONS = [
   },
 ]
 
-export default function SettingsPage() {
+export default function Settings() {
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-sm text-muted-foreground">
-          Manage your account settings.
-        </p>
-      </div>
-
+    <SettingsPage title="Settings" description="Manage your account settings.">
       <div className="flex flex-col gap-4">
         {SECTIONS.map((section) => {
           const Icon = section.icon
@@ -71,6 +64,6 @@ export default function SettingsPage() {
           )
         })}
       </div>
-    </div>
+    </SettingsPage>
   )
 }

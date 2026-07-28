@@ -1,22 +1,17 @@
-import { SettingsCard } from "@/components/settings"
-import { ConnectedAccountsList } from "@/components/settings/connected-accounts-list"
+import { ConnectedAccountsList, SettingsCard, SettingsPage } from "@/components/settings"
 
 export default function ConnectionsPage() {
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold">Connections</h1>
-        <p className="text-sm text-muted-foreground">
-          Manage your linked social accounts.
-        </p>
-      </div>
-
+    <SettingsPage
+      title="Connections"
+      description="Manage your linked social accounts."
+    >
       <SettingsCard
         title="Linked accounts"
         description="Connect your social accounts for easier sign-in."
       >
         <ConnectedAccountsList />
       </SettingsCard>
-    </div>
+    </SettingsPage>
   )
 }

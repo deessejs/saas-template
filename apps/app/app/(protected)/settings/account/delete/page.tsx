@@ -1,16 +1,12 @@
-import { DeleteAccountDialog } from "@/components/settings/delete-account-dialog"
+import { DeleteAccountDialog, SettingsPage } from "@/components/settings"
 
 export default function DeleteAccountPage() {
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold">Delete account</h1>
-        <p className="text-sm text-muted-foreground">
-          Permanently remove your account and all associated data.
-        </p>
-      </div>
-
+    <SettingsPage
+      title="Delete account"
+      description="Permanently remove your account and all associated data."
+    >
       <DeleteAccountDialog />
-    </div>
+    </SettingsPage>
   )
 }
