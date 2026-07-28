@@ -34,6 +34,8 @@
   </a>
 </p>
 
+> 👉 **Need workspaces / multi-tenant?** See [`deessejs/saas-template-multi-tenant`](https://github.com/deessejs/saas-template-multi-tenant) — same monorepo with the Better Auth Organization plugin wired in, for users who need per-tenant data isolation and invite-based memberships.
+
 ---
 
 ## What's included
