@@ -8,6 +8,7 @@ import { RPCHandler } from "@orpc/server/fetch"
 import { db } from "@workspace/database"
 import { serverEnv } from "@workspace/env/server"
 import { appRouter } from "./router/index.js"
+import { API_BASE_PATH } from "./base-path.js"
 
 // Body parser methods that consume the request body. The proxy below
 // redirects these to Hono's parsed getters so oRPC never sees a drained
@@ -35,10 +36,12 @@ export type ApiEnv = {
   }
 }
 
-// Catch-all is mounted at /api/[[...route]] in apps/app, so all incoming
-// requests have an /api prefix. basePath('/api') makes Hono match those
-// patterns correctly without changing the route definitions below.
-const api = new Hono<ApiEnv>().basePath("/api")
+// Catch-all is mounted at /api/[[...route]] in apps/app/app/api/[[...route]]/route.ts,
+// so all incoming requests have an /api prefix. `API_BASE_PATH` (from ./base-path.js)
+// is the single source of truth — Hono routes below are registered *relative* to it
+// (e.g. `/health` matches `/api/health`). Renaming the prefix means editing
+// API_BASE_PATH in base-path.ts and moving the Next.js catch-all directory.
+const api = new Hono<ApiEnv>().basePath(API_BASE_PATH)
 
 // CORS middleware (single source of truth, validated at the env-package boundary)
 api.use(
