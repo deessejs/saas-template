@@ -1,25 +1,23 @@
 - [Stack](project/stack.md) — pnpm 11 monorepo + catalogs strict + Turbo v2 + Tailwind v4 + CI
 - [Template strategy](project/template-strategy.md) — GitHub template repo, no changesets for end users
-- [Vercel deploy](project/deploy.md) — eve vercel.json pattern + dashboard overrides + engines.node >=24 + live agent URL
+- [Vercel deploy](project/deploy.md) — per-app Vercel projects for web/app/docs, dashboard overrides trump vercel.json, engines.node >=22.0.0 + cache-bust quirk
 - [Next.js 16 proxy.ts](project/nextjs-proxy.md) — middleware renamed to proxy.ts; auth guard in apps/app/proxy.ts is correct
 - [Vercel platform](project/vercel-platform.md) — July 2026 snapshot: Vercel Services (multi-framework), Fluid compute + Active CPU, Sandbox, AI Gateway, full product catalog
-- [Eve integration](project/eve.md) — `npx eve init` side effects on root pnpm-workspace.yaml + package.json + MiniMax M3 provider
 - [AGENTS + commit conventions](project/agents.md) — AGENTS.md markers + Conventional Commits (informal) + CODEOWNERS + Co-authored-by footer
 - [Git workflow — staging-first](project/git-workflow.md) — setup 2026-07-16: PRs target staging, main is human-promoted, never merge direct to main
 - [apps/app architecture](apps/app.md) — authenticated app (login/signup/dashboard/settings), separate deploy from web
 - [apps/web architecture](apps/web.md) — public static site (marketing/blog/changelog/legal), NO auth, links to /login /signup live in apps/app
 - [apps/docs architecture](apps/docs.md) — Fumadocs-based docs site (separate deploy, target of /docs links from web/app)
+- [Single-tenant only](project/single-tenant.md) — NO organization plugin/schema/useActiveOrganization/#9710 workaround in this repo (re-confirmed 2026-07-28); docs/guides/better-auth/{index,org,hooks,client}.md are stale on this
 - [packages/ui audit](packages/ui-audit.md) — audit findings corrected after web verification (4 wrong, 4 right)
 - [use-shadcn skill initiative](project/use-shadcn-skill.md) — 2026-07-09: 3-layer fix (skill + ESLint rule + new Checkbox) to stop agents using raw HTML; 3-file migration backlog
 - [packages/auth](packages/auth.md) — Better Auth schema ownership; runtime/adapter 1.6.23 vs legacy CLI 1.4.21 warning
-- [P1 useSecureCookies](project/p1-use-secure-cookies.md) — static `true` breaks local HTTP sessions
-- [P1 trustedOrigins](project/p1-trusted-origins.md) — localhost always trusted; conditional CSRF risk on deployment host
-- [P1 sendOnSignUp](project/p1-send-on-signup-disabled.md) — verification required but unenforced; f42933e temp bypass
-- [P1 CI typecheck](project/p1-ci-typecheck-scope.md) — typecheck job filters workspace and skips --frozen-lockfile
-- [P1 catalog latest tags](project/p1-catalog-latest-tags.md) — four `latest` entries defeat catalog reproducibility
-- [P1 settings stubs](project/p1-settings-cosmetic-stubs.md) — six setTimeout/DUMMY_* stubs in settings pages
-- [P1 OAuthButtons](project/p1-oauth-buttons-no-error.md) — duplicated OAuthButtons with no error handling
-- [Better Auth CLI blocker](project/better-auth-cli-release-blocker.md) — version mismatch blocks safe auth schema generation
+- [P1 useSecureCookies — RESOLVED 2026-07-28](project/p1-use-secure-cookies.md) — NODE_ENV-conditional fix in packages/auth/src/auth.ts:55-57 (kept as historical note)
+- [P1 trustedOrigins — RESOLVED 2026-07-28](project/p1-trusted-origins.md) — NODE_ENV-guarded localhost in packages/auth/src/auth.ts:12-17 (kept as historical note)
+- [P1 sendOnSignUp — RESOLVED 2026-07-28 code](project/p1-send-on-signup-disabled.md) — sendOnSignUp is true + proxy gates unverified; doc label still stale, see followup-better-auth-doc-stale
+- [Followup better-auth doc stale](project/followup-better-auth-doc-stale.md) — index.md:17 / email.md:27 / pitfalls.md §6 still say "temp bypass" though code is fixed; bundle in single-tenant doc cleanup PR
+- [P1 CI typecheck — RESOLVED 2026-07-28](project/p1-ci-typecheck-scope.md) — typecheck has no filter + uses --frozen-lockfile; only the `--filter=web` pre-build remains for content-collections types
+- [Better Auth CLI blocker — RESOLVED 2026-07-28](project/better-auth-cli-release-blocker.md) — no separate @better-auth/cli declared; `auth` ships with catalog better-auth@^1.6.23 (same line as runtime/adapter)
 - [Verify high-severity findings](feedback-verify-high-severity-findings.md) — P0/P1 require exact versions, runtime/Git proof, and Fresh sources
 - [Package structure](project/package-structure.md) — one-package-per-concern — new features get their own packages/* (e.g. packages/email for the mailer)
 - [Mailer audit](project/mailer-audit.md) — 2026-07-07 decision log: Resend + console default + react-email in new packages/email package
@@ -29,3 +27,5 @@
 - [Claude Code workflows](claude-code/workflows.md) — Workflow tool primitives, patterns, hard limits, when over Agent tool
 - [User research style](user.md) — thorough research with examples, French, casual, autonomous decisions, /goal do it, fresh CLI
 - [Long-term solutions](feedback-long-term-solutions.md) — prefer systemic fixes over local patches (pnpm.overrides over catalog pin, codify patterns, track adjacent debt)
+- [README layout 2026 (validated)](feedback-readme-layout-2026.md) — <picture> hero + shields badges + Vercel/Codespaces deploy + 3-col "What's included" + GitHub alerts + tables; validated 2026-07-28 by user ("love it") on commit 9de39a0
+- [No em-dashes](feedback-no-em-dashes.md) — README/prose must avoid em-dashes (—); use parentheses or periods. Validated 2026-07-28 on commit c336cff.

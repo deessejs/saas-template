@@ -60,6 +60,41 @@ export const serverSchema = z.object({
     .enum(["console", "resend"])
     .default("console"),
 })
+  // Production-only invariants. Skipped in dev/test so contributors don't
+  // need a full .env to start the app. Enforced in prod because each of these
+  // silently degrades to a stub (e.g. dummy `{}` DB, default localhost URL,
+  // empty Resend key) that looks fine in dev and breaks in prod.
+  .superRefine((data, ctx) => {
+    if (data.NODE_ENV !== "production") return
+
+    if (!data.DATABASE_URL) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "DATABASE_URL is required in production (was optional in dev to keep onboarding simple)",
+        path: ["DATABASE_URL"],
+      })
+    }
+
+    const secret = data.BETTER_AUTH_SECRET ?? data.AUTH_SECRET
+    if (!secret || secret.length < 32) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "BETTER_AUTH_SECRET (>= 32 chars) is required in production. Run: openssl rand -base64 32",
+        path: ["BETTER_AUTH_SECRET"],
+      })
+    }
+
+    if (data.MAIL_TRANSPORT === "resend" && !data.RESEND_API_KEY) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "RESEND_API_KEY is required when MAIL_TRANSPORT=resend (or use MAIL_TRANSPORT=console for dev)",
+        path: ["RESEND_API_KEY"],
+      })
+    }
+  })
 
 /**
  * Client-side env contract. Only NEXT_PUBLIC_* values, safe to bundle to the

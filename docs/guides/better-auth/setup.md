@@ -31,13 +31,14 @@ export const auth = betterAuth({
     schema,
   }),
   plugins: [
-    organization({ /* ... */ }),
-    nextCookies(),
+    nextCookies(), // must be last
   ],
 })
 ```
 
 **Source:** [better-auth.com/docs/reference/options](https://better-auth.com/docs/reference/options) — base config reference.
+
+> **Note:** this template is **single-tenant** (see `index.md` "Locked-in Decisions"). No organization plugin, no org schema — do not reintroduce.
 
 ---
 
@@ -102,7 +103,7 @@ Cookies are `httpOnly` and `secure` by default in production. Configure via `adv
 
 ```ts
 advanced: {
-  useSecureCookies: true,  // ⚠️ breaks local dev — see pitfalls.md §4
+  useSecureCookies: process.env.NODE_ENV === "production",  // ⚠️ never set this to `true` unconditionally — see pitfalls.md §4
   cookiePrefix: "my-app",  // prefix: "my-app.session_token"
   crossSubDomainCookies: {  // for subdomain sharing
     enabled: true,
@@ -153,7 +154,6 @@ pnpm auth:generate   # or: better-auth generate --config ./src/auth.ts --output 
 
 ```ts
 plugins: [
-  organization({ /* ... */ }),
   nextCookies(),  // ← last
 ],
 ```

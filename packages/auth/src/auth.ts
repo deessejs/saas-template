@@ -6,6 +6,19 @@ import * as schema from "@workspace/database"
 import { serverEnv } from "@workspace/env/server"
 import { sendAuthEmail, templates } from "@workspace/email"
 
+/**
+ * Log a transactional email failure. Hook your observability vendor here
+ * (Sentry.captureException, metrics.increment("email_send_failure_total", {flow}),
+ * structured log shipping, etc.). Kept as a thin local function so the auth
+ * config stays pure and the observability layer is swappable.
+ */
+function logEmailFailure(flow: string, userId: string, error: string): void {
+	console.error(
+		`[auth] ${flow} email failed`,
+		JSON.stringify({ userId, flow, error }),
+	)
+}
+
 export const auth = betterAuth({
   baseURL: serverEnv.BETTER_AUTH_URL,
   secret: serverEnv.BETTER_AUTH_SECRET,
@@ -24,12 +37,18 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
+    // Fire-and-forget for response latency (per Better Auth's timing-attack
+    // guidance), but inspect the result asynchronously so failures are
+    // observable. Do not surface to the user — forgot-password must keep
+    // its "always succeed" anti-enumeration UX.
     sendResetPassword: async ({ user, url }) => {
       void sendAuthEmail({
         to: user.email,
         subject: "Reset your password",
         react: templates.ResetPassword({ url, userEmail: user.email }),
         tags: [{ name: "flow", value: "reset-password" }],
+      }).then((result) => {
+        if (!result.ok) logEmailFailure("reset-password", user.id, result.error)
       })
     },
   },
@@ -37,12 +56,19 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     sendOnSignIn: true,
+    // Same pattern as sendResetPassword: fire-and-forget for latency, observe
+    // the result asynchronously. Unlike forgot-password, this flow happens
+    // post-authentication — failing here may warrant a user-visible toast
+    // in the calling page (e.g. settings/email-form.tsx), but the auth
+    // callback itself must not throw to keep Better Auth's contract.
     sendVerificationEmail: async ({ user, url }) => {
-      await sendAuthEmail({
+      void sendAuthEmail({
         to: user.email,
         subject: "Verify your email",
         react: templates.VerifyEmail({ url, userEmail: user.email }),
         tags: [{ name: "flow", value: "verify-email" }],
+      }).then((result) => {
+        if (!result.ok) logEmailFailure("verify-email", user.id, result.error)
       })
     },
   },

@@ -1,72 +1,59 @@
 ---
 name: vercel-deploy
-description: Vercel deployment pattern for eve agent in this monorepo — dashboard overrides, Node 24, engines pinning, flat agent structure, live URL
+description: Vercel deployment pattern for this monorepo's three apps (web, app, docs) — dashboard overrides trump vercel.json, Node floor engines pin, cache-bust quirk on engines.node change
 metadata:
   type: project
 ---
 
-# Vercel + eve monorepo deployment
+# Vercel deploy — this template's three apps
 
-## Pattern exact (matching complete-electron-template)
+`apps/web` (marketing), `apps/app` (authenticated product), and `apps/docs` (Fumadocs) are deployed as **three separate Vercel projects** from one monorepo. Vercel detects the Next.js framework per app automatically.
 
-```json
-// vercel.json (at repo root)
-{
-  "installCommand": "pnpm install --ignore-scripts",
-  "buildCommand": "cd agent && pnpm run build",
-  "outputDirectory": ".vercel/output"
-}
-```
+## Per-app configuration
 
-**DO NOT use `pnpm --filter`** — the `cd agent &&` puts the CWD inside `agent/`, eve discovers `instructions.md` correctly from that CWD, and `outputDirectory` is resolved from the project root (not from the build's CWD).
+| App | Vercel project name (suggested) | Build command (auto) | Output dir |
+|---|---|---|---|
+| `apps/web` | `saas-template-web` | `next build` | `.next` |
+| `apps/app` | `saas-template-app` | `next build` | `.next` |
+| `apps/docs` | `saas-template-docs` | `next build` (after `fumadocs-mdx`) | `.next` |
 
-## Live URL
-
-- Tech-lead agent: https://saas-template-tech-lead.vercel.app
+The repo root has no `vercel.json`. Each Vercel project is configured to point at its app's directory and use the framework auto-detection. Default behavior works.
 
 ## Dashboard settings OVERRIDE vercel.json
 
-Vercel dashboard → Project Settings → Build & Development has fields that **override** `vercel.json`. If the dashboard defines `buildCommand` or `outputDirectory`, those values overwrite `vercel.json`.
+Vercel dashboard → Project Settings → Build & Development has fields that **override** any `vercel.json` you commit. If the dashboard defines `buildCommand` or `outputDirectory`, those values win.
 
-→ Changing `vercel.json` is not enough if the dashboard has its own overrides. The build uses the dashboard settings.
+→ Editing `vercel.json` is not enough if the dashboard has its own overrides. The build uses the dashboard settings.
 
-**Solution**: align dashboard with `vercel.json`, OR don't touch the dashboard fields.
+**Solution**: align the dashboard with `vercel.json`, OR don't touch the dashboard fields and let auto-detection drive.
 
 ## Node.js version
 
-`eve@0.18.x` requires Node >=24. Vercel uses Node 22.x by default.
+`engines.node` in root `package.json` is `">=22.0.0"`. Vercel uses `engines.node` to override the dashboard Node version for the build, even when the value is a range.
 
-Add in root `package.json`:
+Vercel currently ships Node 22.x LTS by default. `>=20` will resolve to Node 22 in production today, but bumps freely as LTS moves forward.
 
-```json
-"engines": {
-  "node": ">=24"
-}
-```
+**Quirk** (verified 2026-07-28): Vercel does NOT bust the build cache when `engines.node` changes ([vercel/vercel#14368](https://github.com/vercel/vercel/issues/14368)). Force a rebuild (empty commit, or `vercel --prod --force`) after bumping.
 
-This overrides the Node version setting of the dashboard for the build.
+## `turbo.json` build env
 
-**Warning**: Vercel does NOT bust the build cache when `engines.node` changes (known bug #14368). Force a rebuild (new commit or `vercel --prod`).
+The `build` task declares the env it expects:
 
-## agent/ structure
+- `DATABASE_URL`, `TEST_DATABASE_URL`
+- `BETTER_AUTH_SECRET`, `AUTH_SECRET` (alias), `BETTER_AUTH_URL`, `ALLOWED_ORIGINS`
+- `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `RESEND_FROM_NAME`, `MAIL_TRANSPORT`
+- `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_APP_DESCRIPTION`, `NEXT_PUBLIC_APP_URL`
 
-The eve agent must be flat in `agent/`:
+These apply globally — `apps/docs` and `apps/web` will need them at build time even though they don't consume most of them. Plan accordingly when you split Vercel projects.
 
-```
-agent/
-  agent.ts
-  instructions.md
-  channels/
-  sandbox/
-  tools/
-```
+## Cross-app linking
 
-NOT `agent/agent/` nested — eve discovers files relative to CWD. A nesting `agent/agent/` broke discovery because `cd agent` placed the CWD in `agent/` where eve found nothing.
+`apps/web/src/components/headers/site-header.tsx` links `/login`, `/signup`, and `/docs` as **bare relative paths**. There is no `NEXT_PUBLIC_APP_URL` env wiring in `apps/web`. All three apps must be served under the same domain (Vercel rewrites or a reverse proxy), or you must inject an env var into `packages/ui/src/lib/config.ts` and read `APP_URL` instead.
 
-## Ressources
+## Sources
 
+- [Vercel — Node.js versions](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions) — engines.node override behavior
 - [Build Output API](https://vercel.com/docs/build-output-api/configuration) — outputDirectory is resolved from project root
-- [Node.js versions](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions) — engines.node overrides dashboard
 - Bug cache: [vercel/vercel#14368](https://github.com/vercel/vercel/issues/14368) — engines.node change does not bust cache
 
-Related: [[eve-integration]]
+Related: [[stack]] (pnpm + Turbo + catalogs that Vercel builds), [[vercel-platform]] (the broader Vercel product surface).

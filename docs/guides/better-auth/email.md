@@ -1,6 +1,6 @@
 # Better-Auth — Email
 
-Email verification, password reset, and invitation emails via `@workspace/email`. See [`index.md`](./index.md) first and read [`hooks.md`](./hooks.md) before this guide.
+Email verification and password reset via `@workspace/email`. See [`index.md`](./index.md) first and read [`hooks.md`](./hooks.md) before this guide.
 
 ---
 
@@ -24,7 +24,8 @@ The `@workspace/email` package is transport-agnostic. `packages/auth` never call
 
 ```ts
 emailVerification: {
-  sendOnSignUp: false,    // ⚠️ temporary bypass — must revert to true
+  sendOnSignUp: true,   // locked — see index.md
+  sendOnSignIn: true,
   sendVerificationEmail: async ({ user, url }) => {
     void sendAuthEmail({
       to: user.email,
@@ -46,7 +47,7 @@ emailVerification: {
 | `false` | Never sends on signup |
 | `undefined` (default) | Sends on signup only if `requireEmailVerification: true` |
 
-**Our choice:** explicit `true` when reactivating. This is more robust than relying on `requireEmailVerification` alone.
+**Our choice:** explicit `true` (locked in `auth.ts:38`). More robust than relying on the `undefined` default, which depends on `requireEmailVerification` to trigger the send.
 
 **Source:** [better-auth.com/docs/reference/options](https://better-auth.com/docs/reference/options) — `sendOnSignUp`, `sendOnSignIn` options.
 
@@ -143,11 +144,11 @@ void sendAuthEmail({
   to: email,
   subject: "...",
   react: ...,
-  idempotencyKey: invitation.id,  // Resend: 24h TTL, max 256 chars
+  idempotencyKey: user.id,  // Resend: 24h TTL, max 256 chars
 })
 ```
 
-Use the invitation ID for invitation emails, user ID for verification emails.
+Use the user ID for verification and password-reset emails.
 
 **Source:** [better-auth.com/docs/infrastructure/services/email](https://better-auth.com/docs/infrastructure/services/email) — email service reference.
 
@@ -205,13 +206,12 @@ return { id: data!.id }
 
 ## Templates
 
-Three transactional templates:
+Two transactional templates ship with this template (single-tenant — no org-invitation template):
 
 | Template | Trigger | Component |
 |---|---|---|
 | `VerifyEmail` | Email verification on signup | `@react-email/components` |
 | `ResetPassword` | Password reset request | `@react-email/components` |
-| `InvitationEmail` | Org invitation | `@react-email/components` |
 
 All use `BaseLayout` (Tailwind-styled via `@react-email/components/Tailwind`). Brand color: `#0070f3`.
 
@@ -219,3 +219,5 @@ To add a new template:
 1. Create `packages/email/src/templates/my-template.tsx`
 2. Export from `packages/email/src/templates/index.ts`
 3. Add to the `templates` namespace export in `packages/email/src/index.ts`
+
+> An `InvitationEmail` template is documented at [`org.md`](./org.md) for historical reference; it is not used in this repo.

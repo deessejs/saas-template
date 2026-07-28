@@ -41,6 +41,5 @@ Vercel ships features constantly. This snapshot is **2026-07-07**. Before recomm
 
 ## Related
 
-- [[deploy]] — our specific `vercel.json` config, dashboard overrides, `engines.node >=24`, and live agent URL
+- [[deploy]] — per-app Vercel project setup, dashboard overrides, `engines.node >=20` and cache-bust quirk
 - [[stack]] — pnpm/Turbo monorepo that Vercel builds
-- [[eve]] — `npx eve init` ships Vercel-aware defaults

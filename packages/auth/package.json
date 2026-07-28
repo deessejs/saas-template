@@ -8,6 +8,11 @@
       "types": "./dist/auth.d.ts",
       "import": "./dist/auth.js",
       "default": "./dist/auth.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js",
+      "default": "./dist/types.js"
     }
   },
   "types": "./dist/auth.d.ts",
