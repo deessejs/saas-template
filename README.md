@@ -161,9 +161,6 @@ Click the **Deploy with Vercel** button at the top. The monorepo is detected aut
 | `apps/app` | `https://app.yourdomain.com` |
 | `apps/docs` | `https://docs.yourdomain.com` |
 
-> [!WARNING]
-> `engines.node` is pinned to `"24.x"` (Eve-side residue). If your deploy target requires a different major, update `package.json` and `pnpm-workspace.yaml` together. Vercel re-detects on each change but can serve stale builds (see the cookie attribute note in [`docs/guides/better-auth/pitfalls.md`](docs/guides/better-auth/pitfalls.md)).
-
 ## Customization
 
 This template is **single-tenant by design**. The auth guides under `docs/guides/better-auth/` explain the lock-ins:
