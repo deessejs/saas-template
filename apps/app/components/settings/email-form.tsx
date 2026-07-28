@@ -5,6 +5,7 @@ import { toast } from "sonner"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
+import { safeRedirect } from "@workspace/utils/safe-redirect"
 
 export function EmailForm() {
 	const [email, setEmail] = useState("")
@@ -18,7 +19,9 @@ export function EmailForm() {
 		setSubmitting(true)
 		const { error } = await authClient.sendVerificationEmail({
 			email: email.trim(),
-			callbackURL: "/verify-email",
+			// Validate even though the literal is hardcoded — defense-in-depth in
+			// case this value becomes user-controlled in a future change.
+			callbackURL: safeRedirect("/verify-email"),
 		})
 		setSubmitting(false)
 

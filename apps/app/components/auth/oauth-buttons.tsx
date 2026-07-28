@@ -4,6 +4,7 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@workspace/ui/components/button"
+import { safeRedirect } from "@workspace/utils/safe-redirect"
 import { GoogleIcon } from "./icons/google-icon"
 import { GitHubIcon } from "./icons/github-icon"
 
@@ -16,7 +17,13 @@ export function OAuthButtons({ callbackURL = "/home" }: OAuthButtonsProps) {
 
 	async function handleOAuth(provider: "google" | "github") {
 		setLoading(provider)
-		const { error } = await authClient.signIn.social({ provider, callbackURL })
+		// Validate callbackURL to defeat open-redirect via protocol-relative URLs
+		// (//evil.com) and backslash bypass (/\\evil.com). See CVE-2025-27143.
+		const safeCallback = safeRedirect(callbackURL)
+		const { error } = await authClient.signIn.social({
+			provider,
+			callbackURL: safeCallback,
+		})
 		setLoading(null)
 
 		if (error) {
