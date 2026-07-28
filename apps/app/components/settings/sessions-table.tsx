@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@workspace/ui/components/button"
+import { asCurrentSessionToken, asSessionToken } from "@workspace/auth/types"
 import {
 	Dialog,
 	DialogContent,
@@ -30,11 +31,18 @@ export function SessionsTable() {
 	const [revokeAllOpen, setRevokeAllOpen] = useState(false)
 	const [revokingAll, setRevokingAll] = useState(false)
 
+	// Audit §3.5: useCallback's body calls `authClient.getSession()` (the
+	// async getter, not a hook). The previous `authClient.useSession()` was
+	// a Rules of Hooks violation — it called useStore from inside an async
+	// callback, outside React's render lifecycle, returning a stale value
+	// (typically the value from a previous render). For the same reason
+	// `revokeOtherSessions` was operating on a stale "current" token,
+	// risking self-logout.
 	const loadSessions = useCallback(async () => {
 		setLoading(true)
 		const [{ data: sessionList }, { data: currentSession }] = await Promise.all([
 			authClient.listSessions(),
-			authClient.useSession(),
+			authClient.getSession(),
 		])
 		setLoading(false)
 
@@ -43,7 +51,10 @@ export function SessionsTable() {
 			return
 		}
 
-		const currentToken = currentSession.session?.token
+		// Audit §3.4: currentSession.session.token is the cookie value. Cast
+		// to branded type at the trust boundary; revoking "this device" by
+		// its id would be a no-op since `revokeSession` looks up by token.
+		const currentToken = asCurrentSessionToken(currentSession.session?.token ?? "")
 
 		setSessions(
 			sessionList.map((s) => ({
@@ -63,14 +74,23 @@ export function SessionsTable() {
 		loadSessions()
 	}, [loadSessions])
 
-	async function handleRevoke(id: string) {
-		setRevoking(id)
-		const { error } = await authClient.revokeSession({ token: id })
+	// Audit §3.4: was passing `id` (row id) as `token` (cookie value). The
+	// server lookup `WHERE token = ?` found nothing, the call returned
+	// success-on-no-op, the local state mutated to remove the row, and the
+	// user thought their "lost device" session was revoked. Now the token
+	// is branded at the boundary so a future id/token swap is a TS error.
+	async function handleRevoke(token: string) {
+		setRevoking(token)
+		const { error } = await authClient.revokeSession({ token: asSessionToken(token) })
 
+		// Audit §3.5 sibling: do not mutate local state when the call
+		// failed. The previous code filtered the row out regardless of
+		// `error`, so failed revokes looked successful in the UI while
+		// the underlying session stayed alive.
 		if (error) {
 			toast.error(error.message ?? "Failed to revoke session")
 		} else {
-			setSessions((prev) => prev.filter((s) => s.id !== id))
+			setSessions((prev) => prev.filter((s) => s.token !== token))
 		}
 		setRevoking(null)
 	}
@@ -84,7 +104,11 @@ export function SessionsTable() {
 		if (error) {
 			toast.error(error.message ?? "Failed to sign out other sessions")
 		} else {
-			setSessions((prev) => prev.filter((s) => s.isCurrent))
+			// `isCurrent` is computed at list-load time from currentToken.
+			// After `revokeOtherSessions`, the server has deleted all
+			// sessions except the current one. We re-fetch to refresh the
+			// list rather than trust the locally-stale `isCurrent` flag.
+			await loadSessions()
 		}
 	}
 
@@ -146,10 +170,10 @@ export function SessionsTable() {
 							<Button
 								variant="ghost"
 								size="sm"
-								onClick={() => handleRevoke(session.id)}
-								disabled={revoking === session.id}
+								onClick={() => handleRevoke(session.token)}
+								disabled={revoking === session.token}
 							>
-								{revoking === session.id ? "Signing out…" : "Sign out"}
+								{revoking === session.token ? "Signing out…" : "Sign out"}
 							</Button>
 						)}
 					</div>

@@ -53,6 +53,8 @@ jobs:
     env:
       NODE_ENV: production
       BETTER_AUTH_SECRET: ci-test-secret-which-is-long-enough-to-pass-the-32-char-validation
+      DATABASE_URL: postgresql://test:test@localhost:5432/test
+      NEXT_PUBLIC_APP_URL: https://ci.example.com
     steps:
       - uses: actions/checkout@v4
         with:
@@ -65,6 +67,10 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      # Env validation — fails fast if production invariants are violated
+      # (DATABASE_URL required, BETTER_AUTH_SECRET >= 32 chars, etc.)
+      - name: Validate env
+        run: pnpm env:check
       - run: pnpm turbo build --force
 
   test-unit:

@@ -58,6 +58,11 @@ function getAvatarUrl(email: string, image?: string | null): string {
 export function NavUser() {
 	const router = useRouter()
 	const { isMobile } = useSidebar()
+	// Top-level hook call: component top-level is a valid hook context per
+	// React's rules. The audit §3.5 bug was calling useSession() inside an
+	// async callback (useCallback body), which IS a violation. Here at
+	// top-level, useSession() is correct.
+	// eslint-disable-next-line no-restricted-syntax
 	const { data: session } = authClient.useSession()
 	const [loggingOut, setLoggingOut] = useState(false)
 	const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
