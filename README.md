@@ -63,7 +63,7 @@
 
 ### Prerequisites
 
-- Node.js **24.x** (`engines.node` enforced)
+- Node.js **22.0.0+** (`engines.node: ">=22.0.0"` enforced)
 - pnpm **11+** (`corepack enable` if not installed)
 - Docker (for local Postgres). Skip if you point `DATABASE_URL` at a remote DB
 
