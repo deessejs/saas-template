@@ -41,20 +41,20 @@
 | Layer | What you get | Why it matters |
 |---|---|---|
 | **Apps** | `apps/web` (marketing), `apps/app` (authenticated product), `apps/docs` (Fumadocs) | Three deployable surfaces, each with its own purpose. |
-| **Auth** | `packages/auth` — Better Auth + Drizzle adapter, email verification, password reset | Real auth, not a demo. Production gating in `apps/app/proxy.ts`. |
-| **API** | `packages/api` — Hono + oRPC, end-to-end typed routes | Type-safe RPC without GraphQL. |
-| **Database** | `packages/database` — Drizzle ORM, Postgres, in-memory test runner (pg-mem) | Single source of truth for schema; tests run without a DB. |
-| **UI** | `packages/ui` — shadcn/ui + Tailwind v4, centralized design tokens | One component library, every app reuses it. |
+| **Auth** | `packages/auth` ( Better Auth + Drizzle adapter, email verification, password reset | Real auth, not a demo. Production gating in `apps/app/proxy.ts`. |
+| **API** | `packages/api` ( Hono + oRPC, end-to-end typed routes | Type-safe RPC without GraphQL. |
+| **Database** | `packages/database` ( Drizzle ORM, Postgres, in-memory test runner (pg-mem) | Single source of truth for schema; tests run without a DB. |
+| **UI** | `packages/ui` ( shadcn/ui + Tailwind v4, centralized design tokens | One component library, every app reuses it. |
 | **Tooling** | pnpm 11 workspaces, Turbo v2, strict catalogs, shared ESLint + TS configs | One command rebuilds, lints, types, tests the whole monorepo. |
 | **Single-tenant** | No organization plugin, no org schema, no org client | One user = one workspace. Multi-tenant is opt-in. |
 
 ## Why this template
 
-- **Modern, but boring where it matters.** Next.js 16, Tailwind v4, React 19, TypeScript 6 — chosen because they're the default for new SaaS projects in 2026.
+- **Modern, but boring where it matters.** Next.js 16, Tailwind v4, React 19, TypeScript 6. Chosen because they're the default for new SaaS projects in 2026.
 - **Lockfile-clean pnpm catalogs.** All shared versions live in `pnpm-workspace.yaml` with `catalogMode: strict`. No drift between apps.
 - **Real auth flow.** Email verification is enforced in the proxy. No "demo" auth.
 - **Real database.** Postgres locally (Docker) or in the cloud. Schema is generated, not hand-written.
-- **Three apps, one repo.** Marketing, product, docs — each deployable independently to Vercel.
+- **Three apps, one repo.** Marketing, product, docs. Each deployable independently to Vercel.
 
 ## Quick start
 
@@ -65,7 +65,7 @@
 
 - Node.js **24.x** (`engines.node` enforced)
 - pnpm **11+** (`corepack enable` if not installed)
-- Docker (for local Postgres) — skip if you point `DATABASE_URL` at a remote DB
+- Docker (for local Postgres). Skip if you point `DATABASE_URL` at a remote DB
 
 ### Install and run
 
@@ -88,7 +88,7 @@ pnpm db:push
 pnpm dev
 ```
 
-Each app's default port is in its own `README.md` (under `apps/*/`). `apps/app` proxies trust `localhost:3000` and `localhost:3001` by default — see `packages/auth/src/auth.ts:13`.
+Each app's default port is in its own `README.md` (under `apps/*/`). `apps/app` proxies trust `localhost:3000` and `localhost:3001` by default. See `packages/auth/src/auth.ts:13`.
 
 ## Available commands
 
@@ -101,7 +101,7 @@ Each app's default port is in its own `README.md` (under `apps/*/`). `apps/app` 
 | `pnpm test` | Run unit tests (pg-mem, no DB needed) |
 | `pnpm db:generate` | Diff schema → write SQL migration |
 | `pnpm db:migrate` | Apply pending migrations |
-| `pnpm db:push` | Sync schema directly (dev only — never in prod) |
+| `pnpm db:push` | Sync schema directly (dev only. Never in prod) |
 | `pnpm db:studio` | Open Drizzle Studio in the browser |
 | `pnpm auth:generate` | Regenerate Better Auth schema in `packages/database/src/schema/auth.ts` |
 | `pnpm env:check` | Validate that all required env vars are present |
@@ -128,9 +128,9 @@ Copy `.env.example` to `.env.local` to start; defaults work for local Docker Pos
 ```
 .
 ├── apps/
-│   ├── web/        # Next.js 16 — marketing site (public, no auth)
-│   ├── app/        # Next.js 16 — authenticated product (proxy.ts guard)
-│   └── docs/       # Next.js 16 — Fumadocs site
+│   ├── web/        # Next.js 16 (marketing site) (public, no auth)
+│   ├── app/        # Next.js 16 (authenticated product) (proxy.ts guard)
+│   └── docs/       # Next.js 16 (Fumadocs site)
 ├── packages/
 │   ├── auth/       # Better Auth setup (single source of truth)
 │   ├── database/   # Drizzle ORM + schema (CLI-generated for auth tables)
@@ -162,7 +162,7 @@ Click the **Deploy with Vercel** button at the top. The monorepo is detected aut
 | `apps/docs` | `https://docs.yourdomain.com` |
 
 > [!WARNING]
-> `engines.node` is pinned to `"24.x"` (Eve-side residue). If your deploy target requires a different major, update `package.json` and `pnpm-workspace.yaml` together — Vercel re-detects on each change but can serve stale builds (see the cookie attribute note in [`docs/guides/better-auth/pitfalls.md`](docs/guides/better-auth/pitfalls.md)).
+> `engines.node` is pinned to `"24.x"` (Eve-side residue). If your deploy target requires a different major, update `package.json` and `pnpm-workspace.yaml` together. Vercel re-detects on each change but can serve stale builds (see the cookie attribute note in [`docs/guides/better-auth/pitfalls.md`](docs/guides/better-auth/pitfalls.md)).
 
 ## Customization
 
@@ -173,13 +173,13 @@ This template is **single-tenant by design**. The auth guides under `docs/guides
 - No `organizationClient()` on the client.
 - Email verification is enforced in `apps/app/proxy.ts` (unverified users redirect to `/verify-email`).
 
-If you need multi-tenant, start from Better Auth's `organizationPlugin` separately — this template will not graft it in cleanly.
+If you need multi-tenant, start from Better Auth's `organizationPlugin` separately. This template will not graft it in cleanly.
 
 ## Architecture notes
 
 - **Proxy, not middleware.** Next.js 16 renamed `middleware.ts` to `proxy.ts`. The auth guard lives at `apps/app/proxy.ts`.
 - **Catalogs, not manual pins.** All shared versions are centralized in `pnpm-workspace.yaml` with `catalogMode: strict`.
-- **Schema ownership.** `packages/database/src/schema/auth.ts` is owned by the Better Auth CLI — never hand-edit.
+- **Schema ownership.** `packages/database/src/schema/auth.ts` is owned by the Better Auth CLI. Never hand-edit.
 - **Single source of truth for auth config.** Everything lives in `packages/auth/src/auth.ts`; routes and components import from `@workspace/auth`.
 
 ## Contributing
@@ -188,7 +188,7 @@ Open an issue to discuss larger changes. For typos, broken links, and small fixe
 
 ## License
 
-[MIT](./LICENSE) — see the LICENSE file for details.
+[MIT](./LICENSE). See the LICENSE file for details.
 
 ## Support
 
