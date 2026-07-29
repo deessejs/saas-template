@@ -1,35 +1,20 @@
 name: Release
 
-# Triggered when staging merges to main (push on main)
-# Or manually via workflow_dispatch for emergency bump
+# Triggered when a staging→main merge commit references `.changeset`, or
+# manually via workflow_dispatch (which re-runs the release against any
+# changesets already on disk).
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - 'VERSION'
-      - 'CHANGELOG.md'
-      - 'package.json'
-      - 'packages/**/package.json'
-      - 'apps/**/package.json'
   workflow_dispatch:
-    inputs:
-      bump:
-        description: 'Version bump type'
-        required: true
-        default: 'patch'
-        type: choice
-        options:
-          - patch
-          - minor
-          - major
-
-permissions:
-  contents: write
-  pull-requests: write
 
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   release:
@@ -43,7 +28,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
@@ -57,114 +41,22 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # ── Manual bump: create empty changeset ──────────────────────────────
-      - name: Create changeset for manual bump
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          echo "Bumping ${{ github.event.inputs.bump }}"
-          pnpm changeset add --empty --yes
-
-      # ── Check for changeset files ───────────────────────────────────────
-      - name: Check changeset files
-        id: changesets
-        run: |
-          COUNT=$(ls .changeset/*.md 2>/dev/null | wc -l)
-          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
-          echo "Found $COUNT changeset file(s)"
-
-      # ── Skip if no changesets on auto trigger ────────────────────────────
-      - name: No changesets found
-        if: steps.changesets.outputs.count == '0'
-        run: |
-          echo "No changeset files found. Skipping release."
-          echo "To create a manual release, use workflow_dispatch."
-
-      # ── Read current VERSION (before changeset bumps it) ─────────────────
-      - name: Read current VERSION
-        id: current-version
-        if: steps.changesets.outputs.count != '0'
-        run: |
-          if [ -f VERSION ]; then
-            CURRENT=$(cat VERSION)
-            echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
-            echo "VERSION file exists with: $CURRENT"
-          else
-            CURRENT=$(node -e "console.log(require('./package.json').version)")
-            echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
-            echo "No VERSION file, starting from: $CURRENT"
-          fi
-
-      # ── Version bump ────────────────────────────────────────────────────
-      - name: Apply version bump
-        if: steps.changesets.outputs.count != '0'
-        run: |
-          pnpm changeset version
-          pnpm install --frozen-lockfile
-
-      # ── Sync VERSION from package.json ───────────────────────────────────
-      - name: Sync VERSION file
-        if: steps.changesets.outputs.count != '0'
-        run: |
-          node -e "
-            const fs = require('fs');
-            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-            const version = pkg.version;
-            const current = '${{ steps.current-version.outputs.current }}';
-            fs.writeFileSync('VERSION', version + '\n');
-            console.log('VERSION updated: ' + current + ' -> ' + version);
-          "
-
-      # ── Commit version bump ──────────────────────────────────────────────
-      - name: Commit version bump
-        if: steps.changesets.outputs.count != '0'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "chore: version bump" || echo "Nothing to commit"
-          git push origin main
-
-      # ── Create git tags ──────────────────────────────────────────────────
-      - name: Create git tags
-        if: steps.changesets.outputs.count != '0'
-        run: |
-          VERSION=$(cat VERSION)
-          TAG="template/v${VERSION}"
-          echo "Creating tag: $TAG"
-          git tag -a "$TAG" -m "Release $TAG"
-          git push origin "$TAG"
-
-      # ── Create GitHub Release ────────────────────────────────────────────
-      - name: Create GitHub Release
-        if: steps.changesets.outputs.count != '0'
-        uses: softprops/action-gh-release@v2
+      # ── Bump versions, commit, open version PR, create GH release ───────
+      # `changesets/action@v2` replaces ~120 lines of custom YAML previously
+      # needed to: detect changesets, run `changeset version`, commit the bump,
+      # push a tag, and create a GitHub Release. See PR body for trade-offs.
+      #
+      # Flow:
+      #   1. First push (with changesets) → action opens a "Version Packages" PR
+      #   2. PR merged → action re-runs, detects no changesets left, runs the
+      #      no-op `publish` script, then creates the GitHub Release
+      - name: Create Release Pull Request or Publish
+        uses: changesets/action@v2
         with:
-          tag_name: "template/v$(cat VERSION)"
-          name: "Release template/v$(cat VERSION)"
-          generate_release_notes: true
-          draft: false
-          prerelease: false
-          files: |
-            VERSION
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # ── Update CHANGELOG.md ──────────────────────────────────────────────
-      - name: Update root CHANGELOG.md
-        if: steps.changesets.outputs.count != '0'
-        run: |
-          DATE=$(date +%Y-%m-%d)
-          VERSION=$(cat VERSION)
-          node -e "
-            const fs = require('fs');
-            const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
-            const entry = \`\n\n## [\${VERSION}] - \${DATE}\n\n### Changed\n\n- Template release\n\`;
-            const updated = changelog.replace('## [Unreleased]', entry + '## [Unreleased]');
-            fs.writeFileSync('CHANGELOG.md', updated);
-            console.log('CHANGELOG.md updated for', VERSION);
-          "
-          git add CHANGELOG.md
-          git commit -m "docs: update CHANGELOG.md for template/v\$VERSION"
-          git push origin main
+          # Template repo: packages are `access: "restricted"`, no npm publish.
+          # Echo is a no-op that satisfies the action's required publish-script.
+          publish: echo "Template repo — no npm publish needed"
+          createGithubReleases: true
+          commit: 'chore(release): version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
