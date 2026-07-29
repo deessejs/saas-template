@@ -1,7 +1,8 @@
 name: Release
 
-# Triggered when staging merges to main (push on main)
-# Or manually via workflow_dispatch for emergency bump
+# Triggered when staging merges to main (push on main).
+# workflow_dispatch re-runs the release against existing changesets on disk
+# (add one with `pnpm changeset` first — there are no inputs to drive the bump).
 on:
   push:
     branches: [main]
@@ -12,16 +13,6 @@ on:
       - 'packages/**/package.json'
       - 'apps/**/package.json'
   workflow_dispatch:
-    inputs:
-      bump:
-        description: 'Version bump type'
-        required: true
-        default: 'patch'
-        type: choice
-        options:
-          - patch
-          - minor
-          - major
 
 permissions:
   contents: write
@@ -57,13 +48,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # ── Manual bump: create empty changeset ──────────────────────────────
-      - name: Create changeset for manual bump
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          echo "Bumping ${{ github.event.inputs.bump }}"
-          pnpm changeset add --empty --yes
-
       # ── Check for changeset files ───────────────────────────────────────
       - name: Check changeset files
         id: changesets
@@ -77,7 +61,8 @@ jobs:
         if: steps.changesets.outputs.count == '0'
         run: |
           echo "No changeset files found. Skipping release."
-          echo "To create a manual release, use workflow_dispatch."
+          echo "To trigger a release manually, use workflow_dispatch."
+          echo "(Changesets must exist on disk — add one with 'pnpm changeset' first.)"
 
       # ── Read current VERSION (before changeset bumps it) ─────────────────
       - name: Read current VERSION
@@ -134,13 +119,25 @@ jobs:
           git tag -a "$TAG" -m "Release $TAG"
           git push origin "$TAG"
 
+      # ── Read new VERSION (output for downstream steps) ───────────────────
+      # GitHub Actions does NOT expand $(...) inside `with:` blocks, only in
+      # `run:` blocks via shell. Output the value here so the action can
+      # reference it via the Actions context.
+      - name: Read new VERSION
+        if: steps.changesets.outputs.count != '0'
+        id: new-version
+        run: |
+          NEW_VERSION=$(cat VERSION)
+          echo "new=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Using VERSION: $NEW_VERSION"
+
       # ── Create GitHub Release ────────────────────────────────────────────
       - name: Create GitHub Release
         if: steps.changesets.outputs.count != '0'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "template/v$(cat VERSION)"
-          name: "Release template/v$(cat VERSION)"
+          tag_name: template/v${{ steps.new-version.outputs.new }}
+          name: Release template/v${{ steps.new-version.outputs.new }}
           generate_release_notes: true
           draft: false
           prerelease: false
@@ -150,6 +147,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # ── Update CHANGELOG.md ──────────────────────────────────────────────
+      # Always run (if changesets exist) so cascade failures in earlier steps
+      # don't skip the root CHANGELOG update. Failures here are non-fatal to
+      # the overall job — wrap in `|| true` so the workflow reports green.
       - name: Update root CHANGELOG.md
         if: steps.changesets.outputs.count != '0'
         run: |
@@ -157,14 +157,22 @@ jobs:
           VERSION=$(cat VERSION)
           node -e "
             const fs = require('fs');
+            if (!fs.existsSync('CHANGELOG.md')) {
+              console.log('No CHANGELOG.md at root — skipping root changelog update.');
+              process.exit(0);
+            }
             const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
+            if (!changelog.includes('## [Unreleased]')) {
+              console.log('No ## [Unreleased] section in CHANGELOG.md — skipping.');
+              process.exit(0);
+            }
             const entry = \`\n\n## [\${VERSION}] - \${DATE}\n\n### Changed\n\n- Template release\n\`;
             const updated = changelog.replace('## [Unreleased]', entry + '## [Unreleased]');
             fs.writeFileSync('CHANGELOG.md', updated);
             console.log('CHANGELOG.md updated for', VERSION);
-          "
-          git add CHANGELOG.md
-          git commit -m "docs: update CHANGELOG.md for template/v\$VERSION"
-          git push origin main
+          " && \
+          git add CHANGELOG.md && \
+          git commit -m "docs: update CHANGELOG.md for template/v${VERSION}" && \
+          git push origin main || echo "Root CHANGELOG.md update failed — non-fatal"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
