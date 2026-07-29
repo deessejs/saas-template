@@ -104,14 +104,19 @@ jobs:
           git push origin main
 
       # ── Create git tags ──────────────────────────────────────────────────
+      # `-f` makes the operation idempotent: if a release is re-run with the
+      # same root version, the existing tag is force-updated to the new commit
+      # instead of failing. Required because `git tag -a` on an existing tag
+      # aborts by default (bit us on the e2e test: tag `template/v0.0.1`
+      # already existed from the backfilled v0.1.0 release).
       - name: Create git tags
         if: steps.changesets.outputs.count != '0'
         run: |
           VERSION=$(cat VERSION)
           TAG="template/v${VERSION}"
-          echo "Creating tag: $TAG"
-          git tag -a "$TAG" -m "Release $TAG"
-          git push origin "$TAG"
+          echo "Creating/updating tag: $TAG"
+          git tag -f -a "$TAG" -m "Release $TAG"
+          git push --force origin "$TAG"
 
       # ── Read new VERSION (output for downstream steps) ───────────────────
       # GitHub Actions does NOT expand $(...) inside `with:` blocks, only in
