@@ -1,16 +1,12 @@
 import Link from "next/link"
-import { SettingsCard } from "@/components/settings"
+import { SettingsCard, SettingsPage } from "@/components/settings"
 
 export default function SecurityPage() {
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold">Security</h1>
-        <p className="text-sm text-muted-foreground">
-          Manage your password and active sessions.
-        </p>
-      </div>
-
+    <SettingsPage
+      title="Security"
+      description="Manage your password and active sessions."
+    >
       <SettingsCard
         title="Password"
         description="Change your account password."
@@ -27,6 +23,6 @@ export default function SecurityPage() {
           </Link>
         </div>
       </SettingsCard>
-    </div>
+    </SettingsPage>
   )
 }
