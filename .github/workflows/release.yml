@@ -134,13 +134,22 @@ jobs:
           git tag -a "$TAG" -m "Release $TAG"
           git push origin "$TAG"
 
+      # ── Read new VERSION (output for downstream steps) ───────────────────
+      - name: Read new VERSION
+        if: steps.changesets.outputs.count != '0'
+        id: new-version
+        run: |
+          NEW_VERSION=$(cat VERSION)
+          echo "new=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Using VERSION: $NEW_VERSION"
+
       # ── Create GitHub Release ────────────────────────────────────────────
       - name: Create GitHub Release
         if: steps.changesets.outputs.count != '0'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "template/v$(cat VERSION)"
-          name: "Release template/v$(cat VERSION)"
+          tag_name: template/v${{ steps.new-version.outputs.new }}
+          name: Release template/v${{ steps.new-version.outputs.new }}
           generate_release_notes: true
           draft: false
           prerelease: false
