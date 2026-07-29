@@ -1,3 +1,4 @@
+/** Categories of cookies that require user consent under GDPR/ePrivacy. */
 export type ConsentCategory = "functional" | "analytics" | "marketing"
 
 export interface CookieConsentData {
