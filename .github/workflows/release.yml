@@ -42,16 +42,20 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       # ── Bump versions, commit, open version PR, create GH release ───────
-      # `changesets/action@v2` replaces ~120 lines of custom YAML previously
+      # `changesets/action@v1` replaces ~120 lines of custom YAML previously
       # needed to: detect changesets, run `changeset version`, commit the bump,
       # push a tag, and create a GitHub Release. See PR body for trade-offs.
+      #
+      # Note: pinned to `@v1` (stable). `@v2` is currently prerelease
+      # (`v2.0.0-next.3`) and not resolvable on GitHub Actions. Revisit when v2
+      # ships stable — see https://github.com/changesets/action/releases.
       #
       # Flow:
       #   1. First push (with changesets) → action opens a "Version Packages" PR
       #   2. PR merged → action re-runs, detects no changesets left, runs the
       #      no-op `publish` script, then creates the GitHub Release
       - name: Create Release Pull Request or Publish
-        uses: changesets/action@v2
+        uses: changesets/action@v1
         with:
           # Template repo: packages are `access: "restricted"`, no npm publish.
           # Echo is a no-op that satisfies the action's required publish-script.
