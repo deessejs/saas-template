@@ -6,7 +6,7 @@ import { useForm } from "@tanstack/react-form"
 import { toast } from "sonner"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@workspace/ui/components/button"
-import { PasswordInput } from "./password-input"
+import { PasswordField } from "./field"
 import { resetPasswordSchema } from "@/components/auth/schemas"
 
 interface ResetPasswordFormProps {
@@ -62,52 +62,18 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 				noValidate
 				className="flex flex-col gap-4"
 			>
-				<form.Field
+				<PasswordField
+					form={form}
 					name="password"
-					children={(field) => (
-						<div className="flex flex-col gap-2">
-							<label htmlFor={field.name} className="text-sm font-medium">
-								New password
-							</label>
-							<PasswordInput
-								id={field.name}
-								name={field.name}
-								autoComplete="new-password"
-								value={field.state.value}
-								onChange={(e) => field.handleChange(e.target.value)}
-								error={!!field.state.meta.errors.length}
-							/>
-							{field.state.meta.errors.map((err) => (
-								<p key={err?.message} className="text-sm text-destructive" role="alert">
-									{err?.message}
-								</p>
-							))}
-						</div>
-					)}
+					label="New password"
+					autoComplete="new-password"
 				/>
 
-				<form.Field
+				<PasswordField
+					form={form}
 					name="confirmPassword"
-					children={(field) => (
-						<div className="flex flex-col gap-2">
-							<label htmlFor={field.name} className="text-sm font-medium">
-								Confirm password
-							</label>
-							<PasswordInput
-								id={field.name}
-								name={field.name}
-								autoComplete="new-password"
-								value={field.state.value}
-								onChange={(e) => field.handleChange(e.target.value)}
-								error={!!field.state.meta.errors.length}
-							/>
-							{field.state.meta.errors.map((err) => (
-								<p key={err?.message} className="text-sm text-destructive" role="alert">
-									{err?.message}
-								</p>
-							))}
-						</div>
-					)}
+					label="Confirm password"
+					autoComplete="new-password"
 				/>
 
 				<form.Subscribe

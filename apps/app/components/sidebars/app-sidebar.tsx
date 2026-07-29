@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { NavUser } from "@/components/sidebars/nav-user"
 import { SettingsNav } from "@/components/sidebars/settings-nav"
-import { SidebarBackAction } from "@/components/sidebar-back-action"
+import { SidebarBackAction } from "@/components/sidebars/sidebar-back-action"
 import {
   Sidebar,
   SidebarContent,

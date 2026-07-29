@@ -5,66 +5,12 @@ import { useRouter } from "next/navigation"
 import { useForm } from "@tanstack/react-form"
 import { toast } from "sonner"
 import { authClient } from "@/lib/auth-client"
-import { Input } from "@workspace/ui/components/input"
 import { Button } from "@workspace/ui/components/button"
 import { Separator } from "@workspace/ui/components/separator"
 import { OAuthButtons } from "./oauth-buttons"
-import { PasswordInput } from "./password-input"
+import { Field, PasswordField } from "./field"
+import { PasswordStrength } from "./password-strength"
 import { signupSchema } from "@/components/auth/schemas"
-
-type StrengthLevel = 0 | 1 | 2 | 3 | 4
-
-const STRENGTH_LABELS = ["", "Weak", "Fair", "Good", "Strong"] as const
-const STRENGTH_COLORS = [
-	"bg-muted",
-	"bg-destructive",
-	"bg-yellow-500",
-	"bg-blue-500",
-	"bg-green-500",
-] as const satisfies Array<string>
-
-function getPasswordStrength(password: string): StrengthLevel {
-	if (!password) return 0
-	let score = 0
-	if (password.length >= 8) score++
-	if (password.length >= 12) score++
-	if (/[a-z]/.test(password)) score++
-	if (/[A-Z]/.test(password)) score++
-	if (/[0-9]/.test(password)) score++
-	if (/[^a-zA-Z0-9]/.test(password)) score++
-	return Math.min(score, 4) as StrengthLevel
-}
-
-function PasswordStrength({ password }: { password: string }) {
-	const strength = getPasswordStrength(password)
-	if (!password) return null
-
-	return (
-		<div className="flex flex-col gap-1">
-			<div className="flex gap-1">
-				{[1, 2, 3, 4].map((level) => (
-					<div
-						key={level}
-						className={`h-1 flex-1 rounded-full transition-colors ${
-							strength >= level ? STRENGTH_COLORS[strength] : "bg-muted"
-						}`}
-					/>
-				))}
-			</div>
-			<p
-				className={`text-xs ${
-					strength <= 1
-						? "text-destructive"
-						: strength <= 2
-							? "text-yellow-600 dark:text-yellow-400"
-							: "text-green-600 dark:text-green-400"
-				}`}
-			>
-				{STRENGTH_LABELS[strength]}
-			</p>
-		</div>
-	)
-}
 
 export function SignupForm() {
 	const router = useRouter()
@@ -106,106 +52,36 @@ export function SignupForm() {
 				noValidate
 				className="flex flex-col gap-4"
 			>
-				<form.Field
+				<Field
+					form={form}
 					name="name"
-					children={(field) => (
-						<div className="flex flex-col gap-1">
-							<label htmlFor={field.name} className="text-sm font-medium">
-								Name
-							</label>
-							<Input
-								id={field.name}
-								name={field.name}
-								type="text"
-								autoComplete="name"
-								autoFocus
-								className="flex h-8 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50"
-								value={field.state.value}
-								onChange={(e) => field.handleChange(e.target.value)}
-								aria-invalid={!!field.state.meta.errors.length}
-							/>
-							{field.state.meta.errors.map((err) => (
-								<p key={err?.message} className="text-sm text-destructive" role="alert">
-									{err?.message}
-								</p>
-							))}
-						</div>
-					)}
+					label="Name"
+					autoComplete="name"
+					autoFocus
 				/>
 
-				<form.Field
+				<Field
+					form={form}
 					name="email"
-					children={(field) => (
-						<div className="flex flex-col gap-1">
-							<label htmlFor={field.name} className="text-sm font-medium">
-								Email
-							</label>
-							<Input
-								id={field.name}
-								name={field.name}
-								type="email"
-								autoComplete="email"
-								className="flex h-8 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50"
-								value={field.state.value}
-								onChange={(e) => field.handleChange(e.target.value)}
-								aria-invalid={!!field.state.meta.errors.length}
-							/>
-							{field.state.meta.errors.map((err) => (
-								<p key={err?.message} className="text-sm text-destructive" role="alert">
-									{err?.message}
-								</p>
-							))}
-						</div>
-					)}
+					label="Email"
+					type="email"
+					autoComplete="email"
 				/>
 
-				<form.Field
+				<PasswordField
+					form={form}
 					name="password"
-					children={(field) => (
-						<div className="flex flex-col gap-1">
-							<label htmlFor={field.name} className="text-sm font-medium">
-								Password
-							</label>
-							<PasswordInput
-								id={field.name}
-								name={field.name}
-								autoComplete="new-password"
-								value={field.state.value}
-								onChange={(e) => field.handleChange(e.target.value)}
-								error={!!field.state.meta.errors.length}
-							/>
-							<PasswordStrength password={field.state.value} />
-							{field.state.meta.errors.map((err) => (
-								<p key={err?.message} className="text-sm text-destructive" role="alert">
-									{err?.message}
-								</p>
-							))}
-						</div>
-					)}
-				/>
+					label="Password"
+					autoComplete="new-password"
+				>
+					{(value) => <PasswordStrength password={value} />}
+				</PasswordField>
 
-				<form.Field
+				<PasswordField
+					form={form}
 					name="confirmPassword"
-					children={(field) => (
-						<div className="flex flex-col gap-1">
-							<label htmlFor={field.name} className="text-sm font-medium">
-								Confirm password
-							</label>
-							<PasswordInput
-								id={field.name}
-								name={field.name}
-								autoComplete="new-password"
-								value={field.state.value}
-								onChange={(e) => field.handleChange(e.target.value)}
-								error={!!field.state.meta.errors.length}
-							/>
-							{field.state.meta.errors.map((err) => (
-								<p key={err?.message} className="text-sm text-destructive" role="alert">
-									{err?.message}
-								</p>
-							))}
-						</div>
-					)}
+					label="Confirm password"
+					autoComplete="new-password"
 				/>
 
 				<p className="text-xs text-muted-foreground">
