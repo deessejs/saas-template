@@ -5,8 +5,8 @@ import { useState } from "react"
 import { useForm } from "@tanstack/react-form"
 import { toast } from "sonner"
 import { authClient } from "@/lib/auth-client"
-import { Input } from "@workspace/ui/components/input"
 import { Button } from "@workspace/ui/components/button"
+import { Field } from "./field"
 import { forgotPasswordSchema } from "@/components/auth/schemas"
 
 export function ForgotPasswordForm() {
@@ -52,31 +52,13 @@ export function ForgotPasswordForm() {
 				noValidate
 				className="flex flex-col gap-4"
 			>
-				<form.Field
+				<Field
+					form={form}
 					name="email"
-					children={(field) => (
-						<div className="flex flex-col gap-1">
-							<label htmlFor={field.name} className="text-sm font-medium">
-								Email
-							</label>
-							<Input
-								id={field.name}
-								name={field.name}
-								type="email"
-								autoComplete="email"
-								autoFocus
-								className="flex h-8 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50"
-								value={field.state.value}
-								onChange={(e) => field.handleChange(e.target.value)}
-								aria-invalid={!!field.state.meta.errors.length}
-							/>
-							{field.state.meta.errors.map((err) => (
-								<p key={err?.message} className="text-sm text-destructive" role="alert">
-									{err?.message}
-								</p>
-							))}
-						</div>
-					)}
+					label="Email"
+					type="email"
+					autoComplete="email"
+					autoFocus
 				/>
 
 				<form.Subscribe

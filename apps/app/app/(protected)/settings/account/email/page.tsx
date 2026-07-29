@@ -1,19 +1,14 @@
-import { SettingsCard } from "@/components/settings"
-import { EmailForm } from "@/components/settings/email-form"
+import { EmailForm, SettingsCard, SettingsPage } from "@/components/settings"
 
 export default function EmailPage() {
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold">Change email</h1>
-        <p className="text-sm text-muted-foreground">
-          Update your account email address. A verification link will be sent to the new address.
-        </p>
-      </div>
-
+    <SettingsPage
+      title="Change email"
+      description="Update your account email address. A verification link will be sent to the new address."
+    >
       <SettingsCard>
         <EmailForm />
       </SettingsCard>
-    </div>
+    </SettingsPage>
   )
 }

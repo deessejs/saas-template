@@ -1,97 +1,26 @@
 # Better-Auth — Known Pitfalls
 
-**Read this before any implementation.** These are behavioral bugs, non-obvious defaults, and removed features that have caused issues in this repo.
+**Read this before any implementation.** These are behavioral bugs, non-obvious defaults, and gotchas that have caused issues in this repo.
+
+> **Single-tenant reminder:** this template does not use the organization plugin. Pitfalls historically tracked here for org-related behaviour (`autoCreateOrganizationOnSignUp`, `session.create.before` org auto-create, `useActiveOrganization` stale cache) have been **removed** from this file and are documented in [`org.md`](./org.md) (historical only). They do not apply here.
 
 ---
 
-## 1. `autoCreateOrganizationOnSignUp` Does Not Exist
-
-**Removed in [PR #4755](https://github.com/better-auth/better-auth/pull/4755) (September 2025, merged into canary).**
-
-The TypeScript option existed in types but had no runtime implementation. It was silently removed rather than implemented. Do not search for it in the docs — it is gone.
-
-**What we do instead:** see [`org.md`](./org.md) — the auto-create is implemented manually in `databaseHooks.session.create.before`.
-
-**Source:** [Issue #4334](https://github.com/better-auth/better-auth/issues/4334) — original report of the non-functional option.
-
----
-
-## 2. `session.create.before` Cannot Query Membership Rows on First Signup
-
-**Status: [open bug #9070](https://github.com/better-auth/better-auth/issues/9070)**
-
-The [documented pattern](https://better-auth.com/docs/plugins/organization) for setting `activeOrganizationId` in `session.create.before` fails on the **first signup** because the organization plugin creates the membership row *after* the session row.
-
-Our current code creates the org inside `session.create.before` itself (not in a separate query), which may sidestep this — but it has not been tested end-to-end with the full membership flow.
-
-**Test plan when touching this code:**
-1. Sign up a brand new user
-2. Verify `activeOrganizationId` is set in the `session` DB row
-3. Verify `useActiveOrganization()` on the client returns the org (not `null`)
-4. Sign out, sign back in — confirm it still works
-
-If step 3 fails, fall back to the workaround in [`client.md`](./client.md).
-
-**Source:** [better-auth.com/docs/plugins/organization](https://better-auth.com/docs/plugins/organization) — official docs that recommend this pattern.
-
----
-
-## 3. `useActiveOrganization` Returns Stale `null` After Sign-in
-
-**Status: [open bug #9710](https://github.com/better-auth/better-auth/issues/9710), fix PRs [#9736](https://github.com/better-auth/better-auth/pull/9736) + [#9737](https://github.com/better-auth/better-auth/pull/9737) pending**
-
-`$activeOrgSignal` invalidates only on `/sign-out` and `/organization/*` paths. It does **not** invalidate on `/sign-in/email`. So after sign-in, `useActiveOrganization()` keeps its pre-session cached value (typically `null`) until a hard page refresh.
-
-**Workaround (apply in `auth-client.ts` or a client-side wrapper):**
-
-```ts
-// apps/app/src/lib/auth-client.ts
-import { createAuthClient } from "better-auth/client"
-import { organizationClient } from "better-auth/client/plugins"
-
-export const authClient = createAuthClient({
-  plugins: [organizationClient()],
-})
-
-// Workaround for #9710: useActiveOrganization returns stale null after sign-in
-let initialized = false
-authClient.$sessionSignal.subscribe(() => {
-  if (initialized) {
-    authClient.$activeOrgSignal.value = null
-  }
-  initialized = true
-})
-```
-
-Until the upstream fix lands, this workaround is required for a correct UX.
-
-**Source:** [better-auth.com/docs/plugins/organization](https://better-auth.com/docs/plugins/organization) — official `setActiveOrganization` docs.
-
----
-
-## 4. `advanced.useSecureCookies: true` Breaks Local Dev
+## 1. `advanced.useSecureCookies: true` Breaks Local Dev
 
 Setting `useSecureCookies: true` forces the `Secure` cookie attribute in **all environments**, including `NODE_ENV=development`. Without HTTPS in local dev, cookies are silently rejected by the browser and sessions never work.
 
-**Current state in this repo:** this option is set. Local dev must use `http://localhost:3000` and the browser must not block cookies.
-
-**Fix:** either remove the line (cookies are secure by default in production anyway) or guard it:
-
-```ts
-advanced: {
-  useSecureCookies: process.env.NODE_ENV === "production",
-},
-```
+**Current state in this repo (verified 2026-07-28):** guarded on `NODE_ENV` at `packages/auth/src/auth.ts:55-57`. Production HTTPS still gets `Secure`; local HTTP does not. Local onboarding works on plain `http://localhost:3000`.
 
 **Source:** [better-auth.com/docs/concepts/cookies](https://better-auth.com/docs/concepts/cookies) — "cookies are secure only in production by default."
 
 ---
 
-## 5. `localhost` in `trustedOrigins` Risks Prod Leak
+## 2. `localhost` in `trustedOrigins` Risks Prod Leak
 
-`trustedOrigins` currently includes hardcoded `http://localhost:3000` and `http://localhost:3001`. This is fine in development, but if `ALLOWED_ORIGINS` is empty in production, localhost origins are still trusted — a potential security issue.
+`trustedOrigins` previously included hardcoded `http://localhost:3000` and `http://localhost:3001` regardless of environment. The CSRF / callback gates in Better Auth 1.6.x delegate to whatever list they receive — so in a self-hosted / Codespaces / on-prem deploy that exposes `localhost`, an attacker reaching those URLs could pass the CSRF check.
 
-**Fix:** guard with `NODE_ENV`:
+**Current state in this repo (verified 2026-07-28):** gated on `NODE_ENV` at `packages/auth/src/auth.ts:12-17`. The localhost entries are only spread when `NODE_ENV === "development"`.
 
 ```ts
 trustedOrigins: [
@@ -106,17 +35,19 @@ trustedOrigins: [
 
 ---
 
-## 6. `sendOnSignUp` Is Temporarily `false`
+## 3. `sendOnSignUp` Must Be Explicit When `requireEmailVerification: true`
 
-Email verification on signup is disabled as a temporary bypass (commit message: "disable email verification (temp bypass)"). The code has `sendOnSignUp: false`.
+Setting `emailAndPassword.requireEmailVerification: true` **without** also setting `emailVerification.sendOnSignUp: true` leaves the verification email gated only on the `undefined` default behavior, which can be brittle across Better Auth upgrades (the semantic of "absent + `requireEmailVerification`" has changed between minor versions).
 
-**When reactivating:** set it to `true` explicitly. Do not rely on the `undefined` default, which depends on `requireEmailVerification` to trigger the send.
+**Current state in this repo (verified 2026-07-28):** both `sendOnSignUp: true` and `sendOnSignIn: true` are explicit at `packages/auth/src/auth.ts:38-39`. `apps/app/proxy.ts` redirects unverified users on protected prefixes (`/home`, `/settings`) to `/verify-email`.
 
-**Source:** [better-auth.com/docs/authentication/email-password](https://better-auth.com/docs/authentication/email-password) — `sendOnSignUp` options documented under email verification config.
+**If you ever need to bypass verification during development**, do not comment these lines out — set `emailAndPassword.requireEmailVerification: false` temporarily and revert before commit. Do not change `sendOnSignUp` back to `false` (or `undefined`-implicit) as a "shortcut".
+
+**Source:** [better-auth.com/docs/authentication/email-password](https://better-auth.com/docs/authentication/email-password) — `sendOnSignUp`, `sendOnSignIn` options.
 
 ---
 
-## 7. Auth Middleware Throws Plain `Error`, Not `ORPCError`
+## 4. Auth Middleware Throws Plain `Error`, Not `ORPCError`
 
 In `packages/api/src/router/middlewares/auth.ts`:
 

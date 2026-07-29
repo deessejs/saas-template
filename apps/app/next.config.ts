@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@workspace/ui", "@workspace/api", "@workspace/auth", "@workspace/database"],
+  transpilePackages: ["@workspace/ui", "@workspace/api", "@workspace/auth", "@workspace/database", "@workspace/utils"],
   images: {
     remotePatterns: [
       {

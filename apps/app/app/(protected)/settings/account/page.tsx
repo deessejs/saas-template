@@ -1,16 +1,12 @@
 import Link from "next/link"
-import { SettingsCard, DangerZone } from "@/components/settings"
+import { DangerZone, SettingsCard, SettingsPage } from "@/components/settings"
 
 export default function AccountPage() {
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold">Account</h1>
-        <p className="text-sm text-muted-foreground">
-          Manage your email and account data.
-        </p>
-      </div>
-
+    <SettingsPage
+      title="Account"
+      description="Manage your email and account data."
+    >
       <SettingsCard
         title="Email"
         description="Change your account email address."
@@ -41,6 +37,6 @@ export default function AccountPage() {
           </Link>
         </div>
       </DangerZone>
-    </div>
+    </SettingsPage>
   )
 }

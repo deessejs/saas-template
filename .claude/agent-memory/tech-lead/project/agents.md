@@ -73,9 +73,11 @@ These are project defaults set by Claude Code itself, not local customization.
 
 ## Branch + PR workflow (observed)
 
-- Default branch: `main`
-- No `develop` branch — feature work happens on topic branches (e.g. `agent/web`, `vercel-fix`), merged via PR to `main`
+- Default branch: `main` — promoted to via merge from `staging` (human-only, never direct)
+- Integration branch: `staging` — set up 2026-07-16, all PRs land here first
+- Feature work happens on topic branches (e.g. `agent/web`, `vercel-fix`, `impl/18-fix-ready-endpoint-db-ping`, `chore/setup-staging-workflow`), PR target is `staging`, then `staging → main` is the release path
 - PR title typically follows the same conventional-commits format as the squash commit
+- See [[git-workflow-staging]] for the full staging-first rules
 
 ## What is NOT in the repo (worth checking before claiming it exists)
 

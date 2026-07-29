@@ -1,35 +1,22 @@
 ---
 name: p1-ci-typecheck-scope
-description: 2026-07-13 P1 finding: .github/workflows/ci.yml typecheck job filters to three packages and runs pnpm install without --frozen-lockfile.
+description: RESOLVED 2026-07-28 (mostly) — the typecheck job runs `pnpm turbo typecheck --force` (no workspace filter) and uses --frozen-lockfile like the other jobs. Only a `--filter=web --force` pre-build remains, likely to generate content-collections types. P1 closed.
 metadata:
   type: project
 ---
 
-The typecheck job runs:
+# RESOLVED 2026-07-28 (mostly)
 
-```sh
-pnpm install
-pnpm turbo typecheck --force \
-  --filter=@workspace/api --filter=@workspace/auth --filter=@workspace/database
-```
+Verified by audit on 2026-07-28 (`.github/workflows/ci.yml`):
 
-Two compounding defects:
+- The typecheck job installs with `pnpm install --frozen-lockfile` (like the other jobs — the original P1 claim "skips --frozen-lockfile" was wrong).
+- The typecheck step itself runs `pnpm turbo typecheck --force` with **no `--filter`** — every workspace with a `typecheck` script is covered.
+- The only `--filter=web --force` call in the file is a **pre-build step** (`pnpm turbo build --filter=web --force`) that runs before typecheck. The likely reason: `apps/web` uses `content-collections` for its MDX blog/changelog, and the generated types must exist before `tsc --noEmit`. Not a coverage defect.
 
-1. The filter excludes `apps/app`, `apps/web`, `apps/docs`, `packages/ui`, `packages/email`, `packages/cookies`, `packages/utils`, `packages/eslint-config`, and `packages/typescript-config`. Type regressions in apps land on `main` and only get caught locally.
-2. `pnpm install` without `--frozen-lockfile` (the other four jobs all use it) silently absorbs lockfile drift instead of failing on it.
+The original concern (lockfile drift silently absorbed, three-of-twelve workspaces guarded) is **not** reproduced.
 
-`turbo.json` already declares `typecheck: { dependsOn: ["^build", "^typecheck"] }`. Dropping the filter runs every workspace that has a `typecheck` script (all three apps do: `tsc --noEmit`).
+## Open question (not a P1)
 
-**Why:** Branch protection on `main` relies on the typecheck job to gate merging. As written, only three of twelve workspaces are actually guarded.
+If the content-collections pre-build is no longer needed on a future version, the `--filter=web` step could be dropped. Not blocking.
 
-**How to apply:**
-- When editing the workflow, mirror the install pattern of the other jobs: `pnpm install --frozen-lockfile`.
-- Run `pnpm turbo typecheck` without filters, or add explicit app filters (`--filter=@workspace/app --filter=@workspace/web --filter=@workspace/docs`).
-- Drop `--force` once cache hits settle, or keep it if cache-hit ratio is irrelevant for the typecheck step.
-- Before flagging "all green", confirm in the PR checks UI that the typecheck job covers the file you're touching.
-
-Verification before sign-off: a deliberate `--frozen-lockfile` failure must turn CI red. A type error in `apps/app/app/page.tsx` must turn CI red.
-
-Full evidence and acceptance criteria: `temp/issues/P1-004-ci-typecheck-scope-and-lockfile.md`.
-
-Related: [[feedback-verify-high-severity-findings]], [[feedback-long-term-solutions]].
+Related: [[stack]], [[feedback-verify-high-severity-findings]].

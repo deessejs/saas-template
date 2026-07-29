@@ -4,6 +4,8 @@ Lifecycle hooks for database operations. See [`index.md`](./index.md) first.
 
 **Source:** [better-auth.com/docs/concepts/hooks](https://better-auth.com/docs/concepts/hooks) — core hooks concept. [better-auth.com/docs/concepts/database](https://better-auth.com/docs/concepts/database) — databaseHooks reference.
 
+> See [`org.md`](./org.md) (historical) for the auto-create-org pattern this template used to rely on — **not applicable here** since the repo is single-tenant.
+
 ---
 
 ## Hook Types
@@ -30,7 +32,7 @@ databaseHooks: {
       before: async (session, ctx) => {
         // session: current session object being written
         // ctx: context (e.g., ctx.context.session for the calling user in update/delete hooks)
-        return { data: { ...session, activeOrganizationId: "..." } }
+        return { data: { ...session, /* any extra fields — single-tenant: none */ } }
         // or: return false to abort
       },
       after: async (session) => {
@@ -47,43 +49,11 @@ The `before` hook can **merge** data back into the session object via `{ data: .
 
 ---
 
-## Session.create.before — Key Use Case
+## Session.create.before — Known Caveat ([#9070](https://github.com/better-auth/better-auth/issues/9070))
 
-This is the hook used for auto-creating the user's personal organization on signup:
+> ⚠️ **Note:** this caveat applies to any code path that touches `session.create.before`. This template is single-tenant and currently does **not** define any such hook; do not add one without first reading the upstream issue.
 
-```ts
-databaseHooks: {
-  session: {
-    create: {
-      before: async (session) => {
-        const userName =
-          session.user?.name ??
-          session.user?.email?.split("@")[0] ??
-          "Personal"
-
-        const org = await (auth.api as any).createOrganization({
-          body: {
-            name: `${userName}'s workspace`,
-            slug: slugify(userName),
-          },
-          headers: new Headers(),
-        })
-
-        return {
-          data: {
-            ...session,
-            activeOrganizationId: org.id,
-          },
-        }
-      },
-    },
-  },
-},
-```
-
-**Why this works:** the org is created inside the before hook using `auth.api.createOrganization`, which means the membership row exists before the session is committed. This may bypass [#9070](https://github.com/better-auth/better-auth/issues/9070) — see [`pitfalls.md`](./pitfalls.md) §2 for the full test plan.
-
-**Source:** [better-auth.com/docs/plugins/organization](https://better-auth.com/docs/plugins/organization) — docs for `setActiveOrganization` via `databaseHooks`.
+On signup, the execution order of the create flow is: `session.create.before` → session row written → `user.create.before` → user row written → `user.create.after`. The original report in #9070 concerned an org-auto-create flow that wrote an `activeOrganizationId` from inside this hook — that flow is org-specific and not applicable here. If you ever add a `session.create.before` for an unrelated reason, verify the user row exists at write time.
 
 ---
 
@@ -136,9 +106,8 @@ On signup, the execution order is:
 4. `user.create.before` (if new user)
 5. User row written
 6. `user.create.after` (if new user)
-7. Organization plugin creates membership row
 
-**Do not** assume `user` exists when `session.create.before` runs — on first signup it does not yet.
+**Do not** assume `user` exists when `session.create.before` runs — on first signup it does not yet. (Step 7 from the pre-single-tenant ordering — "organization plugin creates membership row" — has been removed.)
 
 ---
 

@@ -13,6 +13,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@workspace/ui/components/dialog"
+import { safeRedirect } from "@workspace/utils/safe-redirect"
 import { DangerZone } from "@/components/settings"
 
 const CONFIRM_TEXT = "DELETE"
@@ -27,7 +28,8 @@ export function DeleteAccountDialog() {
 		if (confirm !== CONFIRM_TEXT) return
 		setDeleting(true)
 		const { error } = await authClient.deleteUser({
-			callbackURL: "/login",
+			// Validate even though the literal is hardcoded — defense-in-depth.
+			callbackURL: safeRedirect("/login"),
 		})
 		setDeleting(false)
 		if (error) {

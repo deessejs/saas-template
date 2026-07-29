@@ -7,10 +7,9 @@ import { toast } from "sonner"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@workspace/ui/components/button"
 import { Checkbox } from "@workspace/ui/components/checkbox"
-import { Input } from "@workspace/ui/components/input"
 import { Separator } from "@workspace/ui/components/separator"
 import { OAuthButtons } from "./oauth-buttons"
-import { PasswordInput } from "./password-input"
+import { Field, PasswordField } from "./field"
 import { loginSchema } from "@/components/auth/schemas"
 
 export function LoginForm() {
@@ -44,63 +43,28 @@ export function LoginForm() {
 				noValidate
 				className="flex flex-col gap-4"
 			>
-				<form.Field
+				<Field
+					form={form}
 					name="email"
-					children={(field) => (
-						<div className="flex flex-col gap-1">
-							<label htmlFor={field.name} className="text-sm font-medium">
-								Email
-							</label>
-							<Input
-								id={field.name}
-								name={field.name}
-								type="email"
-								autoComplete="email"
-								autoFocus
-								value={field.state.value}
-								onChange={(e) => field.handleChange(e.target.value)}
-								aria-invalid={!!field.state.meta.errors.length}
-							/>
-							{field.state.meta.errors.map((err) => (
-								<p key={err?.message} className="text-sm text-destructive" role="alert">
-									{err?.message}
-								</p>
-							))}
-						</div>
-					)}
+					label="Email"
+					type="email"
+					autoComplete="email"
+					autoFocus
 				/>
 
-				<form.Field
+				<PasswordField
+					form={form}
 					name="password"
-					children={(field) => (
-						<div className="flex flex-col gap-1">
-							<div className="flex items-center justify-between">
-								<label htmlFor={field.name} className="text-sm font-medium">
-									Password
-								</label>
-								<Link
-									href="/forgot-password"
-									className="text-sm text-primary underline-offset-4 hover:underline"
-								>
-									Forgot password?
-								</Link>
-							</div>
-							<PasswordInput
-								id={field.name}
-								name={field.name}
-								autoComplete="current-password"
-								value={field.state.value}
-								onChange={(e) => field.handleChange(e.target.value)}
-								error={!!field.state.meta.errors.length}
-								aria-invalid={!!field.state.meta.errors.length}
-							/>
-							{field.state.meta.errors.map((err) => (
-								<p key={err?.message} className="text-sm text-destructive" role="alert">
-									{err?.message}
-								</p>
-							))}
-						</div>
-					)}
+					label="Password"
+					autoComplete="current-password"
+					labelAside={
+						<Link
+							href="/forgot-password"
+							className="text-sm text-primary underline-offset-4 hover:underline"
+						>
+							Forgot password?
+						</Link>
+					}
 				/>
 
 				<div className="flex items-center gap-2">

@@ -1,12 +1,25 @@
-# Better-Auth — Organization Plugin
+# Better-Auth — Organization Plugin (NOT USED IN THIS REPO)
 
-Organization management with memberships, roles, and invitations. See [`index.md`](./index.md) first and read [`hooks.md`](./hooks.md) before this guide.
+> ⚠️ **Historical reference only.** This file is preserved as a link target from [`index.md`](./index.md) and downstream docs, but the Better Auth organization plugin is **not** used in this template.
 
-**Source:** [better-auth.com/docs/plugins/organization](https://better-auth.com/docs/plugins/organization) — full plugin documentation.
+This template is **single-tenant** (see `index.md` "Single-Tenant" + project memory `single-tenant`). There is no concept of organization, no memberships, no invitations, no org-scoped roles.
 
 ---
 
-## Plugin Registration
+## Why this file exists
+
+Earlier iterations of this template experimented with `organizationPlugin` (org auto-create on signup, invitations, role-based access control, `useActiveOrganization`). The repo was re-scoped to single-tenant; `packages/auth/src/auth.ts` was cleaned to drop the plugin. This file was kept:
+
+- so internal and external links from other guides do not break, and
+- as a maintained historical reference for users who want to extend this template with org-scoped behaviour themselves.
+
+---
+
+## What this file used to document
+
+The following sections were archived verbatim — every pattern described here is **single-tenant-incompatible** and must not be reintroduced without first re-evaluating the schema, proxy rules, and client wiring.
+
+### Plugin registration (archived)
 
 ```ts
 import { organization } from "better-auth/plugins"
@@ -14,214 +27,33 @@ import { organizationPluginOptions } from "./shared-options"
 
 export const auth = betterAuth({
   plugins: [
-    organization({
-      ...organizationPluginOptions,
-    }),
+    organization({ ...organizationPluginOptions }),
     nextCookies(), // must be last
   ],
 })
 ```
 
----
+### Auto-create org on signup (archived)
 
-## Auto-Create Org on Signup
+`autoCreateOrganizationOnSignUp` was removed upstream in [PR #4755](https://github.com/better-auth/better-auth/pull/4755). The "supported" replacement in many guides used `databaseHooks.session.create.before` to call `auth.api.createOrganization` and stamp the org id onto the new session. That hook is buggy on first signup — see [issue #9070](https://github.com/better-auth/better-auth/issues/9070).
 
-We do **not** use `autoCreateOrganizationOnSignUp` — it was removed (see [`pitfalls.md`](./pitfalls.md) §1). Instead, the org is created in `databaseHooks.session.create.before`. See [`hooks.md`](./hooks.md) for the full implementation.
+### Invitations, roles, `requireEmailVerificationOnInvitation` (archived)
 
-**Source:** [PR #4755](https://github.com/better-auth/better-auth/pull/4755) — removal of the unimplemented option. [Issue #4334](https://github.com/better-auth/better-auth/issues/4334) — original report.
+Three default roles (`owner`, `admin`, `member`) plus custom roles via `createAccessControl`. Invitations went through `auth.api.createInvitation` and a `sendInvitationEmail` callback. `requireEmailVerificationOnInvitation: true` ensured the invitee (not the sender) was verified. None of this is applicable to single-tenant.
 
-Slug generation (40 char max, URL-safe):
+### `useActiveOrganization` stale-cache bug — [#9710](https://github.com/better-auth/better-auth/issues/9710) (archived)
 
-```ts
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 40)
-}
-```
+`$activeOrgSignal` invalidates only on `/sign-out` and `/organization/*` paths, not on `/sign-in/email`. The recommended workaround was to forward `$sessionSignal` invalidations to `$activeOrgSignal` on the client. With no `organizationClient()` wired here, the workaround is moot — and any new client-side code that needs session reactivity should use `$sessionSignal` directly.
 
 ---
 
-## Roles
+## If you need multi-tenant
 
-Three default roles ship with the plugin:
-
-| Role | Description |
-|---|---|
-| `owner` | Full control. Created the org. Cannot be deleted. |
-| `admin` | Full control except deleting the org or changing the owner. |
-| `member` | Read-only access to org data. |
-
-Users can hold **multiple roles** (stored as a comma-separated string). The creator of an org gets the `owner` role.
-
-**Source:** [better-auth.com/docs/plugins/organization](https://better-auth.com/docs/plugins/organization) — membership roles section.
-
-### Custom Roles
-
-For custom permissions, use `createAccessControl`:
-
-```ts
-import { createAccessControl } from "better-auth/plugins/access"
-import { defaultStatements, adminAc } from "better-auth/plugins/organization/access"
-
-const statement = {
-  ...defaultStatements,
-  project: ["create", "share", "update", "delete"],
-} as const
-
-const ac = createAccessControl(statement)
-const projectAdmin = ac.newRole({ project: ["create", "update"], ...adminAc.statements })
-```
-
-Pass to both server and client plugins:
-```ts
-organization({ ac, roles: { owner, admin, member, projectAdmin } })
-```
-
-**Source:** [better-auth.com/docs/plugins/organization](https://better-auth.com/docs/plugins/organization) — `createAccessControl` and custom permissions.
+Do not try to graft the org plugin back into this template. Start from a fresh better-auth setup with `organizationPlugin` configured, and pay attention to the upstream issues referenced above.
 
 ---
 
-## Invitations
+## Sources
 
-### Sending Invitations
-
-Call `auth.api.createInvitation` (server-side) or `authClient.organization.invite` (client-side):
-
-```ts
-// Server
-const invitation = await auth.api.createInvitation({
-  body: {
-    organizationId: "org-id",
-    email: "invitee@example.com",
-    role: "member",
-  },
-  headers: await headers(),
-})
-```
-
-**Source:** [better-auth.com/docs/plugins/organization](https://better-auth.com/docs/plugins/organization) — `createInvitation` API.
-
-### Invitation Email
-
-Configure `sendInvitationEmail` in `organizationPluginOptions`:
-
-```ts
-sendInvitationEmail: async ({ email, organization: org, inviter, invitation }) => {
-  const inviteLink = `${serverEnv.BETTER_AUTH_URL}/accept-invitation?id=${invitation.id}`
-  void sendAuthEmail({
-    to: email,
-    subject: `Join ${org.name}`,
-    react: templates.InvitationEmail({
-      inviteLink,
-      organizationName: org.name,
-      inviterName: inviter.user?.name ?? inviter.user?.email ?? "Someone",
-      inviterEmail: inviter.user?.email ?? "",
-      role: invitation.role ?? "member",
-      expiresAt: new Date(invitation.expiresAt),
-    }),
-    tags: [{ name: "flow", value: "invitation" }],
-    idempotencyKey: invitation.id,
-  })
-},
-```
-
-`invitation.role` may be `undefined` — default to `"member"`.
-
-**Source:** [better-auth.com/docs/plugins/organization](https://better-auth.com/docs/plugins/organization) — `sendInvitationEmail` signature.
-
-### Email Verification Requirement
-
-We set `requireEmailVerificationOnInvitation: true`. This means:
-- Accepting, rejecting, or viewing an invitation requires the session email to be verified
-- The sender's email does not need to be verified (only the invitee's)
-
-**Source:** [better-auth.com/docs/plugins/organization](https://better-auth.com/docs/plugins/organization) — `requireEmailVerificationOnInvitation` docs.
-
----
-
-## afterAcceptInvitation — Set Active Org
-
-After accepting an invitation, set the invited org as the active org:
-
-```ts
-organizationHooks: {
-  afterAcceptInvitation: async ({ organization: org }) => {
-    await (auth.api as any).setActiveOrganization({
-      body: { organizationId: org.id },
-      headers: new Headers(),
-    })
-  },
-},
-```
-
-**Note on [#9710](https://github.com/better-auth/better-auth/issues/9710):** `setActiveOrganization` updates the server session row correctly, but `useActiveOrganization()` on the client may still return stale `null`. See [`pitfalls.md`](./pitfalls.md) §3 for the workaround.
-
-**Source:** [better-auth.com/docs/plugins/organization](https://better-auth.com/docs/plugins/organization) — `afterAcceptInvitation` hook.
-
----
-
-## Organization Lifecycle Hooks
-
-Use `organizationHooks` (not the legacy `organizationCreation` hooks):
-
-```ts
-organizationHooks: {
-  beforeCreateOrganization: async ({ organization, user }) => {
-    // Enrich or validate before creation
-    return { data: { ...organization, metadata: { source: "signup" } } }
-  },
-  afterCreateOrganization: async ({ organization, member, user }) => {
-    // Setup resources, send notifications
-  },
-  beforeDeleteOrganization: async ({ organization, user, member }) => {
-    // Guard: only owners can delete
-    import { APIError } from "better-auth/api"
-    if (member.role !== "owner") {
-      throw new APIError("FORBIDDEN", { message: "Only owners can delete an org" })
-    }
-  },
-},
-```
-
-**Source:** [better-auth.com/docs/plugins/organization](https://better-auth.com/docs/plugins/organization) — `organizationHooks` section with full hook list.
-
----
-
-## Membership Limits
-
-Default: 100 members per org. Configurable per organization:
-
-```ts
-organization({
-  membershipLimit: async (organization) => {
-    const plan = await getPlan(organization.id)
-    return plan === "pro" ? 1000 : 100
-  },
-})
-```
-
-**Source:** [better-auth.com/docs/plugins/organization](https://better-auth.com/docs/plugins/organization) — `membershipLimit`.
-
----
-
-## Restrict Org Creation
-
-Control which users can create orgs:
-
-```ts
-organization({
-  allowUserToCreateOrganization: async (user) => {
-    const subscription = await getSubscription(user.id)
-    return subscription.plan !== "free"
-  },
-})
-```
-
-When set to `false`, only server-side `auth.api.createOrganization` (without session headers) can create orgs on behalf of a user.
-
-**Source:** [better-auth.com/docs/plugins/organization](https://better-auth.com/docs/plugins/organization) — `allowUserToCreateOrganization`.
+- Plugin docs (kept for link integrity): [better-auth.com/docs/plugins/organization](https://better-auth.com/docs/plugins/organization)
+- Closed upstream bugs: [#9070](https://github.com/better-auth/better-auth/issues/9070), [#9710](https://github.com/better-auth/better-auth/issues/9710)

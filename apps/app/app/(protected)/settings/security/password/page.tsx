@@ -1,19 +1,14 @@
-import { SettingsCard } from "@/components/settings"
-import { PasswordForm } from "@/components/settings/password-form"
+import { PasswordForm, SettingsCard, SettingsPage } from "@/components/settings"
 
 export default function PasswordPage() {
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold">Change password</h1>
-        <p className="text-sm text-muted-foreground">
-          Update your account password.
-        </p>
-      </div>
-
+    <SettingsPage
+      title="Change password"
+      description="Update your account password."
+    >
       <SettingsCard>
         <PasswordForm />
       </SettingsCard>
-    </div>
+    </SettingsPage>
   )
 }

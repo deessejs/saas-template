@@ -28,6 +28,8 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
+      // Test setup: fire-and-forget is fine for test isolation.
+      // eslint-disable-next-line no-restricted-syntax
       void sendAuthEmail({
         to: user.email,
         subject: "Reset your password",
@@ -38,6 +40,8 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
+      // Test setup: fire-and-forget is fine for test isolation.
+      // eslint-disable-next-line no-restricted-syntax
       void sendAuthEmail({
         to: user.email,
         subject: "Verify your email",
