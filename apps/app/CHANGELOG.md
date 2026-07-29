@@ -1,5 +1,12 @@
 # app
 
+## 0.1.2
+
+### Patch Changes
+
+- @workspace/api@0.0.2
+- @workspace/auth@0.0.2
+
 ## 0.1.1
 
 ### Patch Changes

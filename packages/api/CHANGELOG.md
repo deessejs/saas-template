@@ -1,5 +1,13 @@
 # @workspace/api
 
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies [83a37b0]
+  - @workspace/database@0.0.1
+  - @workspace/auth@0.0.2
+
 ## 0.0.1
 
 ### Patch Changes
