@@ -165,7 +165,7 @@ Click the **Deploy with Vercel** button at the top. The monorepo is detected aut
 
 ## Customization
 
-This template is **single-tenant by design**. The auth guides under `docs/guides/better-auth/` explain the lock-ins:
+This template is **single-tenant by design**. Lock-ins:
 
 - No `organization(...)` plugin in `packages/auth/src/auth.ts`.
 - No `databaseHooks.session.create.before` for org auto-create.

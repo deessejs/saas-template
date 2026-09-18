@@ -20,7 +20,7 @@ Thank you for your interest in contributing!
 
 - `feat/` — New features
 - `fix/` — Bug fixes
-- `docs/` — Documentation updates
+- _(no `docs/` branch prefix — see `apps/docs/` for the deployed docs app; internal documentation lives in code comments and `README.md`)_
 - `refactor/` — Code refactoring
 
 ### Commits
