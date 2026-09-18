@@ -52,7 +52,7 @@ export function Footer() {
 ```tsx
 import { ConsentScript } from "@workspace/cookies"
 
-<ConsentScript
+;<ConsentScript
   category="analytics"
   src="https://example.com/analytics.js"
   strategy="lazyOnload"
@@ -72,11 +72,11 @@ export default function CookiesPage() {
 
 ## Consent categories
 
-| Category | Default | Description |
-|---|---|---|
+| Category     | Default   | Description                |
+| ------------ | --------- | -------------------------- |
 | `functional` | always on | Strictly necessary cookies |
-| `analytics` | off | Analytics and tracking |
-| `marketing` | off | Marketing and ads |
+| `analytics`  | off       | Analytics and tracking     |
+| `marketing`  | off       | Marketing and ads          |
 
 ## GDPR compliance
 

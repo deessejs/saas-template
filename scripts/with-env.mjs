@@ -25,7 +25,7 @@ import path from "node:path"
 
 const loaderPath = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
-  "../packages/env/dist/loader.js",
+  "../packages/env/dist/loader.js"
 )
 const { loadRepoEnv } = await import(pathToFileURL(loaderPath).href)
 

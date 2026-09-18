@@ -37,4 +37,4 @@ export type CurrentSessionToken = Brand<string, "CurrentSessionToken">
 export const asSessionToken = (s: string): SessionToken => s as SessionToken
 export const asSessionRowId = (s: string): SessionRowId => s as SessionRowId
 export const asCurrentSessionToken = (s: string): CurrentSessionToken =>
-	s as CurrentSessionToken
+  s as CurrentSessionToken

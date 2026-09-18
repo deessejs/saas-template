@@ -24,42 +24,41 @@ import { z } from "zod"
  * suite run without env vars while still enforcing it at prod startup.
  */
 
-const csv = z
-  .string()
-  .transform((s) => s.split(",").map((p) => p.trim()).filter(Boolean))
+const csv = z.string().transform((s) =>
+  s
+    .split(",")
+    .map((p) => p.trim())
+    .filter(Boolean)
+)
 
-export const serverSchema = z.object({
-  NODE_ENV: z
-    .enum(["development", "test", "production"])
-    .default("development"),
-  DATABASE_URL: z.string().url().optional(),
-  TEST_DATABASE_URL: z.string().url().optional(),
-  BETTER_AUTH_URL: z.string().url().default("http://localhost:3000"),
-  // Optional. In production, better-auth throws if unset.
-  // In dev/test, better-auth uses a built-in default secret.
-  // We only validate length when the value is present (prevents crash in test).
-  BETTER_AUTH_SECRET: z
-    .string()
-    .min(32, "Run: openssl rand -base64 32 (>= 32 chars required)")
-    .optional(),
-  AUTH_SECRET: z.string().min(32).optional(),
-  ALLOWED_ORIGINS: csv.default([]),
+export const serverSchema = z
+  .object({
+    NODE_ENV: z
+      .enum(["development", "test", "production"])
+      .default("development"),
+    DATABASE_URL: z.string().url().optional(),
+    TEST_DATABASE_URL: z.string().url().optional(),
+    BETTER_AUTH_URL: z.string().url().default("http://localhost:3000"),
+    // Optional. In production, better-auth throws if unset.
+    // In dev/test, better-auth uses a built-in default secret.
+    // We only validate length when the value is present (prevents crash in test).
+    BETTER_AUTH_SECRET: z
+      .string()
+      .min(32, "Run: openssl rand -base64 32 (>= 32 chars required)")
+      .optional(),
+    AUTH_SECRET: z.string().min(32).optional(),
+    ALLOWED_ORIGINS: csv.default([]),
 
-  // Mailer — Resend (prod)
-  RESEND_API_KEY: z.string().optional(),
-  RESEND_FROM_EMAIL: z
-    .string()
-    .email()
-    .default("onboarding@resend.dev"),
-  RESEND_FROM_NAME: z.string().min(1).default("SaaS Template"),
+    // Mailer — Resend (prod)
+    RESEND_API_KEY: z.string().optional(),
+    RESEND_FROM_EMAIL: z.string().email().default("onboarding@resend.dev"),
+    RESEND_FROM_NAME: z.string().min(1).default("SaaS Template"),
 
-  // Mailer — transport selector
-  //   "console" (default) → logs to stdout, zero infrastructure
-  //   "resend"            → production, uses RESEND_API_KEY
-  MAIL_TRANSPORT: z
-    .enum(["console", "resend"])
-    .default("console"),
-})
+    // Mailer — transport selector
+    //   "console" (default) → logs to stdout, zero infrastructure
+    //   "resend"            → production, uses RESEND_API_KEY
+    MAIL_TRANSPORT: z.enum(["console", "resend"]).default("console"),
+  })
   // Production-only invariants. Skipped in dev/test so contributors don't
   // need a full .env to start the app. Enforced in prod because each of these
   // silently degrades to a stub (e.g. dummy `{}` DB, default localhost URL,

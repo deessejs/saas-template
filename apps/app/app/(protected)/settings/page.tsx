@@ -56,7 +56,9 @@ export default function Settings() {
                   </div>
                   <div className="flex-1">
                     <h2 className="font-medium">{section.title}</h2>
-                    <p className="text-sm text-muted-foreground">{section.description}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {section.description}
+                    </p>
                   </div>
                 </div>
               </SettingsCard>

@@ -49,21 +49,23 @@ if (NODE_ENV === "production") {
   const url = process.env.NEXT_PUBLIC_APP_URL
   if (!url || url === "http://localhost:3000") {
     errors.push(
-      "client.NEXT_PUBLIC_APP_URL must be set to the deployment URL in production (no localhost fallback)",
+      "client.NEXT_PUBLIC_APP_URL must be set to the deployment URL in production (no localhost fallback)"
     )
   }
 }
 
 if (errors.length > 0) {
   // eslint-disable-next-line no-console
-  console.error(`\n[env-check] ✗ Invalid environment for NODE_ENV=${NODE_ENV}:\n`)
+  console.error(
+    `\n[env-check] ✗ Invalid environment for NODE_ENV=${NODE_ENV}:\n`
+  )
   for (const e of errors) {
     // eslint-disable-next-line no-console
     console.error(`  - ${e}`)
   }
   // eslint-disable-next-line no-console
   console.error(
-    "\nCopy .env.example to .env at the repo root and fill in the values.\n",
+    "\nCopy .env.example to .env at the repo root and fill in the values.\n"
   )
   process.exit(1)
 }

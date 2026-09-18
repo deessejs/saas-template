@@ -1,4 +1,8 @@
-import { SessionsTable, SettingsCard, SettingsPage } from "@/components/settings"
+import {
+  SessionsTable,
+  SettingsCard,
+  SettingsPage,
+} from "@/components/settings"
 
 export default function SessionsPage() {
   return (

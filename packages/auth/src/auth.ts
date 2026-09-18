@@ -13,10 +13,10 @@ import { sendAuthEmail, templates } from "@workspace/email"
  * config stays pure and the observability layer is swappable.
  */
 function logEmailFailure(flow: string, userId: string, error: string): void {
-	console.error(
-		`[auth] ${flow} email failed`,
-		JSON.stringify({ userId, flow, error }),
-	)
+  console.error(
+    `[auth] ${flow} email failed`,
+    JSON.stringify({ userId, flow, error })
+  )
 }
 
 export const auth = betterAuth({
