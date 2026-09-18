@@ -6,8 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "format": "prettier --write \"**/*.{ts,tsx,mdx}\"",
+    "lint": "oxlint",
+    "format": "oxfmt",
     "typecheck": "fumadocs-mdx && next typegen && tsc --noEmit"
   },
   "dependencies": {
@@ -28,9 +28,9 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@workspace/eslint-config": "workspace:*",
+    "@workspace/oxlint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
-    "eslint": "^9",
+    "oxlint": "catalog:",
     "postcss": "^8.5.15",
     "tailwindcss": "^4",
     "typescript": "catalog:"

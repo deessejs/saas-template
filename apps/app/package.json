@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "oxlint --max-warnings=0",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -32,9 +32,9 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@workspace/eslint-config": "workspace:*",
+    "@workspace/oxlint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
-    "eslint": "^9",
+    "oxlint": "catalog:",
     "tailwindcss": "^4",
     "typescript": "catalog:"
   }

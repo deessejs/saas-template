@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -15,9 +16,8 @@
       "default": "./dist/schema/index.js"
     }
   },
-  "types": "./dist/index.d.ts",
   "scripts": {
-    "lint": "eslint --max-warnings=0",
+    "lint": "oxlint --max-warnings=0",
     "build": "tsc",
     "test": "vitest",
     "test:run": "vitest run",
@@ -36,11 +36,11 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@workspace/eslint-config": "workspace:*",
+    "@workspace/oxlint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "dotenv": "catalog:",
     "drizzle-kit": "catalog:",
-    "eslint": "catalog:",
+    "oxlint": "catalog:",
     "pg-mem": "^3.0.0",
     "vitest": "catalog:"
   }

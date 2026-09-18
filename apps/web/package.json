@@ -1,14 +1,14 @@
 {
   "name": "web",
   "version": "0.0.1",
-  "type": "module",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "lint": "oxlint",
+    "format": "oxfmt",
     "typecheck": "tsc --noEmit",
     "content-collections": "content-collections build"
   },
@@ -32,9 +32,9 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@workspace/eslint-config": "workspace:*",
+    "@workspace/oxlint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
-    "eslint": "^9",
+    "oxlint": "catalog:",
     "reading-time": "catalog:",
     "typescript": "catalog:",
     "zod": "catalog:"

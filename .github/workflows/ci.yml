@@ -29,6 +29,23 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm turbo lint --force
 
+  format:
+    name: Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm oxfmt --check
+
   typecheck:
     name: Type Check
     runs-on: ubuntu-latest
