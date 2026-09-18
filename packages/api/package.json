@@ -3,6 +3,7 @@
   "version": "0.0.2",
   "private": true,
   "type": "module",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -20,9 +21,8 @@
       "default": "./dist/base-path.js"
     }
   },
-  "types": "./dist/index.d.ts",
   "scripts": {
-    "lint": "eslint --max-warnings=0",
+    "lint": "oxlint --max-warnings=0",
     "build": "tsc",
     "test": "vitest",
     "test:run": "vitest run",
@@ -44,9 +44,9 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@workspace/eslint-config": "workspace:*",
+    "@workspace/oxlint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
-    "eslint": "catalog:",
+    "oxlint": "catalog:",
     "vitest": "catalog:"
   }
 }

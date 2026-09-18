@@ -29,7 +29,7 @@
  */
 export function safeRedirect(
   target: string | null | undefined,
-  fallback: string = "/",
+  fallback: string = "/"
 ): string {
   if (typeof target !== "string" || target.length === 0) return fallback
   // Must be a relative path. Reject fully-qualified URLs.

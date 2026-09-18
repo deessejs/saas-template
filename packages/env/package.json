@@ -29,6 +29,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "lint": "oxlint --max-warnings=0",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -37,8 +38,9 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@workspace/eslint-config": "workspace:*",
+    "@workspace/oxlint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

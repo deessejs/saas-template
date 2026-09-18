@@ -113,7 +113,7 @@ export const testDb = {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         execute: (strings: TemplateStringsArray, ...values: any[]) => {
           return _pgMemDb.public.all(
-            strings.reduce((acc, str, i) => acc + str + (values[i] ?? ""), ""),
+            strings.reduce((acc, str, i) => acc + str + (values[i] ?? ""), "")
           )
         },
         select: () => _pgMemDb.public,

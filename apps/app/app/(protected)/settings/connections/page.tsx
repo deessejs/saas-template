@@ -1,4 +1,8 @@
-import { ConnectedAccountsList, SettingsCard, SettingsPage } from "@/components/settings"
+import {
+  ConnectedAccountsList,
+  SettingsCard,
+  SettingsPage,
+} from "@/components/settings"
 
 export default function ConnectionsPage() {
   return (

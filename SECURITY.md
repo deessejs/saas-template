@@ -15,6 +15,7 @@ If you discover a security vulnerability, please report it responsibly.
 Instead, contact us directly at: [support@deessejs.com](mailto:support@deessejs.com)
 
 Include the following information in your report:
+
 - Type of issue (e.g., XSS, SQL injection, etc.)
 - Full paths of source file(s) related to the vulnerability
 - Location of the affected source code (tag/branch/commit or direct URL)

@@ -7,7 +7,7 @@ This repository includes a pre-configured development environment for GitHub Cod
 - **Node.js 22** - Latest LTS runtime
 - **PostgreSQL 16** - Pre-installed and initialized
 - **pnpm** - Fast, disk space efficient package manager
-- **VS Code Extensions** - ESLint, Prettier, Prisma, Tailwind CSS
+- **VS Code Extensions** - Oxc (Oxlint + Oxfmt), Prisma, Tailwind CSS
 
 ## Getting Started
 
@@ -21,6 +21,7 @@ This repository includes a pre-configured development environment for GitHub Cod
 ### First-Time Setup
 
 The dev container automatically:
+
 - Installs pnpm dependencies
 - Creates PostgreSQL user and database
 - Generates the auth schema
@@ -39,10 +40,10 @@ Set your secrets in Codespaces:
 
 ### Available Services
 
-| Service | Port | URL |
-|---------|------|-----|
+| Service    | Port | URL                                                    |
+| ---------- | ---- | ------------------------------------------------------ |
 | PostgreSQL | 5432 | `postgresql://codespace:codespace@localhost:5432/saas` |
-| App Dev | 3000 | https://localhost:3000 |
+| App Dev    | 3000 | https://localhost:3000                                 |
 
 ### Running Commands
 
@@ -62,6 +63,7 @@ pnpm test
 ### PostgreSQL not starting
 
 Run manually:
+
 ```bash
 sudo service postgresql start
 ```
@@ -69,6 +71,7 @@ sudo service postgresql start
 ### Database connection errors
 
 Check the connection string:
+
 ```bash
 echo $DATABASE_URL
 ```
@@ -86,8 +89,8 @@ pnpm db:push
 ## VS Code Extensions
 
 The dev container pre-installs:
-- ESLint
-- Prettier
+
+- Oxc (Oxlint + Oxfmt)
 - Tailwind CSS IntelliSense
 - Prisma
 - TypeScript Nightly

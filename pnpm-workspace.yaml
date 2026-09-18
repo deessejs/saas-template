@@ -4,8 +4,8 @@ packages:
 
 # pnpm 11: explicit allowlist for build scripts
 allowBuilds:
-  '@mongodb-js/zstd': true
-  '@prisma/client': true
+  "@mongodb-js/zstd": true
+  "@prisma/client": true
   better-sqlite3: true
   esbuild: true
   node-liblzma: true
@@ -20,26 +20,26 @@ catalog:
 
   # Auth
   "@better-auth/drizzle-adapter": ^1.6.23
-  '@changesets/changelog-git': ^0.2.1
-  '@changesets/cli': ^2.31.0
-  '@content-collections/cli': ^0.1.9
-  '@content-collections/core': ^0.15.2
-  '@content-collections/mdx': ^0.2.2
-  '@content-collections/next': ^0.2.11
-  '@deessejs/errors': ^1.1.1
-  '@deessejs/fp': ^1.0.0
+  "@changesets/changelog-git": ^0.2.1
+  "@changesets/cli": ^2.31.0
+  "@content-collections/cli": ^0.1.9
+  "@content-collections/core": ^0.15.2
+  "@content-collections/mdx": ^0.2.2
+  "@content-collections/next": ^0.2.11
+  "@deessejs/errors": ^1.1.1
+  "@deessejs/fp": ^1.0.0
 
   # Next.js
   "@next/env": ^16.2.10
-  '@orpc/client': ^1.14.7
+  "@orpc/client": ^1.14.7
   "@orpc/server": ^1.14.7
   "@react-email/components": ^1.0.12
   "@react-email/render": ^2.0.6
-  '@shikijs/rehype': ^4.3.1
+  "@shikijs/rehype": ^4.3.1
 
   # Shared tooling
   "@tailwindcss/postcss": ^4.3.2
-  '@tanstack/react-form': ^1.33.0
+  "@tanstack/react-form": ^1.33.0
   "@turbo/gen": ^2.10.4
 
   # Types
@@ -55,8 +55,9 @@ catalog:
   dotenv: ^17.4.2
   drizzle-kit: ^0.31.10
   drizzle-orm: ^0.45.2
-  eslint: ^9.39.4
-  "eslint-config-next": ^16.2.10
+  oxlint: ^1.83.0
+  oxfmt: ^0.68.0
+  "oxlint-plugin-eslint": ^1.83.0
   fuse.js: ^7.4.2
 
   # API

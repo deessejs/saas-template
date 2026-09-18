@@ -22,32 +22,40 @@ export type SendEmailResult = { ok: true } | { ok: false; error: string }
  * (subject lines often contain the recipient's email) into stdout.
  */
 export async function sendAuthEmail(opts: {
-	to: string
-	subject: string
-	react: React.ReactNode
-	tags?: Array<{ name: string; value: string }>
-	idempotencyKey?: string
+  to: string
+  subject: string
+  react: React.ReactNode
+  tags?: Array<{ name: string; value: string }>
+  idempotencyKey?: string
 }): Promise<SendEmailResult> {
-	if (process.env.NODE_ENV !== "production") {
-		console.log("[DEBUG] sendAuthEmail() called — subject:", opts.subject)
-	}
-	try {
-		const result = await mailer.send({
-			to: opts.to,
-			subject: opts.subject,
-			react: opts.react,
-			...(opts.tags ? { tags: opts.tags } : {}),
-			...(opts.idempotencyKey ? { idempotencyKey: opts.idempotencyKey } : {}),
-		})
-		// ResendTransport returns `{ data, error }`; ConsoleTransport returns
-		// the data directly. Normalize to the discriminated union.
-		if (result && typeof result === "object" && "error" in result && result.error) {
-			return { ok: false, error: String(result.error) }
-		}
-		return { ok: true }
-	} catch (err) {
-		return { ok: false, error: err instanceof Error ? err.message : String(err) }
-	}
+  if (process.env.NODE_ENV !== "production") {
+    console.log("[DEBUG] sendAuthEmail() called — subject:", opts.subject)
+  }
+  try {
+    const result = await mailer.send({
+      to: opts.to,
+      subject: opts.subject,
+      react: opts.react,
+      ...(opts.tags ? { tags: opts.tags } : {}),
+      ...(opts.idempotencyKey ? { idempotencyKey: opts.idempotencyKey } : {}),
+    })
+    // ResendTransport returns `{ data, error }`; ConsoleTransport returns
+    // the data directly. Normalize to the discriminated union.
+    if (
+      result &&
+      typeof result === "object" &&
+      "error" in result &&
+      result.error
+    ) {
+      return { ok: false, error: String(result.error) }
+    }
+    return { ok: true }
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : String(err),
+    }
+  }
 }
 
 /**
@@ -58,6 +66,6 @@ export async function sendAuthEmail(opts: {
  *   templates.VerifyEmail({ url, userEmail: user.email })
  */
 export const templates = {
-	VerifyEmail,
-	ResetPassword,
+  VerifyEmail,
+  ResetPassword,
 }

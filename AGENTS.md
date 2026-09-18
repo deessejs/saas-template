@@ -1,4 +1,5 @@
 <!-- BEGIN:nextjs-agent-rules -->
+
 # This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
@@ -35,11 +36,12 @@ feature/fix branch  ─PR─▶  staging  ─merge (manual, human)─▶  main  
 - `chore/{slug}` for chores, refactors, infra — e.g. `chore/setup-staging-workflow`
 - `fix/{slug}` for unsolicited bug fixes
 
-### Fresh CLI 
+### Fresh CLI
 
 `fresh` is a CLI for AI-powered web search and fetch, backed by Exa.ai.
 
 **Subcommands:**
+
 - `fresh auth login [--no-open]` — device authorization flow. `--no-open` skips auto-opening the browser.
 - `fresh auth logout` — sign out and clear stored credentials.
 - `fresh auth status` — check whether the token is valid.
@@ -52,5 +54,6 @@ feature/fix branch  ─PR─▶  staging  ─merge (manual, human)─▶  main  
 **Auth state to watch:** if `fresh auth status` reports "Token expired", run `fresh auth login` (with `--no-open` if you want to open the browser URL manually).
 
 **Notes:**
+
 - General help via `fresh --help` and per-command via `fresh <cmd> --help`.
 - Version via `fresh --version`.

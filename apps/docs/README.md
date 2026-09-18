@@ -22,13 +22,13 @@ The dev server runs on `http://localhost:3000` by default. If another app is alr
 
 ## Scripts
 
-| Script | Purpose |
-| --- | --- |
-| `pnpm --filter @workspace/docs dev` | Start the dev server with HMR |
-| `pnpm --filter @workspace/docs build` | Production build |
-| `pnpm --filter @workspace/docs start` | Run the production build |
-| `pnpm --filter @workspace/docs lint` | ESLint (extends `eslint-config-next`) |
-| `pnpm --filter @workspace/docs format` | Prettier on TS/TSX/MDX |
+| Script                                    | Purpose                                   |
+| ----------------------------------------- | ----------------------------------------- |
+| `pnpm --filter @workspace/docs dev`       | Start the dev server with HMR             |
+| `pnpm --filter @workspace/docs build`     | Production build                          |
+| `pnpm --filter @workspace/docs start`     | Run the production build                  |
+| `pnpm --filter @workspace/docs lint`      | Oxlint (extends `oxlint-config/next`)     |
+| `pnpm --filter @workspace/docs format`    | Oxfmt on TS/TSX/MDX                       |
 | `pnpm --filter @workspace/docs typecheck` | Regenerate MDX types, then `tsc --noEmit` |
 
 ## Authoring content

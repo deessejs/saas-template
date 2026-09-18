@@ -8,32 +8,32 @@ export function AppFooter() {
   return (
     <footer className="border-t">
       <div className="mx-auto flex h-14 items-center justify-between px-4">
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           © {year} {APP_NAME}. All rights reserved.
         </p>
 
         <nav className="flex items-center gap-4">
           <Link
             href="/docs"
-            className="text-muted-foreground text-sm hover:text-foreground transition-colors"
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             Docs
           </Link>
           <Link
             href="/privacy"
-            className="text-muted-foreground text-sm hover:text-foreground transition-colors"
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             Privacy
           </Link>
           <Link
             href="/cookies"
-            className="text-muted-foreground text-sm hover:text-foreground transition-colors"
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             Cookies
           </Link>
           <Link
             href="/terms"
-            className="text-muted-foreground text-sm hover:text-foreground transition-colors"
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             Terms
           </Link>

@@ -21,7 +21,7 @@ if (
   // eslint-disable-next-line no-console
   console.warn(
     "[env] Client env validation warnings (using defaults):",
-    parsed.error.issues,
+    parsed.error.issues
   )
 }
 
@@ -36,5 +36,5 @@ export const clientEnv: Readonly<ClientEnv> = Object.freeze(
           "SaaS application built with Next.js and shared UI components",
         NEXT_PUBLIC_APP_URL:
           process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
-      },
+      }
 )

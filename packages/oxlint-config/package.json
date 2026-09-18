@@ -1,0 +1,21 @@
+{
+  "name": "@workspace/oxlint-config",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "base.json",
+    "react-internal.json",
+    "next.json"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./base.json",
+    "./base": "./base.json",
+    "./react-internal": "./react-internal.json",
+    "./next": "./next.json"
+  },
+  "dependencies": {
+    "oxlint": "catalog:",
+    "oxlint-plugin-eslint": "catalog:"
+  }
+}
