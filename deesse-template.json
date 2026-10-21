@@ -20,18 +20,10 @@
   "product": {
     "layer": "open-community",
     "category": "saas",
-    "labels": [
-      "nextjs",
-      "drizzle",
-      "postgres",
-      "auth",
-      "saas"
-    ],
+    "labels": ["nextjs", "drizzle", "postgres", "auth", "saas"],
     "image": "/ship-your-saas.png"
   },
-  "includes": [
-    "**"
-  ],
+  "includes": ["**"],
   "excludes": [
     ".changeset/*.md",
     ".claude/settings.local.json",
