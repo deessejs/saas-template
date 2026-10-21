@@ -16,12 +16,12 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: pnpm
@@ -33,12 +33,12 @@ jobs:
     name: Type Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: pnpm
@@ -56,12 +56,12 @@ jobs:
       DATABASE_URL: postgresql://test:test@localhost:5432/test
       NEXT_PUBLIC_APP_URL: https://ci.example.com
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: pnpm
@@ -80,12 +80,12 @@ jobs:
       NODE_ENV: test
       BETTER_AUTH_SECRET: ci-test-secret-which-is-long-enough-to-pass-the-32-char-validation
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: pnpm
@@ -119,12 +119,12 @@ jobs:
       BETTER_AUTH_SECRET: ci-test-secret-which-is-long-enough-to-pass-the-32-char-validation
       DATABASE_URL: postgresql://test:test@localhost:5432/test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: pnpm

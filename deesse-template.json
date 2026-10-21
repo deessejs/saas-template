@@ -1,0 +1,58 @@
+{
+  "$schema": "https://raw.githubusercontent.com/deessejs/deessejs/main/templates/schema/template-v2.json",
+  "name": "saas-template",
+  "slug": "saas-starter",
+  "title": "SaaS Starter",
+  "description": "A Next.js 16 monorepo with authentication, billing and organisations already wired, so you reach your first paying B2B customer in thirty days.",
+  "version": "0.0.1",
+  "type": "template:starter",
+  "author": "DeesseJS <hello@deessejs.com>",
+  "license": "MIT",
+  "source": {
+    "repo": "deessejs/saas-template",
+    "ref": "main"
+  },
+  "requires": {
+    "runtime": "node",
+    "node": ">=22.0.0",
+    "packageManager": "pnpm@11.0.0"
+  },
+  "product": {
+    "layer": "open-community",
+    "category": "saas",
+    "labels": ["nextjs", "saas", "auth", "postgres"],
+    "image": "/ship-your-saas.png"
+  },
+  "includes": ["**"],
+  "excludes": [
+    ".changeset/*.md",
+    ".claude/settings.local.json",
+    ".claude/agent-memory/**",
+    ".claude/plans/**",
+    ".claude/worktrees/**",
+    ".claude/pr-body-*.md",
+    ".github/ISSUE_TEMPLATE/**",
+    ".github/CODEOWNERS",
+    ".github/FUNDING.yml",
+    ".github/PULL_REQUEST_TEMPLATE.md",
+    "CHANGELOG.md",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/.next/**",
+    "**/.turbo/**",
+    "**/coverage/**",
+    "**/.DS_Store",
+    "**/.env",
+    "**/.env.*"
+  ],
+  "fileTypes": {
+    "README.md": "doc",
+    "LICENSE": "doc",
+    "CONTRIBUTING.md": "doc",
+    "AGENTS.md": "doc",
+    "CLAUDE.md": "doc",
+    ".changeset/config.json": "config",
+    ".github/workflows/ci.yml": "ci",
+    ".github/workflows/release.yml": "ci"
+  }
+}
